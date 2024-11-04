@@ -1,0 +1,156 @@
+<script>
+import AICommendationModal from "@/components/AICommendationModal.vue";
+import {ref} from "vue";
+import ModalPopup from "@/components/SingleButtonModal.vue";
+import {ROUTES} from "@/router/routes";
+import {useRoute} from "vue-router";
+
+export default {
+  name: "WisdomShareDelete",
+  computed: {
+    ROUTES() {
+      return ROUTES
+    }
+  },
+  components: {ModalPopup, AICommendationModal},
+  setup() {
+    const route = useRoute();
+    const postId = route.params.id
+    console.log("postId:", postId);
+
+    const modalPopupStatue = ref(false);
+    const aiModalPopupStatue = ref(false);
+
+    const industries = ref([
+      "제조업", "정보통신", "금융업", "서비스업", "건설업",
+      "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
+    ]);
+
+    const onDeletePostClick = () => {
+      modalPopupStatue.value = true;
+    }
+
+    return {
+      industries,
+      modalPopupStatue,
+      aiModalPopupStatue,
+      onDeletePostClick,
+    };
+  }
+}
+</script>
+
+<template>
+  <main class="body">
+    <div class="header">
+      <div class="header-title">지혜 나눔</div>
+    </div>
+    <div class="content">
+      <!-- 직종 선택 -->
+      <div class="input-label">
+        <select class="input-field" aria-label="산업">
+          <option value="" disabled selected>산업</option>
+          <option v-for="industry in industries" :key="industry" :value="industry">{{ industry }}</option>
+        </select>
+      </div>
+      <!-- 제목 입력 -->
+      <div class="input-section">
+        <div class="input-label">
+          <input class="input-field" placeholder="제목을 입력해주세요">
+        </div>
+      </div>
+      <!-- 내용 입력 -->
+      <div class="input-label">
+        <textarea class="textarea-field" placeholder="" />
+      </div>
+      <div class="delete-button" @click="onDeletePostClick">삭제하기</div>
+    </div>
+  </main>
+  <modal-popup
+      v-if="modalPopupStatue"
+      @close-modal="modalPopupStatue = false"
+      :modal-message="'지혜 나눔 삭제 완료되었습니다.'"
+      :router-path="ROUTES.WISDOM_SHARE.path"
+  />
+  <a-i-commendation-modal
+      v-if="aiModalPopupStatue"
+      @close-modal="aiModalPopupStatue = false"
+  />
+</template>
+
+<style scoped>
+.body {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between; /* 두 요소를 양 끝에 배치 */
+  align-items: center; /* 세로 정렬을 가운데로 */
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+}
+
+.input-label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 10px 10px 0; /* 오른쪽 여백 추가 */
+  box-sizing: border-box;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+  color: #413F42;
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  box-sizing: border-box;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+  color: #413F42;
+  resize: vertical;
+  min-height: 250px;
+}
+
+.delete-button {
+  width: 90%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
+}
+</style>

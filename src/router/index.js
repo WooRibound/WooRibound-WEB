@@ -1,0 +1,175 @@
+import { createRouter, createWebHistory } from "vue-router";
+import { ROUTES } from "@/router/routes";
+import { useUserStore } from "@/stores/userStore";
+import { USER_TYPES } from "@/constants/userTypes";
+
+const router = createRouter({
+    history: createWebHistory(""),
+    routes: [
+        {
+            path: "/:pathMatch(.*)*",
+            name: "NotFound",
+            component: () => import("@/views/Error/NotFindPageView.vue"),
+        },
+        {
+            path: ROUTES.MAIN.path,
+            name: ROUTES.MAIN.name,
+            component: () => import("@/views/Common/MainView.vue"),
+        },
+        {
+            path: ROUTES.ADMIN_MAIN.path,
+            name: ROUTES.ADMIN_MAIN.name,
+            component: () => import("@/views/Common/AdminMain.vue"),
+        },
+        {
+            path: ROUTES.JOB_MENU.path,
+            name: ROUTES.JOB_MENU.name,
+            component: () => import("@/views/IndividualUser/JobMenu.vue"),
+        },
+        {
+            path: ROUTES.JOB_APPLICATION_STATUS.path,
+            name:  ROUTES.JOB_APPLICATION_STATUS.name,
+            component: () => import("@/views/IndividualUser/JobApplicationStatus.vue"),
+        },
+        {
+            path: ROUTES.RESUME_PAGE.path,
+            name: ROUTES.RESUME_PAGE.name,
+            component: () => import("@/views/IndividualUser/ResumePage.vue"),
+        },
+        {
+            path: ROUTES.INDIVIDUAL_USER_PROFILE.path,
+            name: ROUTES.INDIVIDUAL_USER_PROFILE.name,
+            component: () => import("@/views/IndividualUser/IndividualUserProfile.vue"),
+        },
+        {
+            path: ROUTES.WOORIBOUND_ELEVATION_INFO.path,
+            name: ROUTES.WOORIBOUND_ELEVATION_INFO.name,
+            component: () => import("@/views/IndividualUser/WooriboundElevationInfo.vue"),
+        },
+        {
+            path: ROUTES.JOB_POSTINGS_PAGE.path,
+            name: ROUTES.JOB_POSTINGS_PAGE.name,
+            component: () => import("@/views/IndividualUser/JobPostingsPage.vue"),
+        },
+        {
+            path: ROUTES.LOGIN.path,
+            name: ROUTES.LOGIN.name,
+            component: () => import("@/views/Authentication/LoginView.vue"),
+        },
+        {
+            path: ROUTES.INDIVIDUAL_USER_REGISTER.path,
+            name: ROUTES.INDIVIDUAL_USER_REGISTER.name,
+            component: () => import("@/views/Authentication/IndividualUserRegisterView.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_REGISTER.path,
+            name: ROUTES.CORPORATE_USER_REGISTER.name,
+            component: () => import("@/views/Authentication/CorporateUserRegisterView.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_FIND_PASSWORD.path,
+            name: ROUTES.CORPORATE_USER_FIND_PASSWORD.name,
+            component: () => import("@/views/Authentication/CorporateUserFindPasswordView.vue"),
+        },
+        {
+            path: ROUTES.JOB_POSTING_DETAIL.path,
+            name: ROUTES.JOB_POSTING_DETAIL.name,
+            component: () => import("@/views/IndividualUser/JobPostingDetail.vue"),
+        },
+        {
+            path: ROUTES.INDIVIDUAL_USER_DELETE.path,
+            name: ROUTES.INDIVIDUAL_USER_DELETE.name,
+            component: () => import("@/views/IndividualUser/IndividualUserDelete.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_DELETE.path,
+            name: ROUTES.CORPORATE_USER_DELETE.name,
+            component: () => import("@/views/CorporateUser/CorporateUserDelete.vue"),
+        },
+        {
+            path: ROUTES.USER_DELETE_SUCCESS.path,
+            name: ROUTES.USER_DELETE_SUCCESS.name,
+            component: () => import("@/views/Common/UserDeleteSuccess.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_ACCOUNT_MENU.path,
+            name: ROUTES.CORPORATE_USER_ACCOUNT_MENU.name,
+            component: () => import("@/views/CorporateUser/CorporateUserAccountMenu.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_PROFILE.path,
+            name: ROUTES.CORPORATE_USER_PROFILE.name,
+            component: () => import("@/views/CorporateUser/CorporateUserProfile.vue"),
+        },
+        {
+            path: ROUTES.JOB_POSTING_MANAGEMENT.path,
+            name: ROUTES.JOB_POSTING_MANAGEMENT.name,
+            component: () => import("@/views/CorporateUser/JobPostingManagement.vue"),
+        },
+        {
+            path: ROUTES.JOB_POSTING_REGISTER.path,
+            name: ROUTES.JOB_POSTING_REGISTER.name,
+            component: () => import("@/views/CorporateUser/JobPostingRegister.vue"),
+        },
+        {
+            path: ROUTES.APPLICANT_DETAIL_PAGE.path,
+            name: ROUTES.APPLICANT_DETAIL_PAGE.name,
+            component: () => import("@/views/CorporateUser/ApplicantDetailPage.vue"),
+        },
+        {
+            path: ROUTES.READONLY_RESUME_PAGE.path,
+            name: ROUTES.READONLY_RESUME_PAGE.name,
+            component: () => import("@/views/CorporateUser/ReadonlyResumePage.vue"),
+        },
+        {
+            path: ROUTES.EMPLOYEE_MANAGEMENT.path,
+            name: ROUTES.EMPLOYEE_MANAGEMENT.name,
+            component: () => import("@/views/CorporateUser/EmployeeManagement.vue"),
+        },
+        {
+            path: ROUTES.WISDOM_SHARE.path,
+            name: ROUTES.WISDOM_SHARE.name,
+            component: () => import("@/views/IndividualUser/WisdomShare.vue"),
+        },
+        {
+            path: ROUTES.WISDOM_SHARE_REGISTER.path,
+            name: ROUTES.WISDOM_SHARE_REGISTER.name,
+            component: () => import("@/views/IndividualUser/WisdomShareRegister.vue"),
+        },
+        {
+            path: ROUTES.WISDOM_SHARE_DELETE.path,
+            name: ROUTES.WISDOM_SHARE_DELETE.name,
+            component: () => import("@/views/IndividualUser/WisdomShareDelete.vue"),
+        },
+        {
+            path: ROUTES.WISDOM_EXPLORE.path,
+            name: ROUTES.WISDOM_EXPLORE.name,
+            component: () => import("@/views/IndividualUser/WisdomExplore.vue"),
+        },
+        {
+            path: ROUTES.WISDOM_EXPLORE_DETAIL.path,
+            name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+            component: () => import("@/views/IndividualUser/WisdomExploreDetail.vue"),
+        },
+    ],
+});
+
+router.beforeEach((to, from, next) => {
+    const userStore = useUserStore();
+
+    // 사용자 로그인 여부와 사용자 유형 확인
+    if (userStore.isLoggedIn &&
+        (userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN)) {
+
+        // 루트 경로를 admin으로 리다이렉트
+        if (to.path === ROUTES.MAIN.path) {
+            next({ path: ROUTES.ADMIN_MAIN.path }); // AdminMainView로 리다이렉트
+        } else {
+            next(); // 다른 경로로 이동
+        }
+    } else {
+        next(); // 로그인하지 않은 경우, 원래 경로로 이동
+    }
+});
+
+export default router;

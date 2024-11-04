@@ -1,0 +1,24 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    height: 60px; /* 헤더 높이 */
+}
+
+main {
+    flex: 1; /* 남은 공간을 차지 */
+    overflow-y: auto; /* 스크롤 가능 */
+    padding: 20px; /* 내부 여백 */
+    box-sizing: border-box;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+    color: inherit;
+}
