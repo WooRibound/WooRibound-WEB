@@ -18,18 +18,12 @@ export default {
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
 
-    const industries = ref([
-      "제조업", "정보통신", "금융업", "서비스업", "건설업",
-      "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
-    ]);
-
     const onReportClick = () => {
       // todo API 구현 시 아래에 로직 구현 하기
       console.log("신고하기");
     }
 
     return {
-      industries,
       modalPopupStatue,
       aiModalPopupStatue,
       onReportClick,
@@ -46,6 +40,10 @@ export default {
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고하기
       </div>
+    </div>
+    <div class="author-info">
+      <div class="author">작성자: user01</div>
+      <div class="date">2024.01.01</div>
     </div>
     <div class="content">
       <!-- 직종 선택 -->
@@ -84,6 +82,25 @@ export default {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.author-info {
+  display: flex; /* Flexbox 사용 */
+  justify-content: space-between; /* 두 요소를 수평으로 나란히 배치 */
+  align-items: center; /* 세로 정렬 */
+  margin-bottom: 15px; /* Author info section margin */
+  font-size: 13px; /* Font size for both author and date */
+  color: #413F42; /* Color for the text */
+}
+
+.author {
+  font-weight: bold; /* Bold for the author's name */
+  margin-left: 6px;
+}
+
+.date {
+  color: #999; /* Lighter color for the date */
+  margin-right: 8px;
 }
 
 .content {
