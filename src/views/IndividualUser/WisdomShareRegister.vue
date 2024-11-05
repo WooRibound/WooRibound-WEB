@@ -3,7 +3,7 @@ import AICommendationModal from "@/components/AICommendationModal.vue";
 import {onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
-import { fetchJobs } from '@/api/services/grobalServiece';
+import { fetchJobs } from '@/api/services/grobalServiece'
 
 export default {
   name: "WisdomShareRegister",
@@ -19,7 +19,7 @@ export default {
 
     const jobs = ref([]);
 
-    const fetchJobs = async () => {
+    const loadJobs = async () => {
       try {
         const response = await fetchJobs();
         jobs.value = response;
@@ -29,7 +29,7 @@ export default {
     };
 
     onMounted(() => {
-      fetchJobs();
+      loadJobs();
     });
 
     const onAIRecommendationClick = () => {
