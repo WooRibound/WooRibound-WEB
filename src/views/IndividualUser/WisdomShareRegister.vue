@@ -1,8 +1,9 @@
 <script>
 import AICommendationModal from "@/components/AICommendationModal.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
+import { fetchJobs } from '@/api/services/grobalServiece'
 
 export default {
   name: "WisdomShareRegister",
@@ -16,10 +17,20 @@ export default {
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
 
-    const industries = ref([
-      "제조업", "정보통신", "금융업", "서비스업", "건설업",
-      "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
-    ]);
+    const jobs = ref([]);
+
+    const loadJobs = async () => {
+      try {
+        const response = await fetchJobs();
+        jobs.value = response;
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
+    };
+
+    onMounted(() => {
+      loadJobs();
+    });
 
     const onAIRecommendationClick = () => {
       console.log("ai 추천");
@@ -31,7 +42,7 @@ export default {
     }
 
     return {
-      industries,
+      jobs,
       modalPopupStatue,
       aiModalPopupStatue,
       onAIRecommendationClick,
@@ -52,7 +63,7 @@ export default {
       <div class="input-label">
         <select class="input-field" aria-label="산업">
           <option value="" disabled selected>산업</option>
-          <option v-for="industry in industries" :key="industry" :value="industry">{{ industry }}</option>
+          <option v-for="job in jobs" :key="job.jobId" :value="job.jobId">{{ job.jobName }}</option>
         </select>
       </div>
       <!-- 제목 입력 -->

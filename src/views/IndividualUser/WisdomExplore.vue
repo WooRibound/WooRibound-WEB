@@ -39,11 +39,15 @@ export default {
           postId: 1,
           postTitle: '시니어도 할 수 있는 Ghat GPT',
           job: '서비스',
+          date: '2024.01.01',
+          userId: 'user01'
         },
         {
           postId: 2,
           postTitle: '시니어도 할 수 있는 EXCEL',
-          job: 'IT 엔지니어',
+          job: 'IT',
+          date: '2024.01.01',
+          userId: 'user02'
         },
       ];
 
@@ -118,8 +122,9 @@ export default {
       <div class="job-posting-info">{{ postCount }}건</div>
       <div class="job-posting-list" v-for="post in postList" :key="post">
         <div class="course-title">{{ post.postTitle }}</div>
+        <div class="course-subtitle">{{ post.job }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ post.job }}</div>
+          <div class="schedule-info">{{ post.userId }} &nbsp;&nbsp;&nbsp; {{ post.date }}</div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(post.postId)">
         </div>
       </div>

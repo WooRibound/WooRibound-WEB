@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useLoadingStore } from '@/stores/loding';
+import { useLoadingStore } from '@/stores/useLodingStore';
 
 const apiInstance = () => {
     const instance = axios.create({
