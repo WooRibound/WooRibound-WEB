@@ -42,7 +42,6 @@ export default {
       user: false
     });
 
-    // 마우스 이벤트 핸들러
     const mouseEnter = (icon) => {
       currentIcon.value[icon] = false; // Hover 시 기본 아이콘 숨김
     };
