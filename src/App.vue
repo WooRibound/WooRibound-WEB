@@ -17,12 +17,13 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import BottomNavigation from "@/components/BottomNavigation.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import FullScreenMenu from "@/views/Common/FullScreenMenu.vue";
 import { useUserStore } from "@/stores/userStore";
 import { USER_TYPES } from "@/constants/userTypes";
+import {useJobStore} from "@/stores/useJobStore";
 
 export default {
   name: 'App',
@@ -32,6 +33,8 @@ export default {
     BottomNavigation
   },
   setup() {
+    const jobStore = useJobStore();
+
     const iconState = ref({});
     const fullScreenMenuState = ref(false);
 
@@ -53,6 +56,10 @@ export default {
 
     const isAdmin = computed(() => {
       return userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN;
+    });
+
+    onMounted(() => {
+      jobStore.fetchJobs();
     });
 
     return {
