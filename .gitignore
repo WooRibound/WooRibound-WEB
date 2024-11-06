@@ -41,6 +41,7 @@ coverage/
 /build/
 
 # Cache files
+node_modules/
 node_modules/.cache/
 
 # Exclude ESLint cache files
