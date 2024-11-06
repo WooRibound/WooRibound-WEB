@@ -70,10 +70,9 @@ export default {
       modalPopupStatue.value = true;
     }
 
-    const handleSelectProvince = (selected) => {
-      console.log("선택된 필터:", selected);
-      if (selected === SEARCH_FILTER_TYPES.JOB) {
-        selectedJob.value = selected.job;
+    const handleSelectFilter = (selected) => {
+      if (selected.filterType === SEARCH_FILTER_TYPES.JOB) {
+        selectedJob.value = selected.filterValue;
       }
     }
 
@@ -88,7 +87,7 @@ export default {
       selectedJob,
       postCount,
       postList,
-      handleSelectProvince,
+      handleSelectFilter,
       searchPosts,
       onMoveDetailPageClick,
       onFilterClick,
@@ -116,7 +115,7 @@ export default {
         <div class="filter-item"
              @click="onFilterClick(SEARCH_FILTER_TYPES.JOB)"
              :style="{ color: selectedJob === '전체 직무' ? 'black' : '#024CAA' }">
-          전체 직무
+          {{ selectedJob }}
         </div>
       </div>
     </div>
@@ -134,7 +133,7 @@ export default {
   <search-filter-modal
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
-      @select-province="handleSelectProvince"
+      @select-filter="handleSelectFilter"
       :filter-type="filterTypes"
   />
 </template>

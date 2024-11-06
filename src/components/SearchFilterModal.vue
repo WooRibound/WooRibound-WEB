@@ -1,14 +1,15 @@
 <script>
-import {computed} from "vue";
-import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
+import { computed } from "vue";
+import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import { useRegionsStore } from "@/stores/useRegionsStore";
+import { useJobStore } from "@/stores/useJobStore";
 
 export default {
   name: "SearchFilterModal",
   computed: {
     SEARCH_FILTER_TYPES() {
-      return SEARCH_FILTER_TYPES
-    }
+      return SEARCH_FILTER_TYPES;
+    },
   },
   props: {
     filterType: {
@@ -16,55 +17,92 @@ export default {
       required: true,
     },
   },
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const regionsStore = useRegionsStore();
+    const jobStore = useJobStore();
+
+    // 지역 리스트 설정
     const provinces = computed(() => {
       const originalProvinces = regionsStore.getProvinces;
-      return ["전체 지역", ...originalProvinces]; // "전체"를 첫 번째 요소로 추가
+      return ["전체 지역", ...originalProvinces];
     });
+
+    // 직무 리스트 설정
+    const jobs = computed(() => {
+      const originalJobs = jobStore.getJobs;
+      console.log("originalJobs:", originalJobs);
+      return ["전체 직무", ...originalJobs.map((job) => job.jobName)];
+    });
+
     const selectedFilterType = computed(() => props.filterType);
 
     const closeModal = () => {
-      emit('close-modal', false);
+      emit("close-modal", false);
     };
 
-    const halfLength = Math.ceil(provinces.value.length / 2);
-    const leftProvinces = computed(() => provinces.value.slice(0, halfLength));
-    const rightProvinces = computed(() => provinces.value.slice(halfLength));
+    const halfLengthProvinces = Math.ceil(provinces.value.length / 2);
+    const leftProvinces = computed(() => provinces.value.slice(0, halfLengthProvinces));
+    const rightProvinces = computed(() => provinces.value.slice(halfLengthProvinces));
 
-    const selectProvince = (province) => {
-      emit("select-province", {
+    const halfLengthJobs = Math.ceil(jobs.value.length / 2);
+    const leftJobs = computed(() => jobs.value.slice(0, halfLengthJobs));
+    const rightJobs = computed(() => jobs.value.slice(halfLengthJobs));
+
+    const selectFilter = (filterValue) => {
+      emit("select-filter", {
         filterType: selectedFilterType.value,
-        province: province,
+        filterValue: filterValue,
       });
       closeModal();
     };
 
     return {
       closeModal,
-      selectProvince,
+      selectFilter,
       selectedFilterType,
       leftProvinces,
       rightProvinces,
+      leftJobs,
+      rightJobs,
     };
-  }
-}
+  },
+};
 </script>
 
 <template>
   <div class="modal-overlay">
-    <div class="menu-content" v-if="selectedFilterType === SEARCH_FILTER_TYPES.JOB">
+    <div class="menu-content job" v-if="selectedFilterType === SEARCH_FILTER_TYPES.JOB">
       <div class="menu_title">
         직무
         <div class="close-button" @click="closeModal">
           <img src="@/assets/images/icons/close.png" alt="Close" />
         </div>
       </div>
-      <div class="menu-items">
-        <div class="menu-item">지원 현황</div>
+      <div class="menu-items job">
+        <div class="menu-column">
+          <div
+              class="menu-item"
+              v-for="(job, index) in leftJobs"
+              :key="index"
+              @click="selectFilter(job)"
+          >
+            {{ job }}
+          </div>
+        </div>
+        <div class="menu-column">
+          <div
+              class="menu-item"
+              v-for="(job, index) in rightJobs"
+              :key="index"
+              @click="selectFilter(job)"
+          >
+            {{ job }}
+          </div>
+        </div>
       </div>
     </div>
-    <div class="menu-content" v-if="selectedFilterType === SEARCH_FILTER_TYPES.REGIONS">
+
+    <div class="menu-content region" v-if="selectedFilterType === SEARCH_FILTER_TYPES.REGIONS">
       <div class="menu_title">
         지역
         <div class="close-button" @click="closeModal">
@@ -77,7 +115,7 @@ export default {
               class="menu-item"
               v-for="(province, index) in leftProvinces"
               :key="index"
-              @click="selectProvince(province)"
+              @click="selectFilter(province)"
           >
             {{ province }}
           </div>
@@ -87,7 +125,7 @@ export default {
               class="menu-item"
               v-for="(province, index) in rightProvinces"
               :key="index"
-              @click="selectProvince(province)"
+              @click="selectFilter(province)"
           >
             {{ province }}
           </div>
@@ -117,8 +155,15 @@ export default {
   border-radius: 20px 20px 0 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  height: 70%;
   margin-bottom: 0;
+}
+
+.menu-content .job{
+  height: 85%;
+}
+
+.menu-content .region{
+  height: 70%;
 }
 
 .menu_title {

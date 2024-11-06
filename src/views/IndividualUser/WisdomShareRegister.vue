@@ -3,7 +3,7 @@ import AICommendationModal from "@/components/AICommendationModal.vue";
 import {onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
-import { fetchJobs } from '@/api/services/grobalServiece'
+import { fetchJobs } from '@/api/services/globalServiece'
 
 export default {
   name: "WisdomShareRegister",
