@@ -34,6 +34,11 @@ export const ROUTES = {
         path: "/login",
         name: "Login",
     },
+    // [개인회원] 지혜 나눔 삭제
+    ADMIN_LOGIN: {
+        path: "/admin/login",
+        name: "AdminLogin"
+    },
     // [개인회원] 회원가입
     INDIVIDUAL_USER_REGISTER: {
         path: "/individual-user/register",

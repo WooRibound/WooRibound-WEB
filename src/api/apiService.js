@@ -58,34 +58,61 @@ const apiInstance = () => {
     return instance;
 };
 
-const handleApiCall = async (method, url, data = null) => {
+const handleApiCall = async (method, url, data = null, options = {}) => {
     const loadingStore = useLoadingStore();
-    loadingStore.setLoading(true); // 로딩 시작
-    const api = apiInstance(); // API 인스턴스 생성
+    loadingStore.setLoading(true);
+
     try {
+        const api = apiInstance();
         let response;
-        switch (method) {
-            case 'get':
-                response = await api.get(url);
-                break;
+        const config = {
+            ...options,
+            withCredentials: true,
+            validateStatus: function (status) {
+                return status >= 200 && status < 500; // 200-499 상태 코드는 에러로 처리하지 않음
+            }
+        };
+
+        switch (method.toLowerCase()) {
             case 'post':
-                response = await api.post(url, data);
+                response = await api.post(url, data, config);
+                break;
+            case 'get':
+                response = await api.get(url, config);
                 break;
             case 'put':
-                response = await api.put(url, data);
+                response = await api.put(url, data, config);
                 break;
             case 'delete':
-                response = await api.delete(url);
+                response = await api.delete(url, config);
                 break;
             default:
                 throw new Error(`Unsupported method: ${method}`);
         }
-        return response.data; // 성공적으로 응답받은 데이터 반환
+
+        return response;
     } catch (error) {
-        console.error(`API call failed (${method} ${url}):`, error);
-        throw error; // 에러를 다시 던져서 호출자가 처리할 수 있게 함
+        console.error('API call failed:', {
+            method,
+            url,
+            error: {
+                message: error.message,
+                response: error.response,
+                request: error.request
+            }
+        });
+
+        // 에러 객체 구조화
+        const errorResponse = {
+            status: error.response?.status,
+            data: error.response?.data,
+            headers: error.response?.headers,
+            message: error.message
+        };
+
+        throw errorResponse;
     } finally {
-        loadingStore.setLoading(false); // 로딩 종료
+        loadingStore.setLoading(false);
     }
 };
 

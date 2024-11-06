@@ -57,6 +57,11 @@ const router = createRouter({
             component: () => import("@/views/Authentication/LoginView.vue"),
         },
         {
+            path: ROUTES.ADMIN_LOGIN.path,
+            name: ROUTES.ADMIN_LOGIN.name,
+            component: () => import("@/views/Authentication/AdminLoginView.vue"),
+        },
+        {
             path: ROUTES.INDIVIDUAL_USER_REGISTER.path,
             name: ROUTES.INDIVIDUAL_USER_REGISTER.name,
             component: () => import("@/views/Authentication/IndividualUserRegisterView.vue"),
@@ -155,21 +160,26 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    // Access Token 처리
+    if (window.location.hash.includes('accessToken=')) {
+        const token = window.location.hash.split('accessToken=')[1];
+        if (token) {
+            localStorage.setItem('accessToken', "bearer "+token);
+            window.location.hash = '';
+        }
+    }
+
     const userStore = useUserStore();
 
-    // 사용자 로그인 여부와 사용자 유형 확인
+    // 로그인한 관리자 사용자의 메인 페이지 리다이렉션
     if (userStore.isLoggedIn &&
         (userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN)) {
-
-        // 루트 경로를 admin으로 리다이렉트
         if (to.path === ROUTES.MAIN.path) {
-            next({ path: ROUTES.ADMIN_MAIN.path }); // AdminMainView로 리다이렉트
-        } else {
-            next(); // 다른 경로로 이동
+            return next({ path: ROUTES.ADMIN_MAIN.path });
         }
-    } else {
-        next(); // 로그인하지 않은 경우, 원래 경로로 이동
     }
+
+    next();
 });
 
 export default router;

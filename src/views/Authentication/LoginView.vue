@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { USER_TYPES } from "@/constants/userTypes";
 import { useRouter } from "vue-router";
 import { ROUTES } from "@/router/routes";
+import { corporateLogin } from "@/api/services/authenticationService";
 
 export default {
   name: "LoginView",
@@ -11,24 +12,48 @@ export default {
 
     const activeUserType = ref(USER_TYPES.INDIVIDUAL_USER); // 기본값: 개인 회원
 
+    // 추가된 ref들
+    const username = ref('');
+    const password = ref('');
+    const errorMessage = ref('');
+
     const onSetActiveUserTypeClick = (type) => {
       activeUserType.value = type;
     };
 
     const onIndividualUserLoginClick = () => {
       console.log("개인회원 로그인 하기");
-      // todo 개인 회원 Oauth 구현 시 로그인 로직 넣기
-      router.push(ROUTES.INDIVIDUAL_USER_REGISTER.path);
+      // 네이버 OAuth 경로로 리다이렉트
+      window.location.href = "http://localhost:8081/oauth2/authorization/naver"; // 네이버 로그인 요청 url
     }
 
-    const onCorporateUserLoginClick = () => {
-      console.log("기업회원 로그인 하기");
-      // todo 기업 회원 로그인 API 구현 시 로직 넣기
-      router.push(ROUTES.MAIN.path);
+    const onCorporateUserLoginClick = async () => {
+      // 입력값 검증
+      if (!username.value || !password.value) {
+        errorMessage.value = '아이디와 비밀번호를 모두 입력해주세요.';
+        return;
+      }
+
+      try {
+        errorMessage.value = ''; // 이전 에러메시지 초기화
+
+        // 로그인 API 호출
+        await corporateLogin(username.value, password.value);
+
+        // 로그인 성공 시 메인 페이지로 이동
+        router.push(ROUTES.MAIN.path);
+      } catch (error) {
+        console.error('로그인 실패:', error);
+        errorMessage.value = '아이디 또는 비밀번호가 올바르지 않습니다.';
+      }
     }
+    
 
     return {
       activeUserType,
+      username,
+      password,
+      errorMessage,
       onSetActiveUserTypeClick,
       onIndividualUserLoginClick,
       onCorporateUserLoginClick,
@@ -65,11 +90,25 @@ export default {
         </div>
       </div>
       <div class="input-section" v-if="activeUserType === USER_TYPES.CORPORATE_MEMBER">
-        <input class="input-field" placeholder="아이디">
-        <input class="input-field" placeholder="비밀번호" type="password">
+        <input
+            class="input-field"
+            placeholder="아이디"
+            v-model="username"
+            @keyup.enter="onCorporateUserLoginClick">
+        <input
+            class="input-field"
+            placeholder="비밀번호"
+            type="password"
+            v-model="password"
+            @keyup.enter="onCorporateUserLoginClick">
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <div class="delete-button" @click="onCorporateUserLoginClick">로그인</div>
-        <router-link :to="ROUTES.CORPORATE_USER_FIND_PASSWORD.path" class="forgot-password">비밀번호 찾기</router-link>
-        <router-link :to="ROUTES.CORPORATE_USER_REGISTER.path" class="signup-link">회원가입 하기</router-link>
+        <router-link :to="ROUTES.CORPORATE_USER_FIND_PASSWORD.path" class="forgot-password">
+          비밀번호 찾기
+        </router-link>
+        <router-link :to="ROUTES.CORPORATE_USER_REGISTER.path" class="signup-link">
+          회원가입 하기
+        </router-link>
       </div>
     </div>
   </main>
@@ -200,6 +239,14 @@ export default {
   justify-content: center; /* 중앙 정렬 */
   font-weight: bold;
   height: 30px;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin: 8px 0;
+  text-align: center;
+  width: 100%;
 }
 
 .naver-logo {
