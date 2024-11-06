@@ -11,8 +11,6 @@ export default {
 
     const submitComment = () => {
       console.log("입력된 커맨트:", comment.value);
-      // 여기서 커맨트를 처리하는 로직을 추가할 수 있습니다.
-      // 예를 들어, API 호출 등을 통해 서버에 커맨트를 제출할 수 있습니다.
     };
 
 
