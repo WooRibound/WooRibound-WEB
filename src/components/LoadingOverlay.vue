@@ -1,5 +1,5 @@
 <script>
-import { useLoadingStore } from '@/store/loding'
+import { useLoadingStore } from '@/stores/useLodingStore'
 import {computed} from "vue";
 export default {
   name: "LoadingOverlay",
