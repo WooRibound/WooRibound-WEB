@@ -40,7 +40,7 @@ export default {
 
     // cities는 computed로 처리하여 선택된 도에 따라 동적으로 도시 리스트를 가져옵니다.
     const cities = computed(() => {
-      return regionsStore.getCitiesByProvince[selectedProvince.value] || [];
+      return regionsStore.getCitiesByProvince(selectedProvince.value) || [];
     });
 
     // 사용자 정보를 가져오는 함수
