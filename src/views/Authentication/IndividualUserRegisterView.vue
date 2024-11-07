@@ -1,38 +1,85 @@
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import { useRegionsStore } from "@/stores/useRegionsStore";
-import {ROUTES} from "@/router/routes";
-import {useUserStore} from "@/stores/userStore";
-import {decodeToken} from "@/utils/tokenDecoder";
+import { ROUTES } from "@/router/routes";
+import { useUserStore } from "@/stores/userStore";
+import { decodeToken } from "@/utils/tokenDecoder";
+import { fetchJoinInfo } from "@/api/services/individualUserService";
 
 export default {
   name: "IndividualUserRegisterView",
   computed: {
     ROUTES() {
-      return ROUTES
+      return ROUTES;
     }
   },
-  components: {ModalPopup},
+  components: { ModalPopup },
   setup() {
-    const  regionsStore = useRegionsStore();
+    const regionsStore = useRegionsStore();
 
-    const provinces = computed(() => regionsStore.getProvinces);
+    // 사용자 정보를 저장할 반응형 변수들
+    const userName = ref("");
+    const userEmail = ref("");
+    const userPhone = ref("");
+    const userGender = ref("");
+    const userBirth = ref("");
     const selectedProvince = ref("");
-    const cities = computed(() => regionsStore.getCitiesByProvince[selectedProvince.value] || []);
+    const selectedCity = ref("");  // 추가된 부분
     const modalPopupStatue = ref(false);
 
     // 경력 여부와 직종
-    const careerStatus = ref("none"); // 'none', 'yes', 'no' 중 선택
-    // todo 직종 리스트 받는 api로 값전 달하기
+    const careerStatus = ref("none");
     const jobCategories = ref([
       "개발자", "디자이너", "마케터", "영업", "기획자", "기타"
     ]);
 
     const isJobCategoryEnabled = computed(() => careerStatus.value === "yes");
-
     const selectedJobs = ref([""]);
     const selectedInterestJobs = ref([""]);
+
+    // cities는 computed로 처리하여 선택된 도에 따라 동적으로 도시 리스트를 가져옵니다.
+    const cities = computed(() => {
+      return regionsStore.getCitiesByProvince[selectedProvince.value] || [];
+    });
+
+    // 사용자 정보를 가져오는 함수
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await fetchJoinInfo();
+
+        if (userInfo) {
+          // 받아온 데이터로 폼 필드 업데이트
+          userName.value = userInfo.name || "";
+          userPhone.value = userInfo.phone || "";
+          userGender.value = userInfo.gender?.toLowerCase() || "";
+          userEmail.value = userInfo.email || "";
+          if (userInfo.gender === 'M') {
+            userGender.value = 'male';
+          } else if (userInfo.gender === 'F') {
+            userGender.value = 'female';
+          } else {
+            userGender.value = '';
+          }
+          if (userInfo.birth) {
+            const birthDate = new Date(userInfo.birth);
+            userBirth.value = birthDate.toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            }).replace(/. /g, '-').replace('.', '');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+        // 에러 처리 (예: 토스트 메시지 표시 등)
+      }
+    };
+
+    // 컴포넌트 마운트 시 사용자 정보 가져오기
+    onMounted(() => {
+      fetchUserInfo();
+    });
 
     const addJobField = () => {
       if (selectedJobs.value.length < 3) {
@@ -60,8 +107,14 @@ export default {
 
     return {
       modalPopupStatue,
-      provinces,
+      userName,
+      userEmail,
+      userPhone,
+      userGender,
+      userBirth,
+      provinces: computed(() => regionsStore.getProvinces),
       selectedProvince,
+      selectedCity,  // 추가된 부분
       cities,
       careerStatus,
       jobCategories,
@@ -123,17 +176,44 @@ export default {
         <!-- 이름 입력  -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="이름">
+          <input
+              v-model="userName"
+              class="input-field"
+              placeholder="이름"
+              :class="{ 'filled': userName }"
+          >
+        </div>
+        <!-- 이메일 입력 -->
+        <div class="input-label">
+          <span class="required">*</span>
+          <input
+              v-model="userEmail"
+              class="input-field"
+              placeholder="이메일"
+              type="email"
+              :class="{ 'filled': userEmail }"
+          >
         </div>
         <!-- 휴대폰번호 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="휴대폰 번호" type="tel">
+          <input
+              v-model="userPhone"
+              class="input-field"
+              placeholder="휴대폰 번호"
+              type="tel"
+              :class="{ 'filled': userPhone }"
+          >
         </div>
         <!-- 성별 선택 -->
         <div class="input-label">
           <span class="required">*</span>
-          <select class="input-field" aria-label="성별 선택">
+          <select
+              v-model="userGender"
+              class="input-field"
+              aria-label="성별 선택"
+              :class="{ 'filled': userGender }"
+          >
             <option value="" disabled selected>성별</option>
             <option value="male">남성</option>
             <option value="female">여성</option>
@@ -142,9 +222,15 @@ export default {
         <!-- 생년월일 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" type="date" data-placeholder="생년월일" required/>
+          <input
+              v-model="userBirth"
+              class="input-field"
+              type="date"
+              data-placeholder="생년월일"
+              required
+              :class="{ 'filled': userBirth }"
+          />
         </div>
-        <!-- 거주 도 선택 -->
         <div class="input-label">
           <span class="required">*</span>
           <select v-model="selectedProvince" class="input-field" aria-label="거주 도">
@@ -324,7 +410,6 @@ input[type="radio"] {
   display: flex;
   align-items: center;
   width: 80px;
-
 }
 
 .icon-button {
