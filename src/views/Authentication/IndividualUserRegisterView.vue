@@ -19,6 +19,7 @@ export default {
     const regionsStore = useRegionsStore();
 
     // 사용자 정보를 저장할 반응형 변수들
+
     const userName = ref("");
     const userEmail = ref("");
     const userPhone = ref("");
