@@ -4,6 +4,7 @@ import { useUserStore } from "@/stores/userStore";
 import { USER_TYPES } from "@/constants/userTypes";
 import { useRouter } from "vue-router";
 import {ROUTES} from "@/router/routes";
+import { logout } from "@/api/services/authenticationService"
 
 export default {
   name: "FullScreenMenu",
@@ -34,7 +35,7 @@ export default {
         onCloseFullScreenMenuClick();
         router.push("/login");
       } else {
-        // todo 로그아웃 로직 구현
+        logout();
         console.log("로그아웃");
       }
     }

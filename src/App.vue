@@ -48,12 +48,12 @@ export default {
 
     // todo 로그인 기능 구현 시 삭제 해야될 코드
     const userStore = useUserStore();
-    userStore.isLoggedIn = false;
+    // userStore.isLoggedIn = false;
     // userStore.userType = USER_TYPES.INDIVIDUAL_USER;
     // userStore.userType = USER_TYPES.CORPORATE_MEMBER;
     // userStore.userType = USER_TYPES.SERVICE_ADMIN;
     // userStore.userType = USER_TYPES.INFRA_ADMIN;
-
+    //
     const isAdmin = computed(() => {
       return userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN;
     });

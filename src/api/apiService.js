@@ -1,17 +1,21 @@
 import axios from 'axios';
 import { useLoadingStore } from '@/stores/useLodingStore';
+import { useUserStore } from "@/stores/userStore";
+
+let refreshTokenRequest = null; // 중복 갱신 요청 방지 변수
 
 const apiInstance = () => {
     const instance = axios.create({
         baseURL: process.env.VUE_APP_API_BASE_URL,
+        withCredentials: true // 쿠키를 포함하여 요청 전송
     });
 
-    // 요청 인터셉터 추가 (옵션)
+    // 요청 인터셉터
     instance.interceptors.request.use(
         (config) => {
             const token = localStorage.getItem('accessToken');
             if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`;
+                config.headers['Authorization'] = token;
             }
             return config;
         },
@@ -20,35 +24,44 @@ const apiInstance = () => {
         }
     );
 
-    // 응답 인터셉터 추가
+    // 응답 인터셉터
     instance.interceptors.response.use(
-        (response) => response,
-        async (error) => {
+        response => response,
+        async error => {
             const originalRequest = error.config;
+            console.log('Response error:', {
+                status: error.response?.status,
+                data: error.response?.data
+            });
 
-            if (
-                error.response.status === 401 &&
-                error.response.data.errorCode === 'TOKEN_EXPIRED' &&
-                !originalRequest._retry
-            ) {
+            // 토큰 만료 에러 처리 (419 상태 코드)
+            if (error.response?.status === 419 && !originalRequest._retry) {
+                console.log('Token expired, attempting refresh');
                 originalRequest._retry = true;
 
                 try {
-                    const response = await instance.post('/auth/refresh', null, {
-                        withCredentials: true,
-                    });
-                    const newAccessToken = response.data.accessToken;
-                    localStorage.setItem('accessToken', newAccessToken);
-                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                    return instance(originalRequest);
+                    // 리프레시 토큰을 사용하여 액세스 토큰 재발급 요청
+                    const tokenResponse = await refreshAccessToken();
+
+                    if (tokenResponse.status === 200) {
+                        const newAccessToken = tokenResponse.data;
+                        localStorage.setItem('accessToken', `Bearer ${newAccessToken}`);
+                        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+                        // 새로운 액세스 토큰으로 원래 요청 재시도
+                        return instance(originalRequest);
+                    } else {
+                        // 리프레시 토큰 요청 실패 시 로그아웃 처리
+                        useUserStore().logout();
+                        window.location.href = '/login';
+                        return Promise.reject(new Error('Token refresh failed'));
+                    }
                 } catch (refreshError) {
-                    localStorage.removeItem('accessToken');
-                    window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+                    console.error('Token refresh failed:', refreshError);
+                    useUserStore().logout();
+                    window.location.href = '/login';
+                    return Promise.reject(refreshError);
                 }
-            } else if (error.response.status === 401) {
-                // 다른 이유로 401 발생 시 로그아웃 또는 에러 처리
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login'; // 로그인 페이지로 리다이렉트
             }
 
             return Promise.reject(error);
@@ -58,34 +71,78 @@ const apiInstance = () => {
     return instance;
 };
 
-const handleApiCall = async (method, url, data = null) => {
-    const loadingStore = useLoadingStore();
-    loadingStore.setLoading(true); // 로딩 시작
-    const api = apiInstance(); // API 인스턴스 생성
+// 리프레시 토큰을 사용하여 액세스 토큰 재발급 요청
+async function refreshAccessToken() {
+    if (!refreshTokenRequest) {
+        refreshTokenRequest = axios.post('/auth/refresh', {}, {
+            baseURL: process.env.VUE_APP_API_BASE_URL,
+            withCredentials: true
+        });
+    }
+
     try {
+        const response = await refreshTokenRequest;
+        return response;
+    } finally {
+        refreshTokenRequest = null;
+    }
+}
+
+const handleApiCall = async (method, url, data = null, options = {}) => {
+    const loadingStore = useLoadingStore();
+    loadingStore.setLoading(true);
+
+    try {
+        const api = apiInstance();
         let response;
-        switch (method) {
-            case 'get':
-                response = await api.get(url);
-                break;
+        const config = {
+            ...options,
+            withCredentials: true,
+            validateStatus: function (status) {
+                return status >= 200 && status < 400; // 200-499 상태 코드는 에러로 처리하지 않음
+            }
+        };
+
+        switch (method.toLowerCase()) {
             case 'post':
-                response = await api.post(url, data);
+                response = await api.post(url, data, config);
+                break;
+            case 'get':
+                response = await api.get(url, config);
                 break;
             case 'put':
-                response = await api.put(url, data);
+                response = await api.put(url, data, config);
                 break;
             case 'delete':
-                response = await api.delete(url);
+                response = await api.delete(url, config);
                 break;
             default:
                 throw new Error(`Unsupported method: ${method}`);
         }
-        return response.data; // 성공적으로 응답받은 데이터 반환
+
+        return response;
     } catch (error) {
-        console.error(`API call failed (${method} ${url}):`, error);
-        throw error; // 에러를 다시 던져서 호출자가 처리할 수 있게 함
+        console.error('API call failed:', {
+            method,
+            url,
+            error: {
+                message: error.message,
+                response: error.response,
+                request: error.request
+            }
+        });
+
+        // 에러 객체 구조화
+        const errorResponse = {
+            status: error.response?.status,
+            data: error.response?.data,
+            headers: error.response?.headers,
+            message: error.message
+        };
+
+        throw errorResponse;
     } finally {
-        loadingStore.setLoading(false); // 로딩 종료
+        loadingStore.setLoading(false);
     }
 };
 

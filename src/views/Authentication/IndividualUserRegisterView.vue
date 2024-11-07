@@ -3,6 +3,8 @@ import { ref, computed } from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import { useRegionsStore } from "@/stores/useRegionsStore";
 import {ROUTES} from "@/router/routes";
+import {useUserStore} from "@/stores/userStore";
+import {decodeToken} from "@/utils/tokenDecoder";
 
 export default {
   name: "IndividualUserRegisterView",
@@ -72,6 +74,43 @@ export default {
       removeInterestJobField,
       onRegisterClick,
     };
+  },
+  mounted() {
+    console.log('IndividualUserRegisterView mounted');
+    this.storeAccessToken();
+  },
+  methods: {
+    storeAccessToken() {
+      const accessToken = this.getAccessTokenFromHash();
+      console.log('Got access token from query:', accessToken);
+
+      if (accessToken) {
+        const tokenWithBearer = `Bearer ${accessToken}`;
+        localStorage.setItem("accessToken", tokenWithBearer);
+        console.log('Stored token in localStorage:', tokenWithBearer);
+
+        const store = useUserStore();
+        console.log('Initial store state:', store.$state);
+
+        const success = decodeToken();
+        console.log('Decode token result:', success);
+
+        if (success) {
+          console.log('Updated store state:', store.$state);
+          console.log('Successfully decoded token and set user info');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+          console.error('Failed to decode token and set user info');
+        }
+      }
+    },
+    getAccessTokenFromHash() {
+      const hash = window.location.hash;
+      if (hash.includes('accessToken=')) {
+        return hash.split('accessToken=')[1];
+      }
+      return null;
+    },
   }
 }
 </script>

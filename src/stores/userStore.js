@@ -4,11 +4,12 @@ import { USER_TYPES } from "@/constants/userTypes";
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        isLoggedIn: false, // 로그인 상태
-        userType: USER_TYPES.INDIVIDUAL_USER,    // 사용자 유형 (개인회원, 기업회원, 서비스관리자, 인프라관리자)
+        isLoggedIn: false,
+        userName: "방문자",
+        userType: USER_TYPES.INDIVIDUAL_USER,
     }),
+
     getters: {
-        // 현재 사용자 상태에 따라 메시지 반환
         statusMessage: (state) => {
             if (!state.isLoggedIn) {
                 return '로그인하지 않았습니다.';
@@ -23,20 +24,31 @@ export const useUserStore = defineStore('user', {
                 case USER_TYPES.INFRA_ADMIN:
                     return '인프라관리자로 로그인하셨습니다.';
                 default:
-                    return '알 수 없는 사용자 유형입니다.';
+                    return `알 수 없는 사용자 유형입니다: ${state.userType}`;
             }
         },
+        getCurrentUserName: (state) => state.userName,
+        getCurrentUserType: (state) => state.userType,
+        isAuthenticated: (state) => state.isLoggedIn,
     },
+
     actions: {
-        // 로그인
-        login(userType) {
+        setUserInfo({ userName, userType }) {
             this.isLoggedIn = true;
+            this.userName = userName;
             this.userType = userType;
         },
-        // 로그아웃
+
         logout() {
+            localStorage.removeItem('accessToken');
             this.isLoggedIn = false;
-            this.userType = null;
+            this.userName = "방문자";
+            this.userType = USER_TYPES.INDIVIDUAL_USER;
         },
+    },
+
+    // 상태를 자동으로 로컬 스토리지에 저장 및 불러오기
+    persist: {
+        storage: localStorage,
     },
 });
