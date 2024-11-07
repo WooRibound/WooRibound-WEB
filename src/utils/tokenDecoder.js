@@ -3,9 +3,14 @@ import { useUserStore } from '@/stores/userStore';
 export const getAccessToken = () => {
   const accessToken = localStorage.getItem('accessToken');
   if (!accessToken) return null;
+  let token = accessToken.replace('Bearer ', '').trim();
+  return token;
+};
 
-  // "Bearer " 부분 제거
-  return accessToken.replace('Bearer ', '');
+export const getAccessTokenWithBearer = () => {
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) return null;
+  return accessToken
 };
 
 export const decodeToken = () => {

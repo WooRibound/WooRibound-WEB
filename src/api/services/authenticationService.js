@@ -1,4 +1,8 @@
-import { decodeToken } from "@/utils/tokenDecoder";
+
+import {
+  decodeToken,
+  getAccessToken
+} from "@/utils/tokenDecoder";
 import handleApiCall from "@/api/apiService";
 import { waitForAccessToken } from "@/utils/tokenDecoder";
 import {useUserStore} from "@/stores/userStore";
@@ -92,6 +96,30 @@ export const adminLogin = async (username, password) => {
       console.error('Error details:', error.response.data);
       console.error('Status:', error.response.status);
     }
+    throw error;
+  }
+};
+
+
+export const loginCheck = async () => {
+  try {
+    const token = getAccessToken();
+
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    console.log('Sending token:', token); // 디버깅용
+
+    const response = await handleApiCall('get', '/auth/check', null);
+
+    if (response.status === 200) {
+      return true;
+    }
+
+    throw new Error(response.data?.message || 'Login check failed');
+  } catch (error) {
+    console.error('Login check error:', error);
     throw error;
   }
 };
