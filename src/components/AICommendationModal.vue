@@ -1,23 +1,35 @@
 <script>
 import { ref } from 'vue';
+import {getGptResponse} from "@/api/services/gptService";
 
 export default {
   name: "AICommendationModal",
   setup(props, {emit}) {
-    const comment = ref("");
+
+    const userInput = ref('');
+
     const closeModal = () => {
       emit('close-modal', false);
     };
 
-    const submitComment = () => {
-      console.log("입력된 커맨트:", comment.value);
-    };
+    const onGetGptCommentClick = async () => {
 
+      if (!userInput.value.trim()) {
+        alert("직무 경험을 입력해주세요.");
+        return;
+      }
+
+      const data = await getGptResponse(userInput.value);
+      console.log("답변: ", data);
+
+      emit('receive-gpt-response', data);
+      closeModal();
+    }
 
     return {
-      comment,
+      userInput,
       closeModal,
-      submitComment,
+      onGetGptCommentClick,
     };
   }
 }
@@ -38,11 +50,11 @@ export default {
       <div class="response-section">
         <div class="input-section">
           <textarea
-              v-model="comment"
+              v-model="userInput"
               class="comment-input"
               placeholder="여기에 커맨트를 입력하세요..."
           />
-          <div class="submit-button" @click="submitComment">제출</div>
+          <div class="submit-button" @click="onGetGptCommentClick">제출</div>
         </div>
       </div>
     </div>

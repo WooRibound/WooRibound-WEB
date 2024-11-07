@@ -6,6 +6,7 @@
         v-if="!isAdmin"
         @icon-state-changed="handleIconStateChanged"
     />
+    <loading-overlay />
   </div>
 
   <div class="app-container" v-if="fullScreenMenuState">
@@ -24,10 +25,12 @@ import FullScreenMenu from "@/views/Common/FullScreenMenu.vue";
 import { useUserStore } from "@/stores/userStore";
 import { USER_TYPES } from "@/constants/userTypes";
 import {useJobStore} from "@/stores/useJobStore";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 export default {
   name: 'App',
   components: {
+    LoadingOverlay,
     FullScreenMenu,
     HeaderComponent,
     BottomNavigation

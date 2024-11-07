@@ -18,6 +18,8 @@ export default {
     const aiModalPopupStatue = ref(false);
 
     const jobs = ref([]);
+    const jobTitle = ref(''); // 제목 입력을 위한 ref
+    const jobDescription = ref(''); // 내용 입력을 위한 ref
 
     const loadJobs = async () => {
       try {
@@ -41,12 +43,21 @@ export default {
       modalPopupStatue.value = true;
     }
 
+    const updateDescriptionFromAI = (gptResponse) => {
+      jobDescription.value = "";
+      jobDescription.value = gptResponse;
+    };
+
+
     return {
       jobs,
+      jobTitle,
+      jobDescription,
       modalPopupStatue,
       aiModalPopupStatue,
       onAIRecommendationClick,
       onRegisterClick,
+      updateDescriptionFromAI,
     };
   }
 }
@@ -69,12 +80,12 @@ export default {
       <!-- 제목 입력 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="제목을 입력해주세요">
+          <input v-model="jobTitle" class="input-field" placeholder="제목을 입력해주세요">
         </div>
       </div>
       <!-- 내용 입력 -->
       <div class="input-label">
-        <textarea class="textarea-field" placeholder="" />
+        <textarea v-model="jobDescription" class="textarea-field" placeholder="" />
       </div>
       <div class="delete-button" @click="onRegisterClick">등록하기</div>
     </div>
@@ -88,6 +99,7 @@ export default {
   <a-i-commendation-modal
       v-if="aiModalPopupStatue"
       @close-modal="aiModalPopupStatue = false"
+      @receive-gpt-response="updateDescriptionFromAI"
   />
 </template>
 
