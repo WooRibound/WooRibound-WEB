@@ -31,8 +31,10 @@ export default {
 
     // 경력 여부와 직종
     const careerStatus = ref("none");
-    const jobCategories = ref([
-      "개발자", "디자이너", "마케터", "영업", "기획자", "기타"
+    const jobCategories = ref(["기획-전략", "마케팅-홍보·조사", "회계-세무·재무", "인사-노무·HRD", "총무-법무·사무",
+      "IT개발-데이터", "디자인", "영업-판매-무역", "고객상담-TM", "구매-자재-물류",
+      "상품기획-MD", "운전-운송-배송", "서비스", "생산", "건설-건축", "의료", "연구-R&D",
+      "교육", "미디어-문화-스포츠", "금융-보험", "공공-복지",
     ]);
 
     const isJobCategoryEnabled = computed(() => careerStatus.value === "yes");
