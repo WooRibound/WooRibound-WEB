@@ -7,6 +7,15 @@ import handleApiCall from "@/api/apiService";
 import { waitForAccessToken } from "@/utils/tokenDecoder";
 import {useUserStore} from "@/stores/userStore";
 
+export const registerUser = async (userData) => {
+    const response = await handleApiCall(
+        'post',
+        '/individualuser/auth/join',
+        userData
+    );
+    return response.data;
+};
+
 const processLoginResponse = async (response) => {
   try {
     console.log('Response headers:', response.headers);
