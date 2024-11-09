@@ -9,3 +9,13 @@ export const fetchJoinInfo = async () => {
     throw error;
   }
 }
+
+export const join = async (data) => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/auth/join', data)
+    return response.data;
+  } catch (error) {
+    console.error('회원 정보 저장 실패' , error);
+    throw error;
+  }
+}
