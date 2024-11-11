@@ -22,6 +22,8 @@ export default {
     const selectedProvince = ref("");
     const selectedCity = ref("");
     const modalPopupStatue = ref(false);
+    const errorMessage = ref("");
+    const thirdPartyConsent = ref(false);
 
     // 경력 여부와 직종
     const careerStatus = ref("none");
@@ -42,13 +44,42 @@ export default {
     });
 
     const onRegisterClick = () => {
+      // 에러 메시지 초기화
+      errorMessage.value = "";
+
       // 필수 필드 유효성 검사
       if (!userName.value || !userEmail.value || !userPhone.value ||
           !userGender.value || !userBirth.value ||
-          !selectedProvince.value || !selectedCity.value) {
-        alert('모든 필수 항목을 입력해주세요.');
+          !selectedProvince.value || !selectedCity.value || careerStatus.value === "none") {
+        errorMessage.value='모든 필수 항목을 입력해주세요.';
         return;
       }
+
+      if (careerStatus.value === "yes" && (!selectedJobs.value || selectedJobs.value[0] === "")) {
+        errorMessage.value='경력을 선택해 주세요';
+        return;
+      }
+
+      // 각 배열 내의 중복 검사
+      const validJobs = selectedJobs.value.filter(job => job !== "");
+      const validInterestJobs = selectedInterestJobs.value.filter(job => job !== "");
+
+      // 경력직종 내 중복 검사
+// 경력직종 내 중복 검사
+      const duplicateJobs = validJobs.filter((item, index) => validJobs.indexOf(item) !== index);
+      if (duplicateJobs.length > 0) {
+        errorMessage.value = `경력에 동일한 항목이 중복 선택되었습니다:\n${duplicateJobs.join(', ')}`;
+        return;
+      }
+
+// 관심직종 내 중복 검사
+      const duplicateInterestJobs = validInterestJobs.filter((item, index) => validInterestJobs.indexOf(item) !== index);
+      if (duplicateInterestJobs.length > 0) {
+        errorMessage.value = `관심직종에 동일한 항목이 중복 선택되었습니다:\n${duplicateInterestJobs.join(', ')}`;
+        return;
+      }
+
+      // 조건 타고 return할 때는 무조건 이 위로. null 처리 전에 early reaturn 하도록
 
       if (selectedJobs.value[0] === "") {
         selectedJobs.value = null;
@@ -74,7 +105,8 @@ export default {
         city: selectedCity.value,
         province: selectedProvince.value,
         selectedInterestJobs: selectedInterestJobs.value,
-        selectedJobs: selectedJobs.value
+        selectedJobs: selectedJobs.value,
+        dataSharingConsent: thirdPartyConsent.value ? 'Y' : 'N'  // 동의 여부를 Y/N으로 변환
       };
 
       console.log(data)
@@ -156,9 +188,11 @@ export default {
       cities,
       careerStatus,
       jobCategories,
+      thirdPartyConsent,
       isJobCategoryEnabled,
       selectedJobs,
       selectedInterestJobs,
+      errorMessage,
       addJobField,
       removeJobField,
       addInterestJobField,
@@ -336,6 +370,25 @@ export default {
             </div>
           </div>
         </div>
+        <div class="consent-wrapper">
+          <input
+              type="checkbox"
+              id="thirdPartyConsent"
+              v-model="thirdPartyConsent"
+              class="consent-checkbox"
+          >
+          <div class="consent-content">
+            <label for="thirdPartyConsent" class="consent-label">
+              제3자 정보제공에 동의합니다
+            </label>
+            <p class="consent-description">
+              채용 담당자의 인재 추천 서비스 이용 시 정보가 제공됩니다.
+            </p>
+          </div>
+        </div>
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
         <div class="delete-button" @click="onRegisterClick">회원가입</div>
       </div>
     </div>
@@ -505,5 +558,55 @@ input[type="date"]::before {
 }
 input[type="date"]:valid::before {
   display: none;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 90%;
+  text-align: center;
+  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
+}
+.consent-wrapper {
+  width: 90%;
+  margin: 15px 0;
+  display: flex;
+  align-items: flex-start;
+  padding: 0 10px;
+}
+
+.consent-checkbox {
+  margin-right: 10px;
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.consent-content {
+  flex: 1;
+}
+
+.consent-label {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.consent-description {
+  font-size: 12px;
+  color: #6c757d;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.consent-label .required {
+  margin-right: 5px;
 }
 </style>

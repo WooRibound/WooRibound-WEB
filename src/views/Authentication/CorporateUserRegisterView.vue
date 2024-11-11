@@ -1,7 +1,10 @@
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import ModalPopup from "@/components/SingleButtonModal.vue";
-import {ROUTES} from "@/router/routes";
+import { ROUTES } from "@/router/routes";
+import { isDuplicateCheck } from "@/api/services/authenticationService";
+import {corporateJoin} from "@/api/services/authenticationService";
+import {searchAddress} from "@/utils/addressFinder"
 
 export default {
   name: "CorporateRegisterView",
@@ -10,73 +13,187 @@ export default {
       return ROUTES
     }
   },
-  components: {ModalPopup},
+  components: { ModalPopup },
   setup() {
+    // 기존 상태 변수들...
     const modalPopupStatue = ref(false);
-    const idInput = ref(""); // 아이디 입력 값
-    const duplicateIdMessage = ref(""); // 중복 확인 메시지
+    const duplicateIdMessage = ref("");
+    const isDuplicated = ref(true);
+    const errorMessage = ref("");
+
+    // 회원가입 폼 데이터
+    const formData = ref({
+      entId: "",          // 아이디
+      regNum: "",         // 사업자 번호
+      entPwd: "",         // 비밀번호
+      entPwdConfirm: "",  // 비밀번호 확인
+      entName: "",        // 기업명
+      entField: "",       // 산업분야
+      entSize: "",        // 기업규모
+      ceoName: "",        // 대표자명
+      revenue: 0,         // 매출액
+      entAddr1: "",       // 주소
+      entAddr2: ""        // 상세주소
+    });
 
     const industries = ref([
       "제조업", "정보통신", "금융업", "서비스업", "건설업",
       "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
     ]);
 
-    const revenue = ref(""); // 원본 숫자 값
-
+    // 매출액 포맷팅
     const formattedRevenue = computed({
       get() {
-        return revenue.value ? new Intl.NumberFormat('ko-KR').format(revenue.value) : "";
+        return formData.value.revenue ? new Intl.NumberFormat('ko-KR').format(formData.value.revenue) : "";
       },
       set(value) {
-        // 콤마를 제거한 후 숫자로 변환하여 원본 값에 저장
-        revenue.value = value.replace(/,/g, '');
+        formData.value.revenue = Number(value.replace(/,/g, ''));
       }
     });
 
     const formatRevenue = (event) => {
       const input = event.target.value;
-      // 숫자와 콤마만 허용
-      const sanitizedInput = input.replace(/[^0-9,]/g, ''); // 숫자와 콤마를 제외한 모든 문자 제거
-      formattedRevenue.value = sanitizedInput; // computed setter가 호출되어 포맷 적용
+      const sanitizedInput = input.replace(/[^0-9,]/g, '');
+      formattedRevenue.value = sanitizedInput;
     };
 
-    const onAddressSearchClick = () => {
-      // todo 다음 주소 api로 로직 주소 찾기 로직 구현하기
-      console.log("주소찾기");
-    }
-    const onRegisterClick = () => {
-      modalPopupStatue.value = true;
-    }
+    const onAddressSearchClick = async () => {
+      try {
+        const result = await searchAddress();
+        if (result) {
+
+          formData.value.entAddr1 = result.address;
+
+          // 상세주소 입력란으로 포커스 이동
+          nextTick(() => {
+            const detailInput = document.querySelector('input[placeholder="상세 주소"]');
+            if (detailInput) detailInput.focus();
+            const len = detailInput.value.length;
+            detailInput.setSelectionRange(len, len);
+          });
+        }
+      } catch (error) {
+        console.error('주소 검색 중 오류 발생:', error);
+      }
+    };
+
+    // 유효성 검사
+    const validateForm = () => {
+      if (!formData.value.entId) {
+        errorMessage.value = "아이디를 입력해주세요.";
+        return false;
+      }
+      if (isDuplicated.value) {
+        errorMessage.value = "아이디 중복확인을 해주세요.";
+        return false;
+      }
+      if (!formData.value.entPwd) {
+        errorMessage.value = "비밀번호를 입력해주세요.";
+        return false;
+      }
+      if (formData.value.entPwd !== formData.value.entPwdConfirm) {
+        errorMessage.value = "비밀번호가 일치하지 않습니다.";
+        return false;
+      }
+      if (!formData.value.ceoName) {
+        errorMessage.value = "대표자명을 입력해주세요.";
+        return false;
+      }
+      if (!formData.value.entName) {
+        errorMessage.value = "기업명을 입력해주세요.";
+        return false;
+      }
+      if (!formData.value.regNum) {
+        errorMessage.value = "사업자번호를 입력해주세요.";
+        return false;
+      }
+      if (!formData.value.entAddr1) {
+        errorMessage.value = "주소를 입력해주세요.";
+        return false;
+      }
+      if (!formData.value.entAddr1) {
+        errorMessage.value = "상세주소를 입력해주세요.";
+        return false;
+      }
+      if (!formData.value.entSize) {
+        errorMessage.value = "기업규모를 선택해주세요.";
+        return false;
+      }
+      if (!formData.value.entField) {
+        errorMessage.value = "산업분야를 선택해주세요.";
+        return false;
+      }
+      if (!formData.value.revenue) {
+        errorMessage.value = "매출액을 입력해주세요.";
+        return false;
+      }
+      return true;
+    };
+
+    // 회원가입 제출
+    const onRegisterClick = async () => {
+      if (!validateForm()) return;
+
+      try {
+        const registerData = {
+          entId: formData.value.entId,
+          regNum: formData.value.regNum,
+          entPwd: formData.value.entPwd,
+          entName: formData.value.entName,
+          entField: formData.value.entField,
+          entSize: formData.value.entSize,
+          ceoName: formData.value.ceoName,
+          revenue: formData.value.revenue,
+          entAddr1: formData.value.entAddr1,
+          entAddr2: formData.value.entAddr2
+        };
+
+        await corporateJoin(registerData);
+        modalPopupStatue.value = true;
+      } catch (error) {
+        console.error('회원가입 실패:', error);
+        alert('회원가입 중 오류가 발생했습니다.');
+      }
+    };
 
     // 중복 확인 함수
-    const onCheckDuplicateIdClick = () => {
-      // todo [아이디 중복 확인 API] 구현 시 아래 로직 구현하기
-      const existingIds = ["user1", "user2"]; // 하드코딩된 기존 아이디 예시
-      if (!idInput.value) {
+    const onCheckDuplicateIdClick = async () => {
+      if (!formData.value.entId) {
         alert("아이디를 입력해주세요.");
         return;
       }
 
-      if (existingIds.includes(idInput.value)) {
-        duplicateIdMessage.value = "* 해당 아이디는 중복입니다.";
-      } else {
-        duplicateIdMessage.value = "* 사용 가능한 아이디입니다.";
+      try {
+        const response = await isDuplicateCheck(formData.value.entId);
+        if (response.isDuplicate) {
+          duplicateIdMessage.value = response.message;
+          isDuplicated.value = true;
+        } else {
+          duplicateIdMessage.value = response.message;
+          isDuplicated.value = false;
+        }
+      } catch (error) {
+        console.error('중복 확인 중 오류 발생:', error);
+        duplicateIdMessage.value = "중복 확인 중 오류가 발생했습니다.";
+        isDuplicated.value = true;
       }
-    }
+    };
 
     return {
       modalPopupStatue,
       industries,
+      formData,
       formattedRevenue,
-      idInput,
       duplicateIdMessage,
+      isDuplicated,
+      errorMessage,
       formatRevenue,
       onAddressSearchClick,
       onRegisterClick,
       onCheckDuplicateIdClick,
     };
   }
-}
+};
 </script>
 
 <template>
@@ -88,73 +205,124 @@ export default {
         <div class="input-label">
           <span class="required">*</span>
           <input
-            class="input-field"
-            placeholder="아이디"
-            v-model="idInput"
+              class="input-field"
+              placeholder="아이디"
+              v-model="formData.entId"
           />
           <button class="image-register-button" @click="onCheckDuplicateIdClick">중복확인</button>
         </div>
         <!-- 중복 확인 메시지 출력 -->
         <div class="input-label" style="margin-left: 30px; font-size: 10pt">
-          <span :class="{ 'error-message': duplicateIdMessage.includes('중복입니다'), 'success-message': duplicateIdMessage.includes('사용 가능한') }">
+          <span :class="{ 'error-message': isDuplicated, 'success-message': !isDuplicated && duplicateIdMessage }">
             {{ duplicateIdMessage }}
           </span>
         </div>
+
         <!-- 비밀번호 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="비밀번호" type="password">
+          <input
+              class="input-field"
+              placeholder="비밀번호"
+              type="password"
+              v-model="formData.entPwd"
+          >
         </div>
+
         <!-- 비밀번호 재입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="비밀번호 재입력" type="password">
+          <input
+              class="input-field"
+              placeholder="비밀번호 재입력"
+              type="password"
+              v-model="formData.entPwdConfirm"
+          >
         </div>
+
         <!-- 대표자명 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="대표자명">
+          <input
+              class="input-field"
+              placeholder="대표자명"
+              v-model="formData.ceoName"
+          >
         </div>
+
         <!-- 기업명 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="기업명">
+          <input
+              class="input-field"
+              placeholder="기업명"
+              v-model="formData.entName"
+          >
         </div>
+
         <!-- 사업자번호 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="사업자 번호">
+          <input
+              class="input-field"
+              placeholder="사업자 번호"
+              v-model="formData.regNum"
+          >
         </div>
+
         <!-- 주소 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="주소" />
+          <input
+              class="input-field"
+              placeholder="주소"
+              v-model="formData.entAddr1"
+          />
           <button class="image-register-button" @click="onAddressSearchClick">검색</button>
         </div>
+
         <!-- 상세주소 입력 -->
         <div class="input-label">
-          <span class="required"></span>
-          <input class="input-field" placeholder="상세 주소" style="margin-left: 7px">
+          <span class="required">*</span>
+          <input
+              class="input-field"
+              placeholder="상세 주소"
+              style="margin-left: 7px"
+              v-model="formData.entAddr2"
+          >
         </div>
-        <!-- 성별 선택 -->
+
+        <!-- 기업 규모 선택 -->
         <div class="input-label">
           <span class="required">*</span>
-          <select class="input-field" aria-label="기업 규모">
+          <select
+              class="input-field"
+              aria-label="기업 규모"
+              v-model="formData.entSize"
+          >
             <option value="" disabled selected>기업 규모</option>
-            <option value="large">대기업</option>
-            <option value="medium">중견기업</option>
-            <option value="small">중소기업</option>
-            <option value="startup">스타트업</option>
+            <option value="STARTUP">스타트업</option>
+            <option value="SMALL">중소기업</option>
+            <option value="MEDIUM">중견기업</option>
+            <option value="LARGE">대기업</option>
           </select>
         </div>
+
         <!-- 산업 선택 -->
         <div class="input-label">
           <span class="required">*</span>
-          <select class="input-field" aria-label="산업">
+          <select
+              class="input-field"
+              aria-label="산업"
+              v-model="formData.entField"
+          >
             <option value="" disabled selected>산업</option>
-            <option v-for="industry in industries" :key="industry" :value="industry">{{ industry }}</option>
+            <option v-for="industry in industries" :key="industry" :value="industry">
+              {{ industry }}
+            </option>
           </select>
         </div>
+
         <!-- 매출액 입력 -->
         <div class="input-label">
           <span class="required">*</span>
@@ -167,6 +335,9 @@ export default {
               @keydown="formatRevenue"
               @keyup="formatRevenue"
           />
+        </div>
+        <div v-if="errorMessage" class="error-message-container">
+          {{ errorMessage }}
         </div>
         <div class="delete-button" @click="onRegisterClick">회원가입</div>
       </div>
@@ -262,11 +433,21 @@ export default {
   border-radius: 8px;
 }
 
-.error-message {
-  color: #C62E2E;
+.error-message-container {
+  width: 90%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  color: #dc3545;
+  text-align: center;
 }
 
 .success-message {
   color: #133E87;
+}
+.error-message {
+  color: #dc3545;  /* 빨간색 */
 }
 </style>
