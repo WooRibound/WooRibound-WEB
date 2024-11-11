@@ -1,7 +1,9 @@
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import ModalPopup from "@/components/SingleButtonModal.vue";
-import {ROUTES} from "@/router/routes";
+import { ROUTES } from "@/router/routes";
+import { searchAddress } from "@/utils/addressFinder";
+
 export default {
   name: "CorporateUserProfile",
   computed: {
@@ -9,11 +11,12 @@ export default {
       return ROUTES
     }
   },
-  components: {ModalPopup},
+  components: { ModalPopup },
   setup() {
     const modalPopupStatue = ref(false);
     const idInput = ref(""); // 아이디 입력 값
     const duplicateIdMessage = ref(""); // 중복 확인 메시지
+    const entAddr1 = ref(""); // 초기화를 null로 변경
 
     const industries = ref([
       "제조업", "정보통신", "금융업", "서비스업", "건설업",
@@ -39,10 +42,28 @@ export default {
       formattedRevenue.value = sanitizedInput; // computed setter가 호출되어 포맷 적용
     };
 
-    const onAddressSearchClick = () => {
-      // todo 다음 주소 api로 로직 주소 찾기 로직 구현하기
-      console.log("주소찾기");
-    }
+    const onAddressSearchClick = async () => {
+      try {
+        // formData가 초기화될 때까지 기다립니다.
+        await nextTick();
+
+        const result = await searchAddress();
+        if (result) {
+          entAddr1.value = result.address; // entAddr1 변수를 업데이트
+
+          // 상세주소 입력란으로 포커스 이동
+          nextTick(() => {
+            const detailInput = document.querySelector('input[placeholder="상세 주소"]');
+            if (detailInput) detailInput.focus();
+            const len = detailInput.value.length;
+            detailInput.setSelectionRange(len, len);
+          });
+        }
+      } catch (error) {
+        console.error('주소 검색 중 오류 발생:', error);
+      }
+    };
+
     const onUpdateProfilerClick = () => {
       modalPopupStatue.value = true;
     }
@@ -73,6 +94,7 @@ export default {
       onAddressSearchClick,
       onUpdateProfilerClick,
       onCheckDuplicateIdClick,
+      entAddr1 // entAddr1 변수를 반환
     };
   }
 }
@@ -113,7 +135,12 @@ export default {
         </div>
         <!-- 주소 입력 -->
         <div class="input-label">
-          <input class="input-field" placeholder="주소" />
+          <input
+              v-if="entAddr1.value !== null"
+              class="input-field"
+              placeholder="주소"
+              v-model="entAddr1"
+          />
           <button class="image-register-button" @click="onAddressSearchClick">검색</button>
         </div>
         <!-- 상세주소 입력 -->
