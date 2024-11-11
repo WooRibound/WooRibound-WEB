@@ -13,20 +13,31 @@ export default {
   setup() {
     const route = useRoute();
     const postId = route.params.id
+    const isDelete = route.query.delete
     console.log("postId:", postId);
 
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
+
+    const warningCount = ref(0);
 
     const onReportClick = () => {
       // todo API 구현 시 아래에 로직 구현 하기
       console.log("신고하기");
     }
 
+    const onDeletedClick = (postId) => {
+      // todo API 구현 시 아래에 로직 구현 하기
+      console.log("postId:", postId);
+    }
+
     return {
       modalPopupStatue,
+      isDelete,
       aiModalPopupStatue,
+      warningCount,
       onReportClick,
+      onDeletedClick,
     };
   }
 }
@@ -36,9 +47,13 @@ export default {
   <main class="body">
     <div class="header">
       <div class="header-title">지혜 탐색</div>
-      <div class="report-container" @click="onReportClick">
+      <div class="report-container" v-if="!isDelete" @click="onReportClick">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고하기
+      </div>
+      <div class="report-container" v-if="isDelete" @click="onReportClick">
+        <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
+        경고 {{ warningCount }}회
       </div>
     </div>
     <div class="author-info">
@@ -63,6 +78,7 @@ export default {
         <textarea class="textarea-field" placeholder="" readonly/>
       </div>
     </div>
+    <div class="delete-button" v-if="isDelete" @click="onDeletedClick(postId)">삭제하기</div>
   </main>
 </template>
 
@@ -170,5 +186,17 @@ export default {
   width: 18px; /* 아이콘 크기 조정 */
   height: auto; /* 비율 유지 */
   margin-bottom: 5px;
+}
+
+.delete-button {
+  width: 95%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
 }
 </style>

@@ -34,6 +34,9 @@ export default {
       return ["전체 직무", ...originalJobs.map((job) => job.jobName)];
     });
 
+    // 경고 필터링 리스트
+    const warnings = ['많은 순','적은 순','없음',];
+
     const selectedFilterType = computed(() => props.filterType);
 
     const closeModal = () => {
@@ -64,6 +67,7 @@ export default {
       rightProvinces,
       leftJobs,
       rightJobs,
+      warnings,
     };
   },
 };
@@ -128,6 +132,26 @@ export default {
               @click="selectFilter(province)"
           >
             {{ province }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-content region" v-if="selectedFilterType === SEARCH_FILTER_TYPES.WARNING">
+      <div class="menu_title">
+        경고 필터링
+        <div class="close-button" @click="closeModal">
+          <img src="@/assets/images/icons/close.png" alt="Close" />
+        </div>
+      </div>
+      <div class="menu-items">
+        <div class="menu-column">
+          <div
+              class="menu-item"
+              v-for="(warning, index) in warnings"
+              :key="index"
+              @click="selectFilter(warning)"
+          >
+            {{ warning }}
           </div>
         </div>
       </div>
