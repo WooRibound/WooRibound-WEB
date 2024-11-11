@@ -156,6 +156,51 @@ const router = createRouter({
             name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
             component: () => import("@/views/IndividualUser/WisdomExploreDetail.vue"),
         },
+        {
+            path: ROUTES.INDIVIDUAL_USER_MANAGEMENT.path,
+            name: ROUTES.INDIVIDUAL_USER_MANAGEMENT.name,
+            component: () => import("@/views/Admin/IndividualUserManagement.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_SIGNUP.path,
+            name: ROUTES.CORPORATE_USER_SIGNUP.name,
+            component: () => import("@/views/Admin/CorporateUserSignup.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_WITHDRAWAL.path,
+            name: ROUTES.CORPORATE_USER_WITHDRAWAL.name,
+            component: () => import("@/views/Admin/CorporateUserWithdrawal.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USERS.path,
+            name: ROUTES.CORPORATE_USERS.name,
+            component: () => import("@/views/Admin/CorporateUsersManagement.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path,
+            name: ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.name,
+            component: () => import("@/views/Admin/CorporateJobPostingManagement.vue"),
+        },
+        {
+            path: ROUTES.WISDOM_MANAGEMENT.path,
+            name: ROUTES.WISDOM_MANAGEMENT.name,
+            component: () => import("@/views/Admin/WisdomManagement.vue"),
+        },
+        {
+            path: ROUTES.USER_LOG_ANALYSIS.path,
+            name: ROUTES.USER_LOG_ANALYSIS.name,
+            component: () => import("@/views/Admin/UserLogAnalysis.vue"),
+        },
+        {
+            path: ROUTES.LOG_DASH_BOARD_MANAGEMENT.path,
+            name: ROUTES.LOG_DASH_BOARD_MANAGEMENT.name,
+            component: () => import("@/views/Admin/LogDashboardManagement.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_PROFILE_READONLY.path,
+            name: ROUTES.CORPORATE_USER_PROFILE_READONLY.name,
+            component: () => import("@/views/Admin/CorporateUserProfileReadonly.vue"),
+        },
     ],
 });
 

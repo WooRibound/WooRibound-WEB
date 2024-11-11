@@ -34,7 +34,7 @@ export const ROUTES = {
         path: "/login",
         name: "Login",
     },
-    // [개인회원] 지혜 나눔 삭제
+    // [관리자] 관리자 로그인
     ADMIN_LOGIN: {
         path: "/admin/login",
         name: "AdminLogin"
@@ -139,9 +139,54 @@ export const ROUTES = {
         path: "/wisdom/explore",
         name: "WisdomExplore"
     },
-    // [개인회원] 지혜 나눔 삭제
+    // [개인회원] 지혜 나눔 상세보기
     WISDOM_EXPLORE_DETAIL: {
         path: "/wisdom/explore/:id",
         name: "WisdomExploreDetail"
     },
+    // [서비스 관리자] 개인 회원 관리
+    INDIVIDUAL_USER_MANAGEMENT: {
+        path: '/admin/user-management',
+        name: 'IndividualUserManagement'
+    },
+    // [서비스 관리자] 기업 회원 가입
+    CORPORATE_USER_SIGNUP: {
+        path: '/admin/corporate-signup',
+        name: 'CorporateUserSignup',
+    },
+    // [서비스 관리자] 기업 회원 탈퇴
+    CORPORATE_USER_WITHDRAWAL: {
+        path: '/admin/corporate-withdrawal',
+        name: 'CorporateUserWithdrawal',
+    },
+    // [서비스 관리자] 기업 회원 조회
+    CORPORATE_USERS: {
+        path: '/admin/corporate-users',
+        name: 'CorporateUsers',
+    },
+    // [서비스 관리자] 기업 공고 관리
+    CORPORATE_JOB_POSTING_MANAGEMENT: {
+        path: '/admin/corporate-job-posting-management',
+        name: 'CorporateJobPostingManagement',
+    },
+    // [서비스 관리자] 지혜 마당 관리
+    WISDOM_MANAGEMENT: {
+        path: '/admin/wisdom-management',
+        name: 'WisdomManagement',
+    },
+    // [서비스 관리자] 사용자 로그 분석
+    USER_LOG_ANALYSIS: {
+        path: '/admin/user-log-analysis',
+        name: 'UserLogAnalysis',
+    },
+    // [서비스 관리자] 사용자 로그 분석
+    LOG_DASH_BOARD_MANAGEMENT: {
+        path: '/admin/log-dashboard-management',
+        name: 'LogDashboardManagement',
+    },
+    // [서비스 관리자] 기업 회원 상세 조회
+    CORPORATE_USER_PROFILE_READONLY: {
+        path: '/admin/corporate-users/profile',
+        name: 'CorporateUserProfileReadonly',
+    }
 };

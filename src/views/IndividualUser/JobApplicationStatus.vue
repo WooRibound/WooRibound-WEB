@@ -1,12 +1,12 @@
 <script>
-import {formatDate} from "@/utils/format";
+import {formatDate1} from "@/utils/format";
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {ROUTES} from "@/router/routes";
 
 export default {
   name: "JobApplicationStatus",
-  methods: { formatDate },
+  methods: { formatDate: formatDate1 },
   setup() {
     const router = useRouter();
 
