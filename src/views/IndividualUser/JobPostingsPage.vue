@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
-import { formatDate } from "@/utils/format";
+import { formatDate1 } from "@/utils/format";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
 
@@ -14,7 +14,7 @@ export default {
     }
   },
   components: { SearchFilterModal },
-    methods: { formatDate },
+    methods: { formatDate: formatDate1 },
   setup() {
     const router = useRouter();
     const route = useRoute();

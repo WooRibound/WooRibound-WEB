@@ -1,9 +1,9 @@
 /**
  * 날짜 포맷팅 MM월 DD일 (요일)
  * @param {Date} value - 입력값
- * @returns {String} - 유효성 검사 결과
+ * @returns {String}
  */
-export const formatDate = (date) => {
+export const formatDate1 = (date) => {
     const options = { month: '2-digit', day: '2-digit' };
     const formattedDate = date.toLocaleDateString('ko-KR', options).replace(/\./g, '');
 
@@ -14,3 +14,19 @@ export const formatDate = (date) => {
 
     return `${month}월${day}일(${dayOfWeek})`;
 };
+
+/**
+ * 날짜 포맷팅 YYYY.MM.DD
+ * @param {Date} value - 입력값
+ * @returns {String}
+ */
+export const formatDate2 = (date) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formattedDate = date.toLocaleDateString('ko-KR', options).replace(/\./g, '');
+
+    const [year, month, day] = formattedDate.split(' ');
+
+    return `${year}.${month}.${day}`;
+};
+
+

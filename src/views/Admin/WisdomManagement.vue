@@ -1,54 +1,70 @@
 <script>
-import {useRouter} from "vue-router";
-import {ROUTES} from "@/router/routes";
-import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
+import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate1} from "@/utils/format";
+import {ROUTES} from "@/router/routes";
+import {useRouter} from "vue-router";
 
 export default {
-  name: "WisdomShare",
+  name: "WisdomManagement",
   computed: {
     SEARCH_FILTER_TYPES() {
       return SEARCH_FILTER_TYPES
     }
   },
-  components: { SearchFilterModal },
-  methods: { formatDate: formatDate1 },
+  components: {SearchFilterModal},
   setup() {
     const router = useRouter();
 
     const modalPopupStatue = ref(false);
-    const searchInput = ref("");
+    const searchInput = ref();
     const filterTypes = ref("");
+    const selectedWarning = ref("경고 필터링");
     const selectedJob = ref("전체 직무");
 
-    const postCount = ref(0);
-    const postList = ref();
+    const postingList = ref();
+    const postingCount = ref(0);
 
-    const searchPosts = () => {
+    const searchJopPosting = () => {
       // todo API 구현 시 아래에 로직 구현 하기
       console.log("검색어:", searchInput.value);
     }
 
-    const fetchPosts = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
+    const onFilterClick = (filterType) => {
+      filterTypes.value = filterType;
+      modalPopupStatue.value = true;
+    }
 
+    const handleSelectFilter = (selected) => {
+      if (selected.filterType === SEARCH_FILTER_TYPES.WARNING) {
+        selectedWarning.value = selected.filterValue;
+      }
+
+      if (selected.filterType === SEARCH_FILTER_TYPES.JOB) {
+        selectedJob.value = selected.filterValue;
+      }
+    }
+
+    const fetchPosts = () => {
       const data = [
         {
           postId: 1,
           postTitle: '시니어도 할 수 있는 Ghat GPT',
           job: '서비스',
+          date: '2024.01.01',
+          userId: 'user01'
         },
         {
           postId: 2,
           postTitle: '시니어도 할 수 있는 EXCEL',
-          job: 'IT 엔지니어',
+          job: 'IT',
+          date: '2024.01.01',
+          userId: 'user02'
         },
       ];
 
-      postList.value = data;
-      postCount.value = postList.value.length;
+      postingList.value = data;
+      postingCount.value = postingList.value.length;
     }
 
     onMounted(() => {
@@ -58,74 +74,65 @@ export default {
     const onMoveDetailPageClick = (postId) => {
       console.log("postId:", postId);
       router.push({
-        name: ROUTES.WISDOM_SHARE_DELETE.name,
+        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
         params:{
           id: postId
         },
+        query: {
+          delete: true
+        }
       })
-    }
-
-    const onFilterClick = (filterType) => {
-      filterTypes.value = filterType;
-      modalPopupStatue.value = true;
-    }
-
-    const handleSelectFilter = (selected) => {
-      if (selected.filterType === SEARCH_FILTER_TYPES.JOB) {
-        selectedJob.value = selected.filterValue;
-      }
-    }
-
-    const onRegisterPostClick = () => {
-      router.push(ROUTES.WISDOM_SHARE_REGISTER.path);
     }
 
     return {
       modalPopupStatue,
       searchInput,
       filterTypes,
+      selectedWarning,
       selectedJob,
-      postCount,
-      postList,
-      handleSelectFilter,
-      searchPosts,
-      onMoveDetailPageClick,
+      postingList,
+      postingCount,
+      searchJopPosting,
       onFilterClick,
-      onRegisterPostClick,
+      handleSelectFilter,
+      onMoveDetailPageClick,
     };
-  }
+  },
 }
 </script>
 
 <template>
   <main class="body">
-    <div class="header">
-      <div class="header-title">지혜 나눔</div>
-      <div class="header-register-job" @click="onRegisterPostClick">등록하기</div>
-    </div>
+    <div class="header">지혜마당 관리</div>
     <div class="search-wrap">
       <input
           class="search-input"
-          placeholder="게시물 제목을 입력하세요"
+          placeholder="게시물 제목을 검색하세요"
           type="text"
           v-model="searchInput"
-          @keyup.enter="searchPosts"
+          @keyup.enter="searchJopPosting"
       >
       <div class="filter-section">
+        <div class="filter-item"
+             @click="onFilterClick(SEARCH_FILTER_TYPES.WARNING)"
+             :style="{ color: selectedWarning === '경고 필터링' ? 'black' : '#024CAA' }">
+          {{ selectedWarning }}
+        </div>
         <div class="filter-item"
              @click="onFilterClick(SEARCH_FILTER_TYPES.JOB)"
              :style="{ color: selectedJob === '전체 직무' ? 'black' : '#024CAA' }">
           {{ selectedJob }}
         </div>
       </div>
-    </div>
-    <div class="job-posting-wrap">
-      <div class="job-posting-info">{{ postCount }}건</div>
-      <div class="job-posting-list" v-for="post in postList" :key="post">
-        <div class="course-title">{{ post.postTitle }}</div>
-        <div class="course-schedule">
-          <div class="schedule-info">{{ post.job }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(post.postId)">
+      <div class="job-posting-wrap">
+        <div class="job-posting-info">{{ postingCount }}건</div>
+        <div class="job-posting-list" v-for="posting in postingList" :key="posting">
+          <div class="course-title">{{ posting.postTitle }}</div>
+          <div class="course-subtitle">{{ posting.job }}</div>
+          <div class="course-schedule">
+            <div class="schedule-info">{{ posting.userId }} &nbsp;&nbsp;&nbsp; {{ posting.date }}</div>
+            <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(posting.postId)">
+          </div>
         </div>
       </div>
     </div>
@@ -154,20 +161,6 @@ export default {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
-}
-
-.header-register-job {
-  background-color: #024CAA; /* 버튼 배경색 */
-  color: white; /* 버튼 텍스트 색 */
-  padding: 10px 15px; /* 여백 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  cursor: pointer; /* 포인터 커서 */
-  transition: background-color 0.3s; /* 호버 효과를 위한 전환 */
-  font-size: 10pt;
-}
-
-.header-register-job:hover {
-  background-color: #0056b3; /* 호버 시 배경색 변경 */
 }
 
 .search-wrap {

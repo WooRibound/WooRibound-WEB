@@ -1,6 +1,6 @@
 <script>
 import { ref,computed } from "vue";
-import { formatDate } from "@/utils/format";
+import { formatDate1 } from "@/utils/format";
 import {useRoute} from "vue-router";
 
 export default {
@@ -8,6 +8,7 @@ export default {
   setup() {
     const route = useRoute();
     const postId = route.params.id
+    const isDelete = route.query.delete
     // todo postId값으로 채용공고 상세 API 구현 후 아래에 로직 구현
     console.log(postId);
 
@@ -18,16 +19,24 @@ export default {
     const endDate = ref(new Date('2024-11-15'));    // 채용 마감일
     const entAddr = ref("서울특별시 강서구 사암대로 179 상암타워");
 
-    const formattedStartDate = computed(() => formatDate(startDate.value));
-    const formattedEndDate = computed(() => formatDate(endDate.value));
+    const formattedStartDate = computed(() => formatDate1(startDate.value));
+    const formattedEndDate = computed(() => formatDate1(endDate.value));
+
+    const onDeletedClick = (postId) => {
+      // todo API 구현 시 아래에 로직 구현 하기
+      console.log("postId:", postId);
+    }
 
     return {
+      isDelete,
+      postId,
       entName,
       postTitle,
       postImg,
       formattedStartDate,
       formattedEndDate,
       entAddr,
+      onDeletedClick,
     };
   }
 }
@@ -49,6 +58,7 @@ export default {
         <div class="company-address">{{ entAddr }}</div>
       </div>
     </div>
+    <div class="delete-button" v-if="isDelete" @click="onDeletedClick(postId)">삭제하기</div>
   </main>
 </template>
 
@@ -131,5 +141,17 @@ export default {
 .company-address {
   font-size: 16px;
   color: #333;
+}
+
+.delete-button {
+  width: 90%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
 }
 </style>

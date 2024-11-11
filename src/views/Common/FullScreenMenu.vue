@@ -119,23 +119,43 @@ export default {
     </div>
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.SERVICE_ADMIN">
       <div class="menu-content">
-        <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
+        <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
+        </router-link>
       </div>
       <div class="menu-content">
         <div class="menu_title">기업 회원 관리</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <div class="menu-item">기업 가입</div>
-          <div class="menu-item">기업 탈퇴</div>
-          <div class="menu-item">기업 회원 조회</div>
+          <router-link :to="ROUTES.CORPORATE_USER_SIGNUP.path">
+            <div class="menu-item">기업 가입</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_USER_WITHDRAWAL.path">
+            <div class="menu-item">기업 탈퇴</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_USERS.path">
+           <div class="menu-item">기업 회원 조회</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path">
+            <div class="menu-item">공고 관리</div>
+          </router-link>
         </div>
       </div>
       <div class="menu-content">
-        <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+        <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">지혜 마당 관리</div>
+        </router-link>
+      </div>
+      <div class="menu-content">
+        <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+        </router-link>
       </div>
     </div>
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INFRA_ADMIN">
       <div class="menu-content">
-        <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
+        <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
+        </router-link>
       </div>
     </div>
   </div>

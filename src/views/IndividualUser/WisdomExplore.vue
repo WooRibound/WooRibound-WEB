@@ -4,7 +4,7 @@ import {ROUTES} from "@/router/routes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate} from "@/utils/format";
+import {formatDate1} from "@/utils/format";
 
 export default {
   name: "WisdomExplore",
@@ -14,7 +14,7 @@ export default {
     }
   },
   components: { SearchFilterModal },
-  methods: { formatDate },
+  methods: { formatDate: formatDate1 },
   setup() {
     const router = useRouter();
 
@@ -23,8 +23,8 @@ export default {
     const filterTypes = ref("");
     const selectedJob = ref("전체 직무");
 
-    const postCount = ref(0);
-    const postList = ref();
+    const postingList = ref();
+    const postingCount = ref(0);
 
     const searchPosts = () => {
       // todo API 구현 시 아래에 로직 구현 하기
@@ -51,8 +51,8 @@ export default {
         },
       ];
 
-      postList.value = data;
-      postCount.value = postList.value.length;
+      postingList.value = data;
+      postingCount.value = postingList.value.length;
     }
 
     onMounted(() => {
@@ -85,8 +85,8 @@ export default {
       searchInput,
       filterTypes,
       selectedJob,
-      postCount,
-      postList,
+      postingCount,
+      postingList,
       handleSelectFilter,
       searchPosts,
       onMoveDetailPageClick,
@@ -118,13 +118,13 @@ export default {
       </div>
     </div>
     <div class="job-posting-wrap">
-      <div class="job-posting-info">{{ postCount }}건</div>
-      <div class="job-posting-list" v-for="post in postList" :key="post">
-        <div class="course-title">{{ post.postTitle }}</div>
-        <div class="course-subtitle">{{ post.job }}</div>
+      <div class="job-posting-info">{{ postingCount }}건</div>
+      <div class="job-posting-list" v-for="posting in postingList" :key="posting">
+        <div class="course-title">{{ posting.postTitle }}</div>
+        <div class="course-subtitle">{{ posting.job }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ post.userId }} &nbsp;&nbsp;&nbsp; {{ post.date }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(post.postId)">
+          <div class="schedule-info">{{ posting.userId }} &nbsp;&nbsp;&nbsp; {{ posting.date }}</div>
+          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(posting.postId)">
         </div>
       </div>
     </div>
