@@ -1,9 +1,10 @@
 <script>
 import AICommendationModal from "@/components/AICommendationModal.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
 import {useRoute} from "vue-router";
+import {deleteWisdomDetail, fetchWisdomDetail} from "@/api/services/individualUserService";
 
 export default {
   name: "WisdomShareDelete",
@@ -16,24 +17,51 @@ export default {
   setup() {
     const route = useRoute();
     const postId = route.params.id
-    console.log("postId:", postId);
 
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
+    const modalMessage = ref('');
 
-    const industries = ref([
-      "제조업", "정보통신", "금융업", "서비스업", "건설업",
-      "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
-    ]);
+    const wisdom = ref({
+      knowhowId: "",
+      knowhowJob: "",
+      knowhowTitle: "",
+      knowhowContent: "",
+    })
 
-    const onDeletePostClick = () => {
-      modalPopupStatue.value = true;
+    const fetchWisdom = async () => {
+      try {
+        const response = await fetchWisdomDetail(postId);
+        wisdom.value = {
+          knowhowId: response.knowhowId,
+          knowhowJob: response.knowhowJob,
+          knowhowTitle: response.knowhowTitle,
+          knowhowContent: response.knowhowContent,
+        };
+      } catch (error) {
+        console.error("Failed to fetch wisdom details:", error);
+      }
+    }
+
+    onMounted(() => {
+      fetchWisdom();
+    })
+
+    const onDeletePostClick = (knowhowId) => {
+      try {
+          const promise = deleteWisdomDetail(knowhowId);
+          modalMessage.value = promise;
+          modalPopupStatue.value = true;
+      } catch (error) {
+        console.error("Failed to fetch wisdom details:", error);
+      }
     }
 
     return {
-      industries,
       modalPopupStatue,
       aiModalPopupStatue,
+      modalMessage,
+      wisdom,
       onDeletePostClick,
     };
   }
@@ -47,29 +75,28 @@ export default {
     </div>
     <div class="content">
       <!-- 직종 선택 -->
-      <div class="input-label">
-        <select class="input-field" aria-label="산업">
-          <option value="" disabled selected>산업</option>
-          <option v-for="industry in industries" :key="industry" :value="industry">{{ industry }}</option>
-        </select>
+      <div class="input-section">
+        <div class="input-label">
+          <input class="input-field" placeholder="" v-model="wisdom.knowhowJob" readonly />
+        </div>
       </div>
       <!-- 제목 입력 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="제목을 입력해주세요">
+          <input class="input-field" placeholder="" v-model="wisdom.knowhowTitle" readonly />
         </div>
       </div>
       <!-- 내용 입력 -->
       <div class="input-label">
-        <textarea class="textarea-field" placeholder="" />
+        <textarea class="textarea-field" placeholder="" v-model="wisdom.knowhowContent" readonly/>
       </div>
-      <div class="delete-button" @click="onDeletePostClick">삭제하기</div>
+      <div class="delete-button" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
     </div>
   </main>
   <modal-popup
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
-      :modal-message="'지혜 나눔 삭제 완료되었습니다.'"
+      :modal-message="modalMessage"
       :router-path="ROUTES.WISDOM_SHARE.path"
   />
   <a-i-commendation-modal

@@ -1,10 +1,15 @@
 <script>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {ROUTES} from "@/router/routes";
 import {useRoute} from "vue-router";
+import {fetchWisdomDetail} from "@/api/services/individualUserService";
+import {formatDate2} from "../../utils/format";
+import ModalPopup from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "WisdomExploreDetail",
+  components: {ModalPopup},
+  methods: {formatDate2},
   computed: {
     ROUTES() {
       return ROUTES
@@ -14,10 +19,10 @@ export default {
     const route = useRoute();
     const postId = route.params.id
     const isDelete = route.query.delete
-    console.log("postId:", postId);
 
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
+    const modalMessage = ref('');
 
     const warningCount = ref(0);
 
@@ -26,18 +31,48 @@ export default {
       console.log("신고하기");
     }
 
-    const onDeletedClick = (postId) => {
-      // todo API 구현 시 아래에 로직 구현 하기
-      console.log("postId:", postId);
+    const wisdom = ref({
+      userName: "",
+      knowhowId: "",
+      knowhowJob: "",
+      knowhowTitle: "",
+      knowhowContent: "",
+    })
+
+    const fetchWisdom = async () => {
+      try {
+        const response = await fetchWisdomDetail(postId);
+        wisdom.value = {
+          userName: response.userName,
+          knowhowId: response.knowhowId,
+          knowhowJob: response.knowhowJob,
+          knowhowTitle: response.knowhowTitle,
+          knowhowContent: response.knowhowContent,
+          uploadDate: response.uploadDate,
+        };
+      } catch (error) {
+        console.error("Failed to fetch wisdom details:", error);
+      }
+    }
+
+    onMounted(() => {
+      fetchWisdom();
+    })
+
+    const onDeletePostClick = (knowhowId) => {
+      // todo <관리자용 삭제 버튼> API 구현시 아래 로직 구현
+      console.log("knowhowId:", knowhowId);
     }
 
     return {
       modalPopupStatue,
       isDelete,
       aiModalPopupStatue,
+      modalMessage,
+      wisdom,
       warningCount,
       onReportClick,
-      onDeletedClick,
+      onDeletePostClick,
     };
   }
 }
@@ -57,29 +92,35 @@ export default {
       </div>
     </div>
     <div class="author-info">
-      <div class="author">작성자: user01</div>
-      <div class="date">2024.01.01</div>
+      <div class="author">작성자: {{ wisdom.userName }}</div>
+      <div class="date">{{ formatDate2(wisdom.uploadDate)}}</div>
     </div>
     <div class="content">
       <!-- 직종 선택 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="산업" readonly />
+          <input class="input-field" placeholder="" v-model="wisdom.knowhowJob" readonly />
         </div>
       </div>
       <!-- 제목 입력 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="제목을 입력해주세요" readonly />
+          <input class="input-field" placeholder="" v-model="wisdom.knowhowTitle" readonly />
         </div>
       </div>
       <!-- 내용 입력 -->
       <div class="input-label">
-        <textarea class="textarea-field" placeholder="" readonly/>
+        <textarea class="textarea-field" placeholder="" v-model="wisdom.knowhowContent" readonly/>
       </div>
     </div>
-    <div class="delete-button" v-if="isDelete" @click="onDeletedClick(postId)">삭제하기</div>
+    <div class="delete-button" v-if="isDelete" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
   </main>
+  <modal-popup
+      v-if="modalPopupStatue"
+      @close-modal="modalPopupStatue = false"
+      :modal-message="modalMessage"
+      :router-path="ROUTES.WISDOM_MANAGEMENT.path"
+  />
 </template>
 
 <style scoped>

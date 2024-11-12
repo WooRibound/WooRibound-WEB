@@ -13,7 +13,6 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const modalPopupStatue = ref(false);
 
     const resume = ref({
       userName: "",
@@ -47,21 +46,14 @@ export default {
       }
     };
 
-
-    const onUploadResumeClick = () => {
-      modalPopupStatue.value = true;
-    }
-
     onMounted(() => {
       const userId = route.params.id;  // 파라미터로 넘어온 userId 받기
       fetchResume(userId);
     });
 
     return {
-      modalPopupStatue,
       resume,
       photoPreview,
-      onUploadResumeClick,
     };
   }
 };
