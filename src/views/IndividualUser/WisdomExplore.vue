@@ -4,7 +4,8 @@ import {ROUTES} from "@/router/routes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate1} from "@/utils/format";
+import {formatDate2} from "@/utils/format";
+import {fetchAllWisdomExplore} from "@/api/services/individualUserService";
 
 export default {
   name: "WisdomExplore",
@@ -14,7 +15,7 @@ export default {
     }
   },
   components: { SearchFilterModal },
-  methods: { formatDate: formatDate1 },
+  methods: {formatDate2},
   setup() {
     const router = useRouter();
 
@@ -31,28 +32,16 @@ export default {
       console.log("검색어:", searchInput.value);
     }
 
-    const fetchPosts = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
+    const fetchPosts = async () => {
+      try {
+        const response = await fetchAllWisdomExplore(searchInput.value, selectedJob.value);
+        postingList.value = response;
+        postingCount.value = postingList.value.length;
+      } catch (error) {
+        console.error('Error data:', error);
+        throw error;
+      }
 
-      const data = [
-        {
-          postId: 1,
-          postTitle: '시니어도 할 수 있는 Ghat GPT',
-          job: '서비스',
-          date: '2024.01.01',
-          userId: 'user01'
-        },
-        {
-          postId: 2,
-          postTitle: '시니어도 할 수 있는 EXCEL',
-          job: 'IT',
-          date: '2024.01.01',
-          userId: 'user02'
-        },
-      ];
-
-      postingList.value = data;
-      postingCount.value = postingList.value.length;
     }
 
     onMounted(() => {
@@ -60,7 +49,6 @@ export default {
     })
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
         name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
         params:{
@@ -78,6 +66,7 @@ export default {
       if (selected.filterType === SEARCH_FILTER_TYPES.JOB) {
         selectedJob.value = selected.filterValue;
       }
+      fetchPosts();
     }
 
     return {
@@ -120,11 +109,11 @@ export default {
     <div class="job-posting-wrap">
       <div class="job-posting-info">{{ postingCount }}건</div>
       <div class="job-posting-list" v-for="posting in postingList" :key="posting">
-        <div class="course-title">{{ posting.postTitle }}</div>
-        <div class="course-subtitle">{{ posting.job }}</div>
+        <div class="course-title">{{ posting.knowhowTitle }}</div>
+        <div class="course-subtitle">{{ posting.knowhowJob }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ posting.userId }} &nbsp;&nbsp;&nbsp; {{ posting.date }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(posting.postId)">
+          <div class="schedule-info">{{ posting.userName }} &nbsp;&nbsp;&nbsp; {{ formatDate2(posting.uploadDate) }}</div>
+          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(posting.knowhowId)">
         </div>
       </div>
     </div>
