@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import { useRegionsStore } from "@/stores/useRegionsStore";
 import { useJobStore } from "@/stores/useJobStore";
+import { useIndustriesStore } from "@/stores/useIndustriesStore";
 
 export default {
   name: "SearchFilterModal",
@@ -20,6 +21,7 @@ export default {
   setup(props, { emit }) {
     const regionsStore = useRegionsStore();
     const jobStore = useJobStore();
+    const industryStore = useIndustriesStore();
 
     // 지역 리스트 설정
     const provinces = computed(() => {
@@ -34,8 +36,15 @@ export default {
       return ["전체 직무", ...originalJobs.map((job) => job.jobName)];
     });
 
+    // 산업 리스트 설정
+    const industries = computed(() => {
+      const originalIndustries = industryStore.getIndustries;
+      console.log("originalIndustries:", originalIndustries);
+      return ["전체 산업", ...originalIndustries];
+    });
+
     // 경고 필터링 리스트
-    const warnings = ['많은 순','적은 순','없음',];
+    const warnings = ['많은 순', '적은 순', '없음',];
 
     const selectedFilterType = computed(() => props.filterType);
 
@@ -50,6 +59,10 @@ export default {
     const halfLengthJobs = Math.ceil(jobs.value.length / 2);
     const leftJobs = computed(() => jobs.value.slice(0, halfLengthJobs));
     const rightJobs = computed(() => jobs.value.slice(halfLengthJobs));
+
+    const halfLengthIndustries = Math.ceil(industries.value.length / 2);
+    const leftIndustries = computed(() => industries.value.slice(0, halfLengthIndustries));
+    const rightIndustries = computed(() => industries.value.slice(halfLengthIndustries));
 
     const selectFilter = (filterValue) => {
       emit("select-filter", {
@@ -67,6 +80,8 @@ export default {
       rightProvinces,
       leftJobs,
       rightJobs,
+      leftIndustries,
+      rightIndustries,
       warnings,
     };
   },
@@ -84,22 +99,12 @@ export default {
       </div>
       <div class="menu-items job">
         <div class="menu-column">
-          <div
-              class="menu-item"
-              v-for="(job, index) in leftJobs"
-              :key="index"
-              @click="selectFilter(job)"
-          >
+          <div class="menu-item" v-for="(job, index) in leftJobs" :key="index" @click="selectFilter(job)">
             {{ job }}
           </div>
         </div>
         <div class="menu-column">
-          <div
-              class="menu-item"
-              v-for="(job, index) in rightJobs"
-              :key="index"
-              @click="selectFilter(job)"
-          >
+          <div class="menu-item" v-for="(job, index) in rightJobs" :key="index" @click="selectFilter(job)">
             {{ job }}
           </div>
         </div>
@@ -115,23 +120,39 @@ export default {
       </div>
       <div class="menu-items">
         <div class="menu-column">
-          <div
-              class="menu-item"
-              v-for="(province, index) in leftProvinces"
-              :key="index"
-              @click="selectFilter(province)"
-          >
+          <div class="menu-item" v-for="(province, index) in leftProvinces" :key="index"
+            @click="selectFilter(province)">
             {{ province }}
           </div>
         </div>
         <div class="menu-column">
-          <div
-              class="menu-item"
-              v-for="(province, index) in rightProvinces"
-              :key="index"
-              @click="selectFilter(province)"
-          >
+          <div class="menu-item" v-for="(province, index) in rightProvinces" :key="index"
+            @click="selectFilter(province)">
             {{ province }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 산업 필터링 -->
+    <div class="menu-content industry" v-if="selectedFilterType === SEARCH_FILTER_TYPES.INDUSTRY">
+      <div class="menu_title">
+        산업
+        <div class="close-button" @click="closeModal">
+          <img src="@/assets/images/icons/close.png" alt="Close" />
+        </div>
+      </div>
+      <div class="menu-items">
+        <div class="menu-column">
+          <div class="menu-item" v-for="(industry, index) in leftIndustries" :key="index"
+            @click="selectFilter(industry)">
+            {{ industry }}
+          </div>
+        </div>
+        <div class="menu-column">
+          <div class="menu-item" v-for="(industry, index) in rightIndustries" :key="index"
+            @click="selectFilter(industry)">
+            {{ industry }}
           </div>
         </div>
       </div>
@@ -145,12 +166,7 @@ export default {
       </div>
       <div class="menu-items">
         <div class="menu-column">
-          <div
-              class="menu-item"
-              v-for="(warning, index) in warnings"
-              :key="index"
-              @click="selectFilter(warning)"
-          >
+          <div class="menu-item" v-for="(warning, index) in warnings" :key="index" @click="selectFilter(warning)">
             {{ warning }}
           </div>
         </div>
@@ -182,18 +198,21 @@ export default {
   margin-bottom: 0;
 }
 
-.menu-content .job{
+.menu-content .job {
   height: 85%;
 }
 
-.menu-content .region{
+.menu-content .region {
   height: 70%;
 }
 
 .menu_title {
-  display: flex; /* 플렉스 박스 사용 */
-  justify-content: space-between; /* 양쪽 끝 정렬 */
-  align-items: center; /* 수직 중앙 정렬 */
+  display: flex;
+  /* 플렉스 박스 사용 */
+  justify-content: space-between;
+  /* 양쪽 끝 정렬 */
+  align-items: center;
+  /* 수직 중앙 정렬 */
   font-weight: bold;
   font-size: 24px;
   margin-bottom: 15px;
@@ -202,12 +221,15 @@ export default {
 .menu-items {
   margin-top: 15px;
   font-size: 19px;
-  display: flex; /* 플렉스 박스 사용 */
+  display: flex;
+  /* 플렉스 박스 사용 */
 }
 
 .menu-column {
-  flex: 1; /* 각 열이 동일한 너비를 가짐 */
-  padding: 0 10px; /* 열 간의 간격 추가 */
+  flex: 1;
+  /* 각 열이 동일한 너비를 가짐 */
+  padding: 0 10px;
+  /* 열 간의 간격 추가 */
 }
 
 .menu-item {
@@ -221,12 +243,16 @@ export default {
 }
 
 .close-button {
-  cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
-  margin-left: auto; /* 제목과의 간격을 자동으로 설정하여 오른쪽 끝으로 이동 */
+  cursor: pointer;
+  /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
+  margin-left: auto;
+  /* 제목과의 간격을 자동으로 설정하여 오른쪽 끝으로 이동 */
 }
 
 .close-button img {
-  width: 24px; /* 이미지 크기 조정 (조정 가능) */
-  height: 24px; /* 이미지 크기 조정 (조정 가능) */
+  width: 24px;
+  /* 이미지 크기 조정 (조정 가능) */
+  height: 24px;
+  /* 이미지 크기 조정 (조정 가능) */
 }
 </style>
