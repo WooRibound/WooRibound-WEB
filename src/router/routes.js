@@ -144,6 +144,11 @@ export const ROUTES = {
         path: "/wisdom/explore/:id",
         name: "WisdomExploreDetail"
     },
+    // [개인회원] 탈퇴한 아이디로 네이버 로그인 시도 시 리다이렉트 페이지
+    DELETED_USER_REDIRECT: {
+        path: "/deleted/user",
+        name: "DeletedUserRedirect"
+    },
     // [서비스 관리자] 개인 회원 관리
     INDIVIDUAL_USER_MANAGEMENT: {
         path: '/admin/user-management',

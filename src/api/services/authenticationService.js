@@ -72,6 +72,26 @@ export const corporateLogin = async (username, password) => {
   }
 };
 
+export const corporateJoin = async (data) => {
+  try {
+    const response = await handleApiCall('post', '/corporate/auth/join', data,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+    );
+    return response;
+  } catch (error) {
+    console.error('Request failed:', error);
+    if (error.response) {
+      console.error('Error details:', error.response.data);
+      console.error('Status:', error.response.status);
+    }
+    throw error;
+  }
+};
+
 export const logout = async () => {
   try {
     const userStore = useUserStore();
@@ -129,6 +149,46 @@ export const loginCheck = async () => {
     throw new Error(response.data?.message || 'Login check failed');
   } catch (error) {
     console.error('Login check error:', error);
+    throw error;
+  }
+};
+
+export const isDuplicateCheck = async (id) => {
+  try {
+    const response = await handleApiCall('get',
+        `/corporate/auth/duplicate/check?id=${id}`);
+
+    if (response.status === 200) {
+      return {isDuplicate: false, message: response.data}; // 중복이 없을 경우
+    }
+  } catch (error) {
+    console.error('Error occurred while checking duplicate:', error);
+
+    // 400 오류일 때 error.data에서 메시지를 가져옴
+    if (error.status === 409) {
+      return {
+        isDuplicate: true,
+        message: error.data  // 서버에서 보낸 메시지를 직접 사용
+      };
+    }
+
+    return {
+      isDuplicate: false,
+      message: error.message || 'Unknown error'
+    };
+  }
+}
+
+export const withdrawWbUser = async () => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/auth/withdraw');
+    console.log("Withdraw API Response:", response);
+    if (response && response.status === 200) {
+      return response;
+    }
+    throw new Error('Withdraw failed');
+  } catch (error) {
+    console.error("Withdraw API Error:", error);
     throw error;
   }
 };
