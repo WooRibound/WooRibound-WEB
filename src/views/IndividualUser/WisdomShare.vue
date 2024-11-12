@@ -5,6 +5,7 @@ import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
 import {formatDate1} from "@/utils/format";
+import {fetchAllWisdomShare} from "@/api/services/individualUserService";
 
 export default {
   name: "WisdomShare",
@@ -27,28 +28,20 @@ export default {
     const postList = ref();
 
     const searchPosts = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
       console.log("검색어:", searchInput.value);
+      console.log("필터:", filterTypes.value);
+      fetchPosts();
     }
 
-    const fetchPosts = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
-
-      const data = [
-        {
-          postId: 1,
-          postTitle: '시니어도 할 수 있는 Ghat GPT',
-          job: '서비스',
-        },
-        {
-          postId: 2,
-          postTitle: '시니어도 할 수 있는 EXCEL',
-          job: 'IT 엔지니어',
-        },
-      ];
-
-      postList.value = data;
-      postCount.value = postList.value.length;
+    const fetchPosts = async () => {
+      try {
+        const promise = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
+        postList.value = promise;
+        postCount.value = postList.value.length;
+      } catch (error) {
+        console.error('Error data:', error);
+        throw error;
+      }
     }
 
     onMounted(() => {
@@ -56,7 +49,6 @@ export default {
     })
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
         name: ROUTES.WISDOM_SHARE_DELETE.name,
         params:{
@@ -74,6 +66,7 @@ export default {
       if (selected.filterType === SEARCH_FILTER_TYPES.JOB) {
         selectedJob.value = selected.filterValue;
       }
+      fetchPosts();
     }
 
     const onRegisterPostClick = () => {
@@ -122,10 +115,10 @@ export default {
     <div class="job-posting-wrap">
       <div class="job-posting-info">{{ postCount }}건</div>
       <div class="job-posting-list" v-for="post in postList" :key="post">
-        <div class="course-title">{{ post.postTitle }}</div>
+        <div class="course-title">{{ post.knowhowTitle }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ post.job }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(post.postId)">
+          <div class="schedule-info">{{ post.knowhowJob }}</div>
+          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(post.knowhowId)">
         </div>
       </div>
     </div>

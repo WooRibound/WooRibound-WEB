@@ -1,9 +1,10 @@
 <script>
 import AICommendationModal from "@/components/AICommendationModal.vue";
-import {onMounted, ref} from "vue";
+import {computed, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
-import { fetchJobs } from '@/api/services/globalServiece'
+import {insertWisdomShare} from "@/api/services/individualUserService";
+import {useJobStore} from "@/stores/useJobStore";
 
 export default {
   name: "WisdomShareRegister",
@@ -14,47 +15,81 @@ export default {
   },
   components: {ModalPopup, AICommendationModal},
   setup() {
+    const jobStore = useJobStore();
+
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
-
-    const jobs = ref([]);
-    const jobTitle = ref(''); // 제목 입력을 위한 ref
-    const jobDescription = ref(''); // 내용 입력을 위한 ref
-
-    const loadJobs = async () => {
-      try {
-        const response = await fetchJobs();
-        jobs.value = response;
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-      }
-    };
-
-    onMounted(() => {
-      loadJobs();
+    const modalMessage = ref('');
+    const jobs = computed(() => {
+      const originalJobs = jobStore.getJobs;
+      return [...originalJobs.map((job) => job.jobName)];
     });
+
+    const knowhowJob = ref('');
+    const knowhowTitle = ref('');
+    const knowhowContent = ref('');
+    const knowhowJobSelect = ref(null);
+    const knowhowTitleSelect = ref(null);
+    const knowhowContentSelect = ref(null);
 
     const onAIRecommendationClick = () => {
       console.log("ai 추천");
       aiModalPopupStatue.value = true;
     }
 
-    const onRegisterClick = () => {
-      modalPopupStatue.value = true;
+    const onRegisterClick = async () => {
+      if (knowhowJob.value === '' || knowhowJob.value === null) {
+        alert("직종을 선택해주세요");
+        knowhowJobSelect.value.focus();
+        return;
+      }
+
+      if (knowhowTitle.value === '' || knowhowTitle.value === null) {
+        alert("제목을 입력해주세요");
+        knowhowTitleSelect.value.focus();
+        return;
+      }
+
+      if (knowhowContent.value === '' || knowhowContent.value === null) {
+        alert("내용 입력해주세요");
+        knowhowContentSelect.value.focus();
+        return;
+      }
+
+      const wisdomShare = {
+        knowhowJob: knowhowJob.value,
+        knowhowTitle: knowhowTitle.value,
+        knowhowContent: knowhowContent.value,
+      };
+
+      try {
+          const response = await insertWisdomShare(wisdomShare);
+          modalMessage.value = response;
+          modalPopupStatue.value = true;
+      } catch (error) {
+          console.error('Error data:', error);
+          throw error;
+      }
+
     }
 
     const updateDescriptionFromAI = (gptResponse) => {
-      jobDescription.value = "";
-      jobDescription.value = gptResponse;
+      knowhowContent.value = "";
+      knowhowContent.value = gptResponse;
     };
 
 
     return {
       jobs,
-      jobTitle,
-      jobDescription,
+      knowhowJob,
+      knowhowTitle,
+      knowhowContent,
       modalPopupStatue,
       aiModalPopupStatue,
+      modalMessage,
+      knowhowJobSelect,
+      knowhowTitleSelect,
+      knowhowContentSelect,
       onAIRecommendationClick,
       onRegisterClick,
       updateDescriptionFromAI,
@@ -72,20 +107,20 @@ export default {
     <div class="content">
       <!-- 직종 선택 -->
       <div class="input-label">
-        <select class="input-field" aria-label="산업">
-          <option value="" disabled selected>산업</option>
-          <option v-for="job in jobs" :key="job.jobId" :value="job.jobId">{{ job.jobName }}</option>
+        <select class="input-field" aria-label="직종" v-model="knowhowJob" ref="knowhowJobSelect">
+          <option value="" disabled selected>직무</option>
+          <option v-for="(job, index) in jobs" :key="index" :value="job">{{ job }}</option>
         </select>
       </div>
       <!-- 제목 입력 -->
       <div class="input-section">
         <div class="input-label">
-          <input v-model="jobTitle" class="input-field" placeholder="제목을 입력해주세요">
+          <input v-model="knowhowTitle" class="input-field" placeholder="제목을 입력해주세요" ref="knowhowTitleSelect">
         </div>
       </div>
       <!-- 내용 입력 -->
       <div class="input-label">
-        <textarea v-model="jobDescription" class="textarea-field" placeholder="" />
+        <textarea v-model="knowhowContent" class="textarea-field" placeholder="일 경험담을 작성해주세요" ref="knowhowContentSelect"/>
       </div>
       <div class="delete-button" @click="onRegisterClick">등록하기</div>
     </div>
@@ -93,7 +128,7 @@ export default {
   <modal-popup
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
-      :modal-message="'지혜 나눔 수정이 완료되었습니다.'"
+      :modal-message="modalMessage"
       :router-path="ROUTES.WISDOM_SHARE.path"
   />
   <a-i-commendation-modal

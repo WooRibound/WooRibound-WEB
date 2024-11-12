@@ -3,7 +3,9 @@
  * @param {Date} value - 입력값
  * @returns {String}
  */
-export const formatDate1 = (date) => {
+export const formatDate1 = (dateString) => {
+    const date = new Date(dateString);
+
     const options = { month: '2-digit', day: '2-digit' };
     const formattedDate = date.toLocaleDateString('ko-KR', options).replace(/\./g, '');
 
@@ -20,7 +22,9 @@ export const formatDate1 = (date) => {
  * @param {Date} value - 입력값
  * @returns {String}
  */
-export const formatDate2 = (date) => {
+export const formatDate2 = (dateString) => {
+    const date = new Date(dateString);
+
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedDate = date.toLocaleDateString('ko-KR', options).replace(/\./g, '');
 
