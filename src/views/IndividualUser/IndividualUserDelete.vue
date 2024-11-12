@@ -1,7 +1,7 @@
 <script>
 import { ref } from "vue";
 import { ROUTES } from "@/router/routes";
-import { withdrawWbUser } from '@/api/services/authenticationService';
+import { withdrawIndividual } from '@/api/services/authenticationService';
 import {useUserStore} from "@/stores/userStore";
 
 export default {
@@ -28,12 +28,12 @@ export default {
 
       try {
         console.log("탈퇴 요청 시작");
-        const response = await withdrawWbUser();
+        const response = await withdrawIndividual();
         await useUserStore().logout();
         console.log("탈퇴 API 응답:", response);
         if (response && response.status === 200) {
           console.log("탈퇴 처리 완료");
-          window.location.href = ROUTES.MAIN.path;
+          window.location.href = ROUTES.USER_DELETE_SUCCESS.path;
         } else {
           throw new Error('탈퇴 처리 실패');
         }

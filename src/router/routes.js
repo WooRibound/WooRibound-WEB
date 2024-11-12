@@ -84,6 +84,10 @@ export const ROUTES = {
         path: "/delete-success",
         name: "UserDeleteSuccess",
     },
+    CORPORATE_DELETE_SUCCESS: {
+        path: "/corporate-delete-success",
+        name: "CorporateDeleteSuccess",
+    },
     // [기업회원] 기업정보 메뉴
     CORPORATE_USER_ACCOUNT_MENU: {
         path: "/corporate/account",

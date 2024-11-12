@@ -179,10 +179,27 @@ export const isDuplicateCheck = async (id) => {
   }
 }
 
-export const withdrawWbUser = async () => {
+export const withdrawIndividual = async () => {
   try {
     const response = await handleApiCall('post', '/individualuser/auth/withdraw');
     console.log("Withdraw API Response:", response);
+    if (response && response.status === 200) {
+      return response;
+    }
+    throw new Error('Withdraw failed');
+  } catch (error) {
+    console.error("Withdraw API Error:", error);
+    throw error;
+  }
+};
+
+export const withdrawCorporate = async (password) => {
+  try {
+    const response = await handleApiCall('post', '/corporate/auth/withdraw', password, {
+      headers: {
+        'Content-Type': 'text/plain'  // content type을 plain text로 변경
+      }
+    });
     if (response && response.status === 200) {
       return response;
     }
