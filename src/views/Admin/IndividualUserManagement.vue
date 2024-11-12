@@ -43,7 +43,6 @@ export default {
     };
 
     const handleSelectFilter = (selected) => {
-      console.log("handleSelectFilter 함수 호출됨");
       if (selected.filterType === SEARCH_FILTER_TYPES.REGIONS) {
         selectedProvince.value = selected.filterValue;
         // 필터 변경될 때마다 데이터 다시 가져오기
@@ -52,7 +51,6 @@ export default {
     };
 
     const fetchIndividualUsers = async () => {
-      console.log("fetchIndividualUsers 호출");
       try {
         const params = {
           userName: searchInput.value,  // 검색어
@@ -63,7 +61,7 @@ export default {
           params: params
         });
 
-        console.log(response.data)
+        // console.log(response.data)
         individualUserList.value = response.data;
         individualUserCount.value = response.data.length;
 
