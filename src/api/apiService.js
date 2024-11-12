@@ -36,7 +36,7 @@ const apiInstance = () => {
             });
 
             // 삭제된 유저 처리 (410 상태 코드)
-            if (error.response?.status === 410) {
+            if (error.status === 410) {
                 console.log('Deleted user detected, redirecting to deleted user page');
                 window.location.href = ROUTES.DELETED_USER_REDIRECT.path;
                 return Promise.reject(error);
