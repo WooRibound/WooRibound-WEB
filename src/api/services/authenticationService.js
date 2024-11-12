@@ -178,3 +178,17 @@ export const isDuplicateCheck = async (id) => {
     };
   }
 }
+
+export const withdrawWbUser = async () => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/auth/withdraw');
+    console.log("Withdraw API Response:", response);
+    if (response && response.status === 200) {
+      return response;
+    }
+    throw new Error('Withdraw failed');
+  } catch (error) {
+    console.error("Withdraw API Error:", error);
+    throw error;
+  }
+};

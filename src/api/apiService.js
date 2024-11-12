@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useLoadingStore } from '@/stores/useLodingStore';
 import { useUserStore } from "@/stores/userStore";
+import {ROUTES} from "@/router/routes";
 
 let refreshTokenRequest = null; // 중복 갱신 요청 방지 변수
 
@@ -33,6 +34,13 @@ const apiInstance = () => {
                 status: error.response?.status,
                 data: error.response?.data
             });
+
+            // 삭제된 유저 처리 (410 상태 코드)
+            if (error.response?.status === 410) {
+                console.log('Deleted user detected, redirecting to deleted user page');
+                window.location.href = ROUTES.DELETED_USER_REDIRECT.path;
+                return Promise.reject(error);
+            }
 
             // 토큰 만료 에러 처리 (419 상태 코드)
             if (error.response?.status === 419 && !originalRequest._retry) {

@@ -157,6 +157,11 @@ const router = createRouter({
             component: () => import("@/views/IndividualUser/WisdomExploreDetail.vue"),
         },
         {
+            path: ROUTES.DELETED_USER_REDIRECT.path,
+            name: ROUTES.DELETED_USER_REDIRECT.name,
+            component: () => import("@/views/Authentication/DeletedUserRedirectView.vue")
+        },
+        {
             path: ROUTES.INDIVIDUAL_USER_MANAGEMENT.path,
             name: ROUTES.INDIVIDUAL_USER_MANAGEMENT.name,
             component: () => import("@/views/Admin/IndividualUserManagement.vue"),
