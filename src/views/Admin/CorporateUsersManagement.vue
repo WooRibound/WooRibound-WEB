@@ -63,7 +63,7 @@ export default {
         corporateUserCount.value = corporateUserList.value.length;
 
       } catch (error) {
-        console.error("fetchIndividualUsers API 호출 오류:", error);
+        console.error("fetchCorporateUsers API 호출 오류:", error);
       }
     }
 
@@ -72,7 +72,6 @@ export default {
     })
 
     const onMoveDetailPageClick = (entId) => {
-      console.log("entId:", entId);
       router.push({
         name: ROUTES.CORPORATE_USER_PROFILE_READONLY.name,
         params: {
@@ -125,7 +124,7 @@ export default {
           <div class="course-schedule">
             <div class="schedule-info">{{ corporateUser.addrCity }}</div>
             <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
-              @click="onMoveDetailPageClick(corporateUser.userId)">
+              @click="onMoveDetailPageClick(corporateUser.entId)">
           </div>
         </div>
       </div>
@@ -212,6 +211,7 @@ export default {
 .job-posting-info {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 10px;
 }

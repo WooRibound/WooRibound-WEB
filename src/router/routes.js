@@ -191,7 +191,7 @@ export const ROUTES = {
     },
     // [서비스 관리자] 기업 회원 상세 조회
     CORPORATE_USER_PROFILE_READONLY: {
-        path: '/admin/corporate-users/profile',
+        path: '/admin/corporate-users/profile/:id',
         name: 'CorporateUserProfileReadonly',
     }
 };
