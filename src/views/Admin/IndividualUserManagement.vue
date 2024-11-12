@@ -1,15 +1,16 @@
 <script>
-import {onMounted, ref} from "vue";
-import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
+import { onMounted, ref } from "vue";
+import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
-import {formatDate2} from "@/utils/format";
-import {ROUTES} from "@/router/routes";
-import {useRouter} from "vue-router";
-import {GENDER_TYPES} from "@/constants/genderTypes";
+import { formatDate2 } from "@/utils/format";
+import { ROUTES } from "@/router/routes";
+import { useRouter } from "vue-router";
+import { GENDER_TYPES } from "@/constants/genderTypes";
+import handleApiCall from '@/api/apiService';
 
 export default {
   name: "IndividualUserManagement",
-  methods: {formatDate2},
+  methods: { formatDate2 },
   computed: {
     GENDER_TYPES() {
       return GENDER_TYPES
@@ -27,68 +28,60 @@ export default {
     const filterTypes = ref("");
     const selectedProvince = ref("전체 지역");
 
-    const individualUserList = ref();
+    const individualUserList = ref([]);
     const individualUserCount = ref(0);
 
-    const searchJopPosting = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
-      console.log("검색어:", searchInput.value);
-    }
+    // 검색어 입력 후 Enter 키를 눌렀을 때 호출되는 함수
+    const searchWbUser = () => {
+      fetchIndividualUsers();
+    };
 
+    // 필터 선택 시 호출되는 함수
     const onFilterClick = (filterType) => {
       filterTypes.value = filterType;
       modalPopupStatue.value = true;
-    }
+    };
 
     const handleSelectFilter = (selected) => {
       if (selected.filterType === SEARCH_FILTER_TYPES.REGIONS) {
         selectedProvince.value = selected.filterValue;
+        // 필터 변경될 때마다 데이터 다시 가져오기
+        fetchIndividualUsers();
       }
-    }
+    };
 
-    const fetchIndividualUsers = () => {
-      const data = [
-        {
-          userId: 'USER001',
-          name: 'John Doe',
-          birthday: '1985-05-20',
-          gender: 'M',
-          phone: '010-1234-5678',
-          user_email: '2024-11-01',
-          addr_city: 'Seoul',
-          addr_province: 'Seoul',
-          job_point: 10,
-        },
-        {
-          userId: 'USER002',
-          name: 'John Doe2',
-          birthday: '1985-05-20',
-          gender: 'F',
-          phone: '010-1234-5678',
-          user_email: '2024-11-01',
-          addr_city: '서울광역시',
-          addr_province: '서울시',
-          job_point: 10,
-        },
-      ];
+    const fetchIndividualUsers = async () => {
+      try {
+        const params = {
+          userName: searchInput.value,  // 검색어
+          addrCity: selectedProvince.value === '전체 지역' ? null : selectedProvince.value,  // '전체 지역'일 경우 null 처리
+        };
 
-      individualUserList.value = data;
-      individualUserCount.value = individualUserList.value.length;
-    }
+        const response = await handleApiCall('get', '/admin/individual', null, {
+          params: params
+        });
 
+        // console.log(response.data)
+        individualUserList.value = response.data;
+        individualUserCount.value = response.data.length;
+
+      } catch (error) {
+        console.error("fetchIndividualUsers API 호출 오류:", error);
+      }
+    };
+
+    // 페이지가 로드될 때 기본 데이터를 가져옴
     onMounted(() => {
       fetchIndividualUsers();
-    })
+    });
 
+    // 사용자 상세 페이지로 이동하는 함수
     const onMoveDetailPageClick = (userId) => {
-      console.log("userId:", userId);
       router.push({
         name: ROUTES.READONLY_RESUME_PAGE.name,
-        params:{
-          id: userId
-        },
-      })
-    }
+        params: { id: userId },
+      });
+    };
 
     return {
       modalPopupStatue,
@@ -97,30 +90,25 @@ export default {
       selectedProvince,
       individualUserList,
       individualUserCount,
-      searchJopPosting,
+      searchWbUser,
       onFilterClick,
       handleSelectFilter,
       onMoveDetailPageClick,
     };
   }
-}
+};
 </script>
+
 
 <template>
   <main class="body">
     <div class="header">개인회원 관리</div>
     <div class="search-wrap">
-      <input
-          class="search-input"
-          placeholder="개인회원 이름을 입력하세요"
-          type="text"
-          v-model="searchInput"
-          @keyup.enter="searchJopPosting"
-      >
+      <input class="search-input" placeholder="개인회원 이름을 입력하세요" type="text" v-model="searchInput"
+        @keyup.enter="searchWbUser">
       <div class="filter-section">
-        <div class="filter-item"
-             @click="onFilterClick(SEARCH_FILTER_TYPES.REGIONS)"
-             :style="{ color: selectedProvince === '전체 지역' ? 'black' : '#024CAA' }">
+        <div class="filter-item" @click="onFilterClick(SEARCH_FILTER_TYPES.REGIONS)"
+          :style="{ color: selectedProvince === '전체 지역' ? 'black' : '#024CAA' }">
           {{ selectedProvince }}
         </div>
       </div>
@@ -133,21 +121,18 @@ export default {
           <div class="course-subtitle">{{ individualUser.addr_city }}</div>
           <div class="course-schedule">
             <div class="schedule-info">
-              {{ formatDate2(new Date(individualUser.birthday)) }}
+              {{ formatDate2(new Date(Date.parse(individualUser.birth))) }}
               ({{ individualUser.gender === GENDER_TYPES.M ? '남자' : '여자' }})
             </div>
-            <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(individualUser.userId)">
+            <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
+              @click="onMoveDetailPageClick(individualUser.userId)">
           </div>
         </div>
       </div>
     </div>
   </main>
-  <search-filter-modal
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
-      @select-filter="handleSelectFilter"
-      :filter-type="filterTypes"
-  />
+  <search-filter-modal v-if="modalPopupStatue" @close-modal="modalPopupStatue = false"
+    @select-filter="handleSelectFilter" :filter-type="filterTypes" />
 </template>
 
 <style scoped>
@@ -222,14 +207,16 @@ export default {
 
 .job-posting-list-top {
   display: flex;
-  justify-content: space-between; /* Aligns items on both ends */
+  justify-content: space-between;
+  /* Aligns items on both ends */
   align-items: center;
   margin-bottom: 5px;
 }
 
 .course-title {
   font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
+  margin-right: auto;
+  /* Ensures it stays on the left */
 }
 
 .course-subtitle {

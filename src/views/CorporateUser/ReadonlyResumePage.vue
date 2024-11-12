@@ -1,8 +1,9 @@
 <script>
 import { ref, onMounted } from "vue";
-import ModalPopup from "@/components/SingleButtonModal.vue";
-import {ROUTES} from "@/router/routes";
-import {useRouter} from "vue-router";
+import { ROUTES } from "@/router/routes";
+import { useRoute } from "vue-router";
+import handleApiCall from '@/api/apiService';
+
 export default {
   name: "ReadonlyResumePage",
   computed: {
@@ -10,61 +11,57 @@ export default {
       return ROUTES
     }
   },
-  components: {ModalPopup},
   setup() {
-    const router = useRouter();
+    const route = useRoute();
     const modalPopupStatue = ref(false);
 
     const resume = ref({
       userName: "",
+      jobPoint: 0,
+      phone: "",
+      addrCity: "",
+      addrProvince: "",
       userImg: "",
-      userPhoneNumber: "",
-      userEmail: "",
-      introduction: ""
+      resumeEmail: "",
+      userIntro: "",
+      jobList: [],
     });
 
     const photoPreview = ref(null); // 이미지 미리보기 URL 저장
 
-    const fetchResume = () => {
-      const data = {
-        userName: '이승준',
-        userPhoneNumber: '010-1111-1111',
-        userImg: require('@/assets/images/logo/id_photo_sample.png'), // 이미지 경로를 require로 수정
-        userEmail: 'test@example.com',
-        userAddr: '서울특별시 서울특별',
-        job_name: 'IT 엔지니어',
-        introduction: '자기소개 내용입니다.'
-      };
+    const fetchResume = async (userId) => {
+      try {
+        const response = await handleApiCall('get', `/admin/individual/detail`, null, {
+          params: { userId }
+        });
 
-      resume.value = data;
-      if (data.userImg) {
-        photoPreview.value = data.userImg;
+        console.log(response.data)
+        // API 응답 데이터로 resume 정보 업데이트
+        resume.value = response.data;
+        if (response.data.userImg) {
+          photoPreview.value = response.data.userImg;
+        }
+
+      } catch (error) {
+        console.error("fetchResume API 호출 오류:", error);
       }
     };
+
 
     const onUploadResumeClick = () => {
       modalPopupStatue.value = true;
     }
 
     onMounted(() => {
-      fetchResume();
+      const userId = route.params.id;  // 파라미터로 넘어온 userId 받기
+      fetchResume(userId);
     });
-
-    const onMoveResumePageClick = (userId) => {
-      router.push({
-        name: ROUTES.READONLY_RESUME_PAGE.name,
-        params: {
-          id: userId
-        }
-      })
-    }
 
     return {
       modalPopupStatue,
       resume,
       photoPreview,
       onUploadResumeClick,
-      onMoveResumePageClick
     };
   }
 };
@@ -82,45 +79,42 @@ export default {
         </div>
         <div class="wooribound-elevation-info">
           <img src="@/assets/images/icons/mountains.png" class="mountains-icon">
-          <div class="elevation-text">우바고도 : 1m</div>
+          <div class="elevation-text">우바고도 : {{ resume.jobPoint }}m</div>
         </div>
+
       </div>
       <!-- 이름 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="이름" v-model="resume.userName" readonly @click="onMoveResumePageClick(1)"/>
+          <input class="input-field" placeholder="이름" v-model="resume.userName" readonly
+            @click="onMoveResumePageClick(1)" />
         </div>
         <!-- 휴대폰번호 -->
         <div class="input-label">
-          <input class="input-field" placeholder="휴대폰 번호" type="tel" v-model="resume.userPhoneNumber" readonly/>
+          <input class="input-field" placeholder="휴대폰 번호" type="tel" v-model="resume.phone" readonly />
         </div>
         <!-- 이메일  -->
         <div class="input-label">
-          <input class="input-field" placeholder="이메일" type="email" v-model="resume.userEmail" readonly/>
+          <input class="input-field" placeholder="이메일" type="email" v-model="resume.resumeEmail" readonly />
         </div>
-        <!-- 주소  -->
+        <!-- 주소 -->
         <div class="input-label">
-          <input class="input-field" placeholder="주소" v-model="resume.userAddr" readonly/>
+          <input class="input-field" placeholder="주소" :value="resume.addrCity + ' ' + resume.addrProvince" readonly />
         </div>
-        <!-- 경력 직종  -->
+        <!-- 경력 직종 -->
         <div class="input-label">
           <span class="bold-text">경력 직종</span>
-          <input class="input-field" placeholder="주소" v-model="resume.job_name" readonly/>
+          <input class="input-field" :value="resume.jobList.length > 0 ? resume.jobList.join(' / ') : ''"
+            :placeholder="resume.jobList.length === 0 ? '없음' : ''" readonly />
         </div>
         <!-- 자기소개 글 입력 -->
         <div class="input-label">
           <span class="bold-text">자기소개 글</span>
-          <textarea class="textarea-field" placeholder="자기소개를 입력하세요" v-model="resume.introduction" readonly/>
+          <textarea class="textarea-field" placeholder="자기소개서" v-model="resume.userIntro" readonly />
         </div>
       </div>
     </div>
   </main>
-  <modal-popup
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
-      :modal-message="'이력서 등록(수정)이 완료되었습니다.'"
-      :router-path="ROUTES.MAIN.path"
-  />
 </template>
 
 <style scoped>
@@ -205,8 +199,9 @@ export default {
 
 .bold-text {
   font-weight: bold;
-  margin-left: 13px;
-  margin-bottom: 5px;
+  margin-left: 3px;
+  margin-bottom: 0px;
+  margin-top: 7px;
 }
 
 .textarea-field {
@@ -224,13 +219,17 @@ export default {
 
 .wooribound-elevation-info {
   display: flex;
-  flex-direction: column; /* 요소를 수직으로 배치 */
-  align-items: center; /* 수평 중앙 정렬 */
-  gap: 10px; /* 아이콘과 텍스트 사이 간격 */
+  flex-direction: column;
+  /* 요소를 수직으로 배치 */
+  align-items: center;
+  /* 수평 중앙 정렬 */
+  gap: 10px;
+  /* 아이콘과 텍스트 사이 간격 */
 }
 
 .mountains-icon {
-  width: 110px; /* 아이콘의 너비 */
+  width: 110px;
+  /* 아이콘의 너비 */
   height: 90px;
 }
 
@@ -239,5 +238,4 @@ export default {
   color: #413F42;
   font-weight: bold;
 }
-
 </style>
