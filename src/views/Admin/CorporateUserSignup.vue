@@ -51,11 +51,9 @@ export default {
       selectedEntId.value = entId;
       modalMessage.value = "회원가입을 반려하겠습니까?";
       isModalVisible.value = true;
-      console.log(entId, approvalStatus.value)
     };
 
     const confirmApproval = async () => {
-      console.log(approvalStatus.value)
       try {
         const response = await handleApiCall('post', '/admin/auth/join-approval', {
           approve: approvalStatus.value,
@@ -64,8 +62,11 @@ export default {
           'Content-Type': 'application/json'
         });
         console.log("승인/반려 처리 결과:", response);
+
         await fetchCorporateUsers(); // 목록 갱신
+
         closeModal(); // 모달 닫기
+
       } catch (error) {
         console.error("confirmApproval API 호출 오류:", error);
       }
