@@ -97,6 +97,11 @@ const router = createRouter({
             component: () => import("@/views/Common/UserDeleteSuccess.vue"),
         },
         {
+            path: ROUTES.CORPORATE_DELETE_SUCCESS.path,
+            name: ROUTES.CORPORATE_DELETE_SUCCESS.name,
+            component: () => import("@/views/Common/CorporateDeleteSuccess.vue"),
+        },
+        {
             path: ROUTES.CORPORATE_USER_ACCOUNT_MENU.path,
             name: ROUTES.CORPORATE_USER_ACCOUNT_MENU.name,
             component: () => import("@/views/CorporateUser/CorporateUserAccountMenu.vue"),
