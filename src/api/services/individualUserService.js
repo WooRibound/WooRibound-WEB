@@ -76,3 +76,25 @@ export const fetchWisdomDetail = async (knowhowId) => {
   }
 }
 
+// 알림 메시지 전체 목록 조회
+export const fetchAllNotification = async () => {
+  try {
+    const response = await handleApiCall('get', `/individual/notifications`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch join info:', error);
+    throw error;
+  }
+}
+
+// 알림 메세지 읽음 표시 업데이트
+export const updateNotification = async (notiId) => {
+  try {
+    const response = await handleApiCall('put', `/individual/notifications/read?notiId=${notiId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch join info:', error);
+    throw error;
+  }
+}
+
