@@ -1,15 +1,16 @@
 <script>
-import {onMounted, ref} from "vue";
-import {ROUTES} from "@/router/routes";
-import {useRoute} from "vue-router";
-import {fetchWisdomDetail} from "@/api/services/individualUserService";
-import {formatDate2} from "../../utils/format";
+import { onMounted, ref } from "vue";
+import { ROUTES } from "@/router/routes";
+import { useRoute } from "vue-router";
+import { fetchWisdomDetail } from "@/api/services/individualUserService";
+import { formatDate2 } from "../../utils/format";
 import ModalPopup from "@/components/SingleButtonModal.vue";
+import handleApiCall from '@/api/apiService';
 
 export default {
   name: "WisdomExploreDetail",
-  components: {ModalPopup},
-  methods: {formatDate2},
+  components: { ModalPopup },
+  methods: { formatDate2 },
   computed: {
     ROUTES() {
       return ROUTES
@@ -17,14 +18,16 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const postId = route.params.id
-    const isDelete = route.query.delete
+    const wisdomId = route.params.id;
+    const isDelete = route.query.delete;
 
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
     const modalMessage = ref('');
 
-    const warningCount = ref(0);
+    const reportedCnt = ref(0);
+    const userFullId = ref('');
+    const userFullName = ref('');
 
     const onReportClick = () => {
       // todo API 구현 시 아래에 로직 구현 하기
@@ -41,7 +44,7 @@ export default {
 
     const fetchWisdom = async () => {
       try {
-        const response = await fetchWisdomDetail(postId);
+        const response = await fetchWisdomDetail(wisdomId);
         wisdom.value = {
           userName: response.userName,
           knowhowId: response.knowhowId,
@@ -50,14 +53,33 @@ export default {
           knowhowContent: response.knowhowContent,
           uploadDate: response.uploadDate,
         };
+        if (isDelete) {
+          await fetchAdminKnowhow();
+        }
       } catch (error) {
         console.error("Failed to fetch wisdom details:", error);
       }
     }
 
+    const fetchAdminKnowhow = async () => {
+      try {
+        const response = await handleApiCall('get', `/admin/knowhow/detail`, null, {
+          params: {
+            knowhowId: wisdomId
+          }
+        });
+        userFullId.value = response.data.userId;
+        userFullName.value = response.data.userName;
+        reportedCnt.value = response.data.reportedCnt;
+
+      } catch (error) {
+        console.error("Failed to fetch reported count:", error);
+      }
+    };
+
     onMounted(() => {
       fetchWisdom();
-    })
+    });
 
     const onDeletePostClick = (knowhowId) => {
       // todo <관리자용 삭제 버튼> API 구현시 아래 로직 구현
@@ -70,7 +92,9 @@ export default {
       aiModalPopupStatue,
       modalMessage,
       wisdom,
-      warningCount,
+      reportedCnt, 
+      userFullId,
+      userFullName,
       onReportClick,
       onDeletePostClick,
     };
@@ -88,12 +112,16 @@ export default {
       </div>
       <div class="report-container" v-if="isDelete" @click="onReportClick">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
-        경고 {{ warningCount }}회
+        신고 {{ reportedCnt }}회
       </div>
     </div>
     <div class="author-info">
-      <div class="author">작성자: {{ wisdom.userName }}</div>
-      <div class="date">{{ formatDate2(wisdom.uploadDate)}}</div>
+      <div class="author">
+        작성자:
+        <span v-if="!isDelete">{{ wisdom.userName }}</span>
+        <span v-else>{{ userFullId }} ({{ userFullName }})</span>
+      </div>
+      <div class="date">{{ formatDate2(wisdom.uploadDate) }}</div>
     </div>
     <div class="content">
       <!-- 직종 선택 -->
@@ -110,17 +138,13 @@ export default {
       </div>
       <!-- 내용 입력 -->
       <div class="input-label">
-        <textarea class="textarea-field" placeholder="" v-model="wisdom.knowhowContent" readonly/>
+        <textarea class="textarea-field" placeholder="" v-model="wisdom.knowhowContent" readonly />
       </div>
     </div>
     <div class="delete-button" v-if="isDelete" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
   </main>
-  <modal-popup
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
-      :modal-message="modalMessage"
-      :router-path="ROUTES.WISDOM_MANAGEMENT.path"
-  />
+  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="modalMessage"
+    :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
 
 <style scoped>
@@ -134,29 +158,39 @@ export default {
 
 .header {
   display: flex;
-  justify-content: space-between; /* 두 요소를 양 끝에 배치 */
-  align-items: center; /* 세로 정렬을 가운데로 */
+  justify-content: space-between;
+  /* 두 요소를 양 끝에 배치 */
+  align-items: center;
+  /* 세로 정렬을 가운데로 */
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
 .author-info {
-  display: flex; /* Flexbox 사용 */
-  justify-content: space-between; /* 두 요소를 수평으로 나란히 배치 */
-  align-items: center; /* 세로 정렬 */
-  margin-bottom: 15px; /* Author info section margin */
-  font-size: 13px; /* Font size for both author and date */
-  color: #413F42; /* Color for the text */
+  display: flex;
+  /* Flexbox 사용 */
+  justify-content: space-between;
+  /* 두 요소를 수평으로 나란히 배치 */
+  align-items: center;
+  /* 세로 정렬 */
+  margin-bottom: 15px;
+  /* Author info section margin */
+  font-size: 13px;
+  /* Font size for both author and date */
+  color: #413F42;
+  /* Color for the text */
 }
 
 .author {
-  font-weight: bold; /* Bold for the author's name */
+  font-weight: bold;
+  /* Bold for the author's name */
   margin-left: 6px;
 }
 
 .date {
-  color: #999; /* Lighter color for the date */
+  color: #999;
+  /* Lighter color for the date */
   margin-right: 8px;
 }
 
@@ -185,7 +219,8 @@ export default {
 .input-field {
   width: 100%;
   padding: 10px;
-  margin: 10px 10px 10px 0; /* 오른쪽 여백 추가 */
+  margin: 10px 10px 10px 0;
+  /* 오른쪽 여백 추가 */
   box-sizing: border-box;
   font-size: 16px;
   border-radius: 8px;
@@ -208,24 +243,36 @@ export default {
 
 .report-container {
   display: flex;
-  align-items: center; /* 아이콘과 텍스트를 수직 정렬 */
-  cursor: pointer; /* 마우스 커서를 포인터로 변경 */
-  color: #FF4545; /* 링크 색상 변경 */
-  font-size: 16px; /* 글자 크기 설정 */
-  border-radius: 8px; /* 둥근 모서리 */
-  padding: 5px 10px; /* 패딩 추가 */
-  transition: background-color 0.3s, color 0.3s; /* 호버 효과 추가 */
+  align-items: center;
+  /* 아이콘과 텍스트를 수직 정렬 */
+  cursor: pointer;
+  /* 마우스 커서를 포인터로 변경 */
+  color: #FF4545;
+  /* 링크 색상 변경 */
+  font-size: 16px;
+  /* 글자 크기 설정 */
+  border-radius: 8px;
+  /* 둥근 모서리 */
+  padding: 5px 10px;
+  /* 패딩 추가 */
+  transition: background-color 0.3s, color 0.3s;
+  /* 호버 효과 추가 */
 }
 
 .report-container:hover {
-  background-color: #FF4545; /* 호버 시 배경색 변경 */
-  color: white; /* 호버 시 텍스트 색상 변경 */
+  background-color: #FF4545;
+  /* 호버 시 배경색 변경 */
+  color: white;
+  /* 호버 시 텍스트 색상 변경 */
 }
 
 .report-container img {
-  margin-right: 5px; /* 아이콘과 텍스트 사이 여백 추가 */
-  width: 18px; /* 아이콘 크기 조정 */
-  height: auto; /* 비율 유지 */
+  margin-right: 5px;
+  /* 아이콘과 텍스트 사이 여백 추가 */
+  width: 18px;
+  /* 아이콘 크기 조정 */
+  height: auto;
+  /* 비율 유지 */
   margin-bottom: 5px;
 }
 
