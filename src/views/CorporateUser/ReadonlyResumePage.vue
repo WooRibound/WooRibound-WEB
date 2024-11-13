@@ -78,8 +78,7 @@ export default {
       <!-- 이름 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="이름" v-model="resume.userName" readonly
-            @click="onMoveResumePageClick(1)" />
+          <input class="input-field" placeholder="이름" v-model="resume.userName" readonly />
         </div>
         <!-- 휴대폰번호 -->
         <div class="input-label">
