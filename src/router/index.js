@@ -22,6 +22,11 @@ const router = createRouter({
             component: () => import("@/views/Common/AdminMain.vue"),
         },
         {
+            path: ROUTES.NOTIFICATION_PAGE.path,
+            name: ROUTES.NOTIFICATION_PAGE.name,
+            component: () => import("@/views/IndividualUser/NotificationPage.vue"),
+        },
+        {
             path: ROUTES.JOB_MENU.path,
             name: ROUTES.JOB_MENU.name,
             component: () => import("@/views/IndividualUser/JobMenu.vue"),

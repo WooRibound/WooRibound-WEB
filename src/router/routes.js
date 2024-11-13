@@ -14,6 +14,11 @@ export const ROUTES = {
         path: "/jobs/menu",
         name: "JobMenu",
     },
+    // [개인회원] 알림 메세지
+    NOTIFICATION_PAGE: {
+        path: "/individual-user/notification",
+        name: "NotificationPage",
+    },
     // [개인회원] 지원 현황
     JOB_APPLICATION_STATUS: {
         path: "/jobs/application-status",

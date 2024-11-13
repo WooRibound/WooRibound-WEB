@@ -26,6 +26,11 @@ export default {
     const isVisible = computed(() => props.fullScreenMenuState);
     const loginText = computed(() => (userStore.isLoggedIn ? "로그아웃" : "로그인"));
 
+    const onMoveToMainClick = () => {
+      router.push(ROUTES.MAIN);
+      emit('close-menu');
+    }
+
     const onCloseFullScreenMenuClick = () => {
       emit('close-menu');
     }
@@ -33,7 +38,7 @@ export default {
     const onClickMoveLogin = () => {
       if (!userStore.isLoggedIn) {
         onCloseFullScreenMenuClick();
-        router.push("/login");
+        router.push(ROUTES.LOGIN);
       } else {
         logout();
         console.log("로그아웃");
@@ -43,6 +48,7 @@ export default {
     return {
       isVisible,
       loginText,
+      onMoveToMainClick,
       onCloseFullScreenMenuClick,
       onClickMoveLogin,
       userStore,
@@ -55,7 +61,7 @@ export default {
 <template>
   <div v-if="isVisible">
     <header class="header">
-      <img src="../../assets/images/icons/home.png" class="home-image">
+      <img src="../../assets/images/icons/home.png" class="home-image" @click="onMoveToMainClick">
       <img src="../../assets/images/icons/close.png" class="close-icon" @click="onCloseFullScreenMenuClick">
     </header>
     <div class="top-bar">
@@ -169,7 +175,6 @@ export default {
   background-color: #ffffff;      /* 배경 흰색 */
   padding: 0 10px;                /* 좌우 10px 패딩 */
   height: 60px;                   /* 일반적인 헤더 높이 */
-  //box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .home-image {
