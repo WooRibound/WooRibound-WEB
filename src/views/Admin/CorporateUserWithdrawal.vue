@@ -22,7 +22,7 @@ export default {
 
     const fetchCorporateUsers = async () => {
       try {
-        const response = await handleApiCall('get', '/admin/enterprise/delete-request', {
+        const response = await handleApiCall('get', '/admin/enterprise/delete-request', null,{
           params: {
             entName: searchInput.value
           }

@@ -22,7 +22,7 @@ export default {
 
     const fetchCorporateUsers = async () => {
       try {
-        const response = await handleApiCall('get', '/admin/enterprise/join-request', {
+        const response = await handleApiCall('get', '/admin/enterprise/join-request', null, {
           params: {
             entName: searchInput.value
           }
@@ -61,6 +61,7 @@ export default {
         }, {
           'Content-Type': 'application/json'
         });
+
         console.log("승인/반려 처리 결과:", response);
 
         await fetchCorporateUsers(); // 목록 갱신
