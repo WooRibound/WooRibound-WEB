@@ -1,15 +1,16 @@
 <script>
 import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { fetchWisdomDetail } from "@/api/services/individualUserService";
 import { formatDate2 } from "../../utils/format";
 import ModalPopup from "@/components/SingleButtonModal.vue";
+import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import handleApiCall from '@/api/apiService';
 
 export default {
   name: "WisdomExploreDetail",
-  components: { ModalPopup },
+  components: { ModalPopup, TwoButtonModal },
   methods: { formatDate2 },
   computed: {
     ROUTES() {
@@ -18,6 +19,8 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();  
+
     const wisdomId = route.params.id;
     const isDelete = route.query.delete;
 
@@ -57,7 +60,7 @@ export default {
           await fetchAdminKnowhow();
         }
       } catch (error) {
-        console.error("Failed to fetch wisdom details:", error);
+        console.error("지혜 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
     }
 
@@ -73,7 +76,7 @@ export default {
         reportedCnt.value = response.data.reportedCnt;
 
       } catch (error) {
-        console.error("Failed to fetch reported count:", error);
+        console.error("신고횟수를 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
     };
 
@@ -81,10 +84,31 @@ export default {
       fetchWisdom();
     });
 
-    const onDeletePostClick = (knowhowId) => {
-      // todo <관리자용 삭제 버튼> API 구현시 아래 로직 구현
-      console.log("knowhowId:", knowhowId);
-    }
+    const showDeleteModal = ref(false);
+
+    const onDeletePostClick = () => {
+      modalMessage.value = "지식을 삭제하시겠습니까?";
+      showDeleteModal.value = true;
+    };
+
+    const confirmDelete = async () => {
+      try {
+        const response = await handleApiCall('post', `/admin/knowhow/delete?knowhowId=${wisdom.value.knowhowId}`, null, {
+          'Content-Type': 'application/json'
+        });
+        console.log("삭제 결과:", response);
+
+        closeModal();
+
+      } catch (error) {
+        console.error("지혜를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+      }
+    };
+
+    const closeModal = () => {
+      showDeleteModal.value = false;
+      router.push(ROUTES.WISDOM_MANAGEMENT.path);
+    };
 
     return {
       modalPopupStatue,
@@ -92,11 +116,14 @@ export default {
       aiModalPopupStatue,
       modalMessage,
       wisdom,
-      reportedCnt, 
+      reportedCnt,
       userFullId,
       userFullName,
       onReportClick,
       onDeletePostClick,
+      showDeleteModal,
+      confirmDelete,
+      closeModal
     };
   }
 }
@@ -142,10 +169,14 @@ export default {
       </div>
     </div>
     <div class="delete-button" v-if="isDelete" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
+
+    <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
+      @close-modal="closeModal" @confirm="confirmDelete" />
   </main>
-  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="modalMessage"
+  <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
     :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
+
 
 <style scoped>
 .body {
