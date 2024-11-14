@@ -64,7 +64,7 @@ export default {
     });
 
     const showDeleteModal = ref(false);
-    
+
     const onApplyClick = (postId) => {
       console.log("postId:", postId);
     };
@@ -83,7 +83,7 @@ export default {
           }
         });
         console.log("삭제 결과:", response);
-        
+
         closeModal(true);
 
       } catch (error) {
@@ -165,20 +165,16 @@ export default {
 .company-logo {
   height: 300px;
   border-radius: 10px 10px 0 0;
-  /* 꼭지점 둥글게 */
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f1f1f1;
-  /* 배경색으로 지정 */
 }
 
 .company-logo img {
   max-height: 100%;
-  /* 높이에 맞춰 이미지 크기 조절 */
   max-width: 100%;
-  /* 너비에 맞춰 이미지 크기 조절 */
 }
 
 .job-posting-info {
@@ -198,42 +194,42 @@ export default {
 }
 
 .job-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
 }
 
 .application-period {
-  font-size: 16px;
+  font-size: 18px;
+  margin-top: 20px;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
 .application-dates {
-  font-size: 16px;
+  font-size: 18px;
   color: #333;
-  /* 기존 색상과 통일 */
   margin-bottom: 10px;
-  /* 아래쪽 여백 */
 }
 
 .company-address-label {
-  font-size: 16px;
-  margin-top: 10px;
-  /* 위쪽 여백 추가 */
+  font-size: 18px;
+  margin-top: 20px;
   font-weight: bold;
 }
 
 .company-address {
-  font-size: 16px;
+  font-size: 18px;
   color: #333;
 }
 
 .delete-button {
   width: 90%;
+  max-width: 400px;
   padding: 10px;
-  margin-top: 20px;
+  margin: 20px auto 0 auto;
+  /* 가운데 정렬을 위한 속성 추가 */
   background-color: #024CAA;
   color: white;
   text-align: center;
