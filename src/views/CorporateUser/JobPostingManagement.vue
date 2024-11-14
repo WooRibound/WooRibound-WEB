@@ -3,105 +3,99 @@ import {useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
 import {formatDate1} from "@/utils/format";
 import {onMounted, ref} from "vue";
+import {fetchMyPostingList} from "@/api/services/corporateUserService";
 
 export default {
   name: "JobPostingManagement",
-  methods: { formatDate: formatDate1 },
+  methods: {formatDate: formatDate1},
   setup() {
     const router = useRouter();
 
-    const jopPostingCount = ref(0);
+    const jobpostingCount = ref(0);
     const jobPostingList = ref();
-    const applicantCount = ref(3);
+    const applicantCount = ref(0);
+
     const onRegisterJobPostingClick = () => {
       router.push(ROUTES.JOB_POSTING_REGISTER.path);
-    }
+    };
 
-    const fetchJopPosting = () => {
-      // todo 채용공고 리스트 API 구현 시 아래에 로직 구현 하기
-      // viewType이 career, new, all에 따라 데이터 불러오기
-
-      const data = [
-        {
-          postId: 1,
-          entId: 1,
-          postTitle: '2024년 하반기 시니어 개발자 모집',
-          entName: '우리 바운드 (주)',
-          jobName: '서비스',
-          postImg: require('@/assets/images/logo/company_sample.png'), // 이미지 경로를 require로 수정
-          startDate: '2024-11-01',
-          endDate: '2024-11-15',
-          postState: 'ACTIVE',
-        },
-      ];
-
-      jobPostingList.value = data;
-      jopPostingCount.value = jobPostingList.value.length;
-    }
+    const fetchJobPosting = async () => {
+      try {
+        console.debug("Fetching job postings");
+        const response = await fetchMyPostingList();
+        console.debug("API Response:", response);
+        jobPostingList.value = response.data || [];
+        jobpostingCount.value = jobPostingList.value.length;
+      } catch (error) {
+        console.error("[fetchJobPosting] Error:", error);
+        jobPostingList.value = [];
+      }
+    };
 
     onMounted(() => {
-      fetchJopPosting();
-    })
+      fetchJobPosting();
+    });
 
     const recruitmentPhase = (postState) => {
       switch (postState) {
-        case 'PENDING':
-          return '오픈 전';
-        case 'ACTIVE':
-          return '채용 중';
-        case 'CLOSED':
-          return '채용 마감';
+        case "PENDING":
+          return "오픈 전";
+        case "ACTIVE":
+          return "채용 중";
+        case "CLOSED":
+          return "채용 마감";
         default:
-          return '';
+          return "";
       }
-    }
+    };
 
     const recruitmentPhaseClass = (postState) => {
       switch (postState) {
-        case 'PENDING':
-          return 'phase-open';
-        case 'ACTIVE':
-          return 'phase-in-progress';
-        case 'CLOSED':
-          return 'phase-closed';
+        case "PENDING":
+          return "phase-open";
+        case "ACTIVE":
+          return "phase-in-progress";
+        case "CLOSED":
+          return "phase-closed";
         default:
-          return '';
+          return "";
       }
-    }
+    };
 
     const onMoveDetailPageClick = (postId) => {
       console.log("postId:", postId);
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
-        params:{
-          id: postId
+        params: {
+          id: postId,
         },
-      })
-    }
+      });
+    };
 
     const onMoveApplicantDetailPageClick = (postId) => {
       console.log("postId:", postId);
       router.push({
         name: ROUTES.APPLICANT_DETAIL_PAGE.name,
-        params:{
-          id: postId
+        params: {
+          id: postId,
         },
-      })
-    }
+      });
+    };
 
     return {
-      jopPostingCount,
+      jobpostingCount,
       jobPostingList,
       applicantCount,
       onRegisterJobPostingClick,
       recruitmentPhase,
       recruitmentPhaseClass,
       onMoveDetailPageClick,
-      onMoveApplicantDetailPageClick
+      onMoveApplicantDetailPageClick,
     };
-  }
-}
+  },
+};
 </script>
+
 
 <template>
   <main class="body">
@@ -110,19 +104,27 @@ export default {
       <div class="header-register-job" @click="onRegisterJobPostingClick">공고 등록</div>
     </div>
     <div class="job-posting-wrap">
-      <div class="job-posting-info">{{ jopPostingCount }}건</div>
+      <div class="job-posting-info">{{ jobpostingCount }}건</div>
       <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting">
         <div class="job-posting-list-top">
           <div class="course-title">{{ jobPosting.entName }}</div>
-          <div :class="['recruitment-phase', recruitmentPhaseClass(jobPosting.postState)]">{{ recruitmentPhase(jobPosting.postState) }}</div>
+          <div :class="['recruitment-phase', recruitmentPhaseClass(jobPosting.postState)]">
+            {{ recruitmentPhase(jobPosting.postState) }}
+          </div>
         </div>
         <div class="job-posting-list-middle">
           <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
-          <div class="applicants-info" @click="onMoveApplicantDetailPageClick(jobPosting.postId)">{{ applicantCount }}명</div>
+          <div class="applicants-info" @click="onMoveApplicantDetailPageClick(jobPosting.postId)">{{
+              applicantCount
+            }}명
+          </div>
         </div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ formatDate(new Date(jobPosting.startDate)) }} ~ {{ formatDate(new Date(jobPosting.endDate)) }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(jobPosting.postId)">
+          <div class="schedule-info">{{ formatDate(new Date(jobPosting.startDate)) }} ~
+            {{ formatDate(new Date(jobPosting.endDate)) }}
+          </div>
+          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
+               @click="onMoveDetailPageClick(jobPosting.postId)">
         </div>
       </div>
     </div>

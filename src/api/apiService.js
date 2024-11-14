@@ -95,7 +95,6 @@ async function refreshAccessToken() {
         refreshTokenRequest = null;
     }
 }
-
 const handleApiCall = async (method, url, data = null, options = {}) => {
     const loadingStore = useLoadingStore();
     loadingStore.setLoading(true);
@@ -107,9 +106,14 @@ const handleApiCall = async (method, url, data = null, options = {}) => {
             ...options,
             withCredentials: true,
             validateStatus: function (status) {
-                return status >= 200 && status < 400; // 200-499 상태 코드는 에러로 처리하지 않음
+                return status >= 200 && status < 400; // 200-399 상태 코드는 에러로 처리하지 않음
             }
         };
+
+        // GET 요청에서 request 파라미터가 존재하는 경우
+        if (method.toLowerCase() === 'get' && data) {
+            config.params = { ...data }; // data 객체를 params에 직접 매핑
+        }
 
         switch (method.toLowerCase()) {
             case 'post':
@@ -153,5 +157,65 @@ const handleApiCall = async (method, url, data = null, options = {}) => {
         loadingStore.setLoading(false);
     }
 };
+
+
+//
+// const handleApiCall = async (method, url, data = null, options = {}) => {
+//     const loadingStore = useLoadingStore();
+//     loadingStore.setLoading(true);
+//
+//     try {
+//         const api = apiInstance();
+//         let response;
+//         const config = {
+//             ...options,
+//             withCredentials: true,
+//             validateStatus: function (status) {
+//                 return status >= 200 && status < 400; // 200-499 상태 코드는 에러로 처리하지 않음
+//             }
+//         };
+//
+//         switch (method.toLowerCase()) {
+//             case 'post':
+//                 response = await api.post(url, data, config);
+//                 break;
+//             case 'get':
+//                 response = await api.get(url, config);
+//                 break;
+//             case 'put':
+//                 response = await api.put(url, data, config);
+//                 break;
+//             case 'delete':
+//                 response = await api.delete(url, config);
+//                 break;
+//             default:
+//                 throw new Error(`Unsupported method: ${method}`);
+//         }
+//
+//         return response;
+//     } catch (error) {
+//         console.error('API call failed:', {
+//             method,
+//             url,
+//             error: {
+//                 message: error.message,
+//                 response: error.response,
+//                 request: error.request
+//             }
+//         });
+//
+//         // 에러 객체 구조화
+//         const errorResponse = {
+//             status: error.response?.status,
+//             data: error.response?.data,
+//             headers: error.response?.headers,
+//             message: error.message
+//         };
+//
+//         throw errorResponse;
+//     } finally {
+//         loadingStore.setLoading(false);
+//     }
+// };
 
 export default handleApiCall;
