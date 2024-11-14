@@ -57,7 +57,6 @@ export default {
         const response = await handleApiCall('get', '/admin/jobposting', null, {
           params: params
         });
-
         jobPostingList.value = response.data;
         jobPostingCount.value = jobPostingList.value.length;
       } catch (error) {
@@ -68,6 +67,32 @@ export default {
     onMounted(() => {
       fetchJobPostings();
     })
+
+    const recruitmentPhase = (postState) => {
+      switch (postState) {
+        case 'PENDING':
+          return '오픈 전';
+        case 'ACTIVE':
+          return '채용 중';
+        case 'CLOSED':
+          return '채용 마감';
+        default:
+          return '';
+      }
+    }
+
+    const recruitmentPhaseClass = (postState) => {
+      switch (postState) {
+        case 'PENDING':
+          return 'phase-open';
+        case 'ACTIVE':
+          return 'phase-in-progress';
+        case 'CLOSED':
+          return 'phase-closed';
+        default:
+          return '';
+      }
+    }
 
     const onMoveDetailPageClick = (postId) => {
       console.log("postId:", postId);
@@ -91,6 +116,8 @@ export default {
       jobPostingList,
       jobPostingCount,
       searchJobPosting,
+      recruitmentPhase,
+      recruitmentPhaseClass,
       onFilterClick,
       handleSelectFilter,
       onMoveDetailPageClick,
@@ -119,8 +146,13 @@ export default {
       <div class="job-posting-wrap">
         <div class="job-posting-info">{{ jobPostingCount }}건</div>
         <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting.entId">
-          <div class="course-title">{{ jobPosting.postTitle }}</div>
-          <div class="course-subtitle">{{ jobPosting.entName }}</div>
+          <div class="job-posting-header">
+            <div class="course-title">{{ jobPosting.entName }}</div>
+            <div :class="['process-state', recruitmentPhaseClass(jobPosting.postState)]">
+              {{ recruitmentPhase(jobPosting.postState) }}
+            </div>
+          </div>
+          <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
           <div class="course-schedule">
             <div class="schedule-info">{{ jobPosting.entAddr1 }}</div>
             <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
@@ -266,6 +298,39 @@ export default {
 
   .schedule-info {
     font-size: 12px;
+  }
+
+  .job-posting-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .course-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .process-state {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    width: 70px;
+  }
+
+  .phase-open {
+    background-color: #5B99C2;
+  }
+
+  .phase-in-progress {
+    background-color: #FF9800;
+  }
+
+  .phase-closed {
+    background-color: #686D76;
   }
 }
 </style>
