@@ -11,32 +11,29 @@ export default {
   components: { TwoButtonModal },
   computed: {
     ROUTES() {
-      return ROUTES
+      return ROUTES;
     }
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const postId = route.params.id
-    const isDelete = route.query.delete
+    const postId = route.params.id;
+    const isDelete = route.query.delete;
 
     const modalPopupStatue = ref(false);
     const modalMessage = ref('');
 
-
     const formattedStartDate = computed(() => formatDate1(jobposting.value.startDate));
     const formattedEndDate = computed(() => formatDate1(jobposting.value.endDate));
 
-
     const onApplyClick = (postId) => {
-      // todo 채용 공고 지원하기 API 연동하기
       console.log("postId:", postId);
-    }
+    };
 
     const onDeletedClick = () => {
-      modalMessage.value = "지식을 삭제하시겠습니까?";
+      modalMessage.value = "채용공고를 삭제하시겠습니까?";
       showDeleteModal.value = true;
-    }
+    };
 
     const jobposting = ref({
       entName: "",
@@ -47,7 +44,7 @@ export default {
       jobName: "",
       entAddr1: "",
       entAddr2: ""
-    })
+    });
 
     const fetchJobPosting = async () => {
       try {
@@ -67,44 +64,47 @@ export default {
           entAddr2: response.data.entAddr2,
         };
 
-        console.log(response)
-        console.log(jobposting.value.entName)
+        console.log(response);
+        console.log(jobposting.value.entName);
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
-    }
+    };
 
     onMounted(() => {
       fetchJobPosting();
-    })
+    });
 
     const showDeleteModal = ref(false);
 
     const confirmDelete = async () => {
       try {
-        const response = await handleApiCall('post', '/admin/jobposting/delete',
-          {
-            postId: postId
-          },
-          {
-            headers: { 'Content-Type': 'application/json' }
+        const response = await handleApiCall('post', '/admin/jobposting/delete', null, {
+          params: { postId: postId },
+          headers: {
+            'Content-Type': 'application/json',
           }
-        );
-
+        });
         console.log("삭제 결과:", response);
-        closeModal();
+
+        // 확인 버튼 클릭 시, 삭제 후 페이지 리다이렉트
+        closeModal(true);
 
       } catch (error) {
         console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
       }
     };
 
-    const closeModal = () => {
+    const closeModal = (shouldRedirect = false) => {
       showDeleteModal.value = false;
-      router.push(ROUTES.JOB_POSTING_MANAGEMENT.path);
+      if (shouldRedirect) {
+        router.push(ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path);
+      }
     };
 
     return {
+      showDeleteModal,
+      modalMessage,
       modalPopupStatue,
       formattedStartDate,
       formattedEndDate,
@@ -113,10 +113,11 @@ export default {
       jobposting,
       onApplyClick,
       onDeletedClick,
-      confirmDelete
+      confirmDelete,
+      closeModal
     };
   }
-}
+};
 </script>
 
 <template>
