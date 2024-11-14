@@ -19,13 +19,12 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const router = useRouter();  
+    const router = useRouter();
 
     const wisdomId = route.params.id;
     const isDelete = route.query.delete;
 
     const modalPopupStatue = ref(false);
-    const aiModalPopupStatue = ref(false);
     const modalMessage = ref('');
 
     const reportedCnt = ref(0);
@@ -113,7 +112,6 @@ export default {
     return {
       modalPopupStatue,
       isDelete,
-      aiModalPopupStatue,
       modalMessage,
       wisdom,
       reportedCnt,

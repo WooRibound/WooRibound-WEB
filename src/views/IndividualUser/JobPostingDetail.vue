@@ -1,42 +1,119 @@
 <script>
-import { ref,computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { formatDate1 } from "@/utils/format";
-import {useRoute} from "vue-router";
+import { ROUTES } from "@/router/routes";
+import { useRoute, useRouter } from "vue-router";
+import TwoButtonModal from '@/components/TwoButtonModal.vue';
+import handleApiCall from '@/api/apiService';
 
 export default {
   name: "JobPostingDetail",
+  components: { TwoButtonModal },
+  computed: {
+    ROUTES() {
+      return ROUTES
+    }
+  },
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const postId = route.params.id
     const isDelete = route.query.delete
-    // todo postId값으로 채용공고 상세 API 구현 후 아래에 로직 구현
-    console.log(postId);
 
-    const entName = ref("우리바운드 (주)");
-    const postTitle = ref("2024 하반기 시니어 개발자 모집");
-    const postImg = require("@/assets/images/logo/company_sample.png");
-    const startDate = ref(new Date('2024-11-01'));  // 채용 시작일
-    const endDate = ref(new Date('2024-11-15'));    // 채용 마감일
-    const entAddr = ref("서울특별시 강서구 사암대로 179 상암타워");
+    const modalPopupStatue = ref(false);
+    const modalMessage = ref('');
 
-    const formattedStartDate = computed(() => formatDate1(startDate.value));
-    const formattedEndDate = computed(() => formatDate1(endDate.value));
 
-    const onDeletedClick = (postId) => {
-      // todo API 구현 시 아래에 로직 구현 하기
+    const formattedStartDate = computed(() => formatDate1(jobposting.value.startDate));
+    const formattedEndDate = computed(() => formatDate1(jobposting.value.endDate));
+
+
+    const onApplyClick = (postId) => {
+      // todo 채용 공고 지원하기 API 연동하기
       console.log("postId:", postId);
     }
 
+    const onDeletedClick = () => {
+      modalMessage.value = "지식을 삭제하시겠습니까?";
+      showDeleteModal.value = true;
+    }
+
+    const jobposting = ref({
+      entName: "",
+      postTitle: "",
+      postImg: "",
+      startDate: "",
+      endDate: "",
+      jobName: "",
+      entAddr1: "",
+      entAddr2: ""
+    })
+
+    const fetchJobPosting = async () => {
+      try {
+        const response = await handleApiCall('get', '/individualuser/jobposting/detail', null, {
+          params: {
+            postId: postId
+          }
+        });
+        jobposting.value = {
+          entName: response.data.entName,
+          postTitle: response.data.postTitle,
+          postImg: response.data.postImg,
+          startDate: response.data.startDate,
+          endDate: response.data.endDate,
+          jobName: response.data.jobName,
+          entAddr1: response.data.entAddr1,
+          entAddr2: response.data.entAddr2,
+        };
+
+        console.log(response)
+        console.log(jobposting.value.entName)
+      } catch (error) {
+        console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
+      }
+    }
+
+    onMounted(() => {
+      fetchJobPosting();
+    })
+
+    const showDeleteModal = ref(false);
+
+    const confirmDelete = async () => {
+      try {
+        const response = await handleApiCall('post', '/admin/jobposting/delete',
+          {
+            postId: postId
+          },
+          {
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+
+        console.log("삭제 결과:", response);
+        closeModal();
+
+      } catch (error) {
+        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+      }
+    };
+
+    const closeModal = () => {
+      showDeleteModal.value = false;
+      router.push(ROUTES.JOB_POSTING_MANAGEMENT.path);
+    };
+
     return {
-      isDelete,
-      postId,
-      entName,
-      postTitle,
-      postImg,
+      modalPopupStatue,
       formattedStartDate,
       formattedEndDate,
-      entAddr,
+      isDelete,
+      postId,
+      jobposting,
+      onApplyClick,
       onDeletedClick,
+      confirmDelete
     };
   }
 }
@@ -47,19 +124,25 @@ export default {
     <div class="job-posting-header">채용공고 상세페이지</div>
     <div class="job-posting-content">
       <div class="company-logo">
-        <img :src="postImg" alt="Company Logo">
+        <img :src="jobposting.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
-        <div class="company-name">{{ entName }}</div>
-        <div class="job-title">{{ postTitle }}</div>
+        <div class="company-name">{{ jobposting.entName }}</div>
+        <div class="job-title">{{ jobposting.postTitle }}</div>
         <div class="application-period">공고 게시 및 서류 접수</div>
         <div class="application-dates">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
         <div class="company-address-label">기업 주소</div>
-        <div class="company-address">{{ entAddr }}</div>
+        <div class="company-address">{{ jobposting.entAddr1 }} {{ jobposting.entAddr2 }}</div>
       </div>
     </div>
-    <div class="delete-button" v-if="isDelete" @click="onDeletedClick(postId)">삭제하기</div>
+    <div class="delete-button" v-if="!isDelete" @click="onApplyClick(postId)">지원하기</div>
+    <div class="delete-button" v-else @click="onDeletedClick(postId)">삭제하기</div>
+
+    <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
+      @close-modal="closeModal" @confirm="confirmDelete" />
   </main>
+  <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
+    :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
 
 <style scoped>
@@ -84,17 +167,21 @@ export default {
 
 .company-logo {
   height: 300px;
-  border-radius: 10px 10px 0 0; /* 꼭지점 둥글게 */
+  border-radius: 10px 10px 0 0;
+  /* 꼭지점 둥글게 */
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f1f1f1;    /* 배경색으로 지정 */
+  background-color: #f1f1f1;
+  /* 배경색으로 지정 */
 }
 
 .company-logo img {
-  max-height: 100%;            /* 높이에 맞춰 이미지 크기 조절 */
-  max-width: 100%;             /* 너비에 맞춰 이미지 크기 조절 */
+  max-height: 100%;
+  /* 높이에 맞춰 이미지 크기 조절 */
+  max-width: 100%;
+  /* 너비에 맞춰 이미지 크기 조절 */
 }
 
 .job-posting-info {
@@ -128,13 +215,16 @@ export default {
 
 .application-dates {
   font-size: 16px;
-  color: #333; /* 기존 색상과 통일 */
-  margin-bottom: 10px; /* 아래쪽 여백 */
+  color: #333;
+  /* 기존 색상과 통일 */
+  margin-bottom: 10px;
+  /* 아래쪽 여백 */
 }
 
 .company-address-label {
   font-size: 16px;
-  margin-top: 10px; /* 위쪽 여백 추가 */
+  margin-top: 10px;
+  /* 위쪽 여백 추가 */
   font-weight: bold;
 }
 
