@@ -91,7 +91,7 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        const response = await handleApiCall('post', '/admin/knowhow/delete', null, {
+        const response = await handleApiCall('delete', '/admin/knowhow/delete', null, {
           params: { knowhowId: wisdom.value.knowhowId },
           headers: {
             'Content-Type': 'application/json',
@@ -309,9 +309,11 @@ export default {
 }
 
 .delete-button {
-  width: 95%;
+  width: 90%;
+  max-width: 400px;
   padding: 10px;
-  margin-top: 20px;
+  margin: 20px auto 0 auto;
+  /* 가운데 정렬을 위한 속성 추가 */
   background-color: #024CAA;
   color: white;
   text-align: center;

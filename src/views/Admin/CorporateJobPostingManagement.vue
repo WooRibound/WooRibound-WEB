@@ -283,7 +283,9 @@ export default {
   margin-left: 15px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1400px) {
+
+  /* 전체 레이아웃에서 동일하게 보이도록 스타일 수정 */
   .job-posting-list {
     padding: 15px;
   }
@@ -306,11 +308,6 @@ export default {
     justify-content: space-between;
   }
 
-  .course-title {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-
   .process-state {
     padding: 5px 10px;
     border-radius: 15px;
@@ -318,7 +315,8 @@ export default {
     color: #ffffff;
     font-weight: bold;
     text-align: center;
-    width: 70px;
+    min-width: 70px;
+    margin-left: 10px;
   }
 
   .phase-open {
