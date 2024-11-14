@@ -73,7 +73,6 @@ export default {
         userFullId.value = response.data.userId;
         userFullName.value = response.data.userName;
         reportedCnt.value = response.data.reportedCnt;
-
       } catch (error) {
         console.error("신고횟수를 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
@@ -92,21 +91,26 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        const response = await handleApiCall('post', `/admin/knowhow/delete?knowhowId=${wisdom.value.knowhowId}`, null, {
-          'Content-Type': 'application/json'
+        const response = await handleApiCall('post', '/admin/knowhow/delete', null, {
+          params: { knowhowId: wisdom.value.knowhowId },
+          headers: {
+            'Content-Type': 'application/json',
+          }
         });
         console.log("삭제 결과:", response);
 
-        closeModal();
+        closeModal(true);
 
       } catch (error) {
         console.error("지혜를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
       }
     };
 
-    const closeModal = () => {
+    const closeModal = (shouldRedirect = false) => {
       showDeleteModal.value = false;
-      router.push(ROUTES.WISDOM_MANAGEMENT.path);
+      if (shouldRedirect) {
+        router.push(ROUTES.WISDOM_MANAGEMENT.path);
+      }
     };
 
     return {
@@ -174,7 +178,6 @@ export default {
   <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
     :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
-
 
 <style scoped>
 .body {

@@ -26,15 +26,6 @@ export default {
     const formattedStartDate = computed(() => formatDate1(jobposting.value.startDate));
     const formattedEndDate = computed(() => formatDate1(jobposting.value.endDate));
 
-    const onApplyClick = (postId) => {
-      console.log("postId:", postId);
-    };
-
-    const onDeletedClick = () => {
-      modalMessage.value = "채용공고를 삭제하시겠습니까?";
-      showDeleteModal.value = true;
-    };
-
     const jobposting = ref({
       entName: "",
       postTitle: "",
@@ -63,9 +54,6 @@ export default {
           entAddr1: response.data.entAddr1,
           entAddr2: response.data.entAddr2,
         };
-
-        console.log(response);
-        console.log(jobposting.value.entName);
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
@@ -76,6 +64,15 @@ export default {
     });
 
     const showDeleteModal = ref(false);
+    
+    const onApplyClick = (postId) => {
+      console.log("postId:", postId);
+    };
+
+    const onDeletedClick = () => {
+      modalMessage.value = "채용공고를 삭제하시겠습니까?";
+      showDeleteModal.value = true;
+    };
 
     const confirmDelete = async () => {
       try {
@@ -86,8 +83,7 @@ export default {
           }
         });
         console.log("삭제 결과:", response);
-
-        // 확인 버튼 클릭 시, 삭제 후 페이지 리다이렉트
+        
         closeModal(true);
 
       } catch (error) {
