@@ -1,9 +1,10 @@
 <script>
-import {onMounted, ref} from "vue";
-import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
+import { onMounted, ref } from "vue";
+import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
-import {useRouter} from "vue-router";
-import {ROUTES} from "@/router/routes";
+import { useRouter } from "vue-router";
+import { ROUTES } from "@/router/routes";
+import handleApiCall from '@/api/apiService';
 
 export default {
   name: "CorporateJobPostingManagement",
@@ -20,13 +21,12 @@ export default {
     const searchInput = ref();
     const filterTypes = ref("");
     const selectedProvince = ref("전체 지역");
-    const selectedJob = ref("전체 직무");
+    const selectedIndustry = ref("전체 산업");
     const jobPostingList = ref();
     const jobPostingCount = ref(0);
 
-    const searchCorporate = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
-      console.log("검색어:", searchInput.value);
+    const searchJobPosting = () => {
+      fetchJobPostings();
     }
 
     const onFilterClick = (filterType) => {
@@ -35,46 +35,45 @@ export default {
     }
 
     const handleSelectFilter = (selected) => {
-      if (selected.filterType === SEARCH_FILTER_TYPES.JOB) {
-        selectedJob.value = selected.filterValue;
+      if (selected.filterType === SEARCH_FILTER_TYPES.INDUSTRY) {
+        selectedIndustry.value = selected.filterValue;
+        fetchJobPostings();
       }
 
       if (selected.filterType === SEARCH_FILTER_TYPES.REGIONS) {
         selectedProvince.value = selected.filterValue;
+        fetchJobPostings();
       }
     }
 
-    const fetchCorporateUsers = () => {
-      const data = [
-        {
-          entId: "USER001",
-          entName: "기업1",
-          createdAt: "2024-01-01",
-          entField: "엔지니어",
-          endAddr: "서울특별시"
-        },
-        {
-          entId: "USER002",
-          entName: "기업2",
-          createdAt: "2024-02-01",
-          entField: "엔지니어",
-          endAddr: "서울특별시"
-        },
-      ];
+    const fetchJobPostings = async () => {
+      try {
+        const params = {
+          entName: searchInput.value,
+          entField: selectedIndustry.value === '전체 산업' ? null : selectedIndustry.value,
+          addrCity: selectedProvince.value === '전체 지역' ? null : selectedProvince.value,
+        };
 
-      jobPostingList.value = data;
-      jobPostingCount.value = jobPostingList.value.length;
+        const response = await handleApiCall('get', '/admin/jobposting', null, {
+          params: params
+        });
+
+        jobPostingList.value = response.data;
+        jobPostingCount.value = jobPostingList.value.length;
+      } catch (error) {
+        console.error("fetchCorporateUsers API 호출 오류:", error);
+      }
     }
 
     onMounted(() => {
-      fetchCorporateUsers();
+      fetchJobPostings();
     })
 
     const onMoveDetailPageClick = (postId) => {
       console.log("postId:", postId);
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
-        params:{
+        params: {
           id: postId
         },
         query: {
@@ -88,10 +87,10 @@ export default {
       searchInput,
       filterTypes,
       selectedProvince,
-      selectedJob,
+      selectedIndustry,
       jobPostingList,
       jobPostingCount,
-      searchCorporate,
+      searchJobPosting,
       onFilterClick,
       handleSelectFilter,
       onMoveDetailPageClick,
@@ -105,68 +104,61 @@ export default {
     <div class="header">기업회원 관리</div>
     <div class="subtitle">공고 관리</div>
     <div class="search-wrap">
-      <input
-          class="search-input"
-          placeholder="기업명을 입력하세요"
-          type="text"
-          v-model="searchInput"
-          @keyup.enter="searchCorporate"
-      >
+      <input class="search-input" placeholder="기업명을 입력하세요" type="text" v-model="searchInput"
+        @keyup.enter="searchJobPosting">
       <div class="filter-section">
-        <div class="filter-item"
-             @click="onFilterClick(SEARCH_FILTER_TYPES.JOB)"
-             :style="{ color: selectedJob === '전체 직무' ? 'black' : '#024CAA' }">
-          {{ selectedJob }}
+        <div class="filter-item" @click="onFilterClick(SEARCH_FILTER_TYPES.INDUSTRY)"
+          :style="{ color: selectedIndustry === '전체 산업' ? 'black' : '#024CAA' }">
+          {{ selectedIndustry }}
         </div>
-        <div class="filter-item"
-             @click="onFilterClick(SEARCH_FILTER_TYPES.REGIONS)"
-             :style="{ color: selectedProvince === '전체 지역' ? 'black' : '#024CAA' }">
+        <div class="filter-item" @click="onFilterClick(SEARCH_FILTER_TYPES.REGIONS)"
+          :style="{ color: selectedProvince === '전체 지역' ? 'black' : '#024CAA' }">
           {{ selectedProvince }}
         </div>
       </div>
       <div class="job-posting-wrap">
         <div class="job-posting-info">{{ jobPostingCount }}건</div>
-        <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting">
-          <div class="job-posting-list-top">
-            <div class="course-title">{{ jobPosting.entName }}</div>
-          </div>
-          <div class="course-subtitle">{{ jobPosting.entField }}</div>
+        <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting.entId">
+          <div class="course-title">{{ jobPosting.postTitle }}</div>
+          <div class="course-subtitle">{{ jobPosting.entName }}</div>
           <div class="course-schedule">
-            <div class="schedule-info">{{ jobPosting.endAddr }}</div>
-            <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(jobPosting.entId)">
+            <div class="schedule-info">{{ jobPosting.entAddr1 }}</div>
+            <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
+              @click="onMoveDetailPageClick(jobPosting.jobPostingId)">
           </div>
         </div>
       </div>
     </div>
   </main>
-  <search-filter-modal
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
-      @select-filter="handleSelectFilter"
-      :filter-type="filterTypes"
-  />
+  <search-filter-modal v-if="modalPopupStatue" @close-modal="modalPopupStatue = false"
+    @select-filter="handleSelectFilter" :filter-type="filterTypes" />
 </template>
 
 <style scoped>
 .body {
-  flex: 1;                      /* 가변 영역, 헤더와 바텀 내비게이션을 제외한 나머지 공간 차지 */
-  padding: 20px;                /* 내부 여백 */
-  box-sizing: border-box;       /* 패딩을 포함한 크기 계산 */
-  background-color: #f8f9fa;    /* 배경색 */
-  overflow-y: auto;             /* 내용이 넘칠 경우 스크롤 가능 */
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  overflow-y: auto;
 }
 
 .header {
-  font-size: 24px;              /* 헤더 폰트 크기 */
-  font-weight: bold;            /* 헤더 두껍게 */
-  margin-bottom: 20px;          /* 아래쪽 여백 */
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-.subtitle {                     /* 소제목 스타일 */
-  font-size: 18px;              /* 글자 크기 */
-  font-weight: bold;            /* 글자 두께 */
-  margin-bottom: 10px;          /* 아래쪽 여백 */
-  color: #333;                  /* 텍스트 색상 */
+.subtitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.search-wrap {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 .search-input {
@@ -196,8 +188,8 @@ export default {
   border: 1px solid #413F42;
   border-radius: 8px;
   background-color: #ffffff;
-  height: 16px;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .filter-item:last-child {
@@ -211,33 +203,32 @@ export default {
 .job-posting-info {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 10px;
 }
 
 .job-posting-list {
-  background-color: #D9D9D9;
+  background-color: #ffffff;
   border-radius: 15px;
-  padding: 15px;
+  padding: 20px;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.job-posting-list-top {
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between; /* Aligns items on both ends */
-  align-items: center;
-  margin-bottom: 5px;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .course-title {
   font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
+  margin-bottom: 8px;
 }
 
 .course-subtitle {
-  margin-bottom: 5px;
+  margin-bottom: 12px;
+  color: #6c757d;
 }
 
 .course-schedule {
@@ -247,12 +238,34 @@ export default {
 }
 
 .schedule-info {
-  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .right-arrow-icon {
   width: 20px;
   height: auto;
   cursor: pointer;
+  margin-left: 15px;
+}
+
+@media (max-width: 768px) {
+  .job-posting-list {
+    padding: 15px;
+  }
+
+  .course-title {
+    font-size: 16px;
+  }
+
+  .course-subtitle {
+    font-size: 14px;
+  }
+
+  .schedule-info {
+    font-size: 12px;
+  }
 }
 </style>

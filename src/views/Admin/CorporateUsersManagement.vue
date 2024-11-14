@@ -58,7 +58,6 @@ export default {
           params: params
         });
 
-
         corporateUserList.value = response.data;
         corporateUserCount.value = corporateUserList.value.length;
 
