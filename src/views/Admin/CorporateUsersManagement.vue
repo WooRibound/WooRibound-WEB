@@ -216,12 +216,16 @@ export default {
 }
 
 .job-posting-list {
-  background-color: #D9D9D9;
+  background-color: #ffffff;
   border-radius: 15px;
-  padding: 15px;
+  padding: 20px;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .job-posting-list-top {
@@ -239,7 +243,10 @@ export default {
 }
 
 .course-subtitle {
-  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .course-schedule {
