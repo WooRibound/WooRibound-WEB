@@ -1,5 +1,17 @@
 import handleApiCall from '@/api/apiService';
 
+
+// 채용공고 삭제
+export const deleteJobPosting= async (postId) => {
+    try {
+        const response = await handleApiCall('post', `/admin/jobposting/delete?postId=${postId}`);
+        return response;
+    } catch (error) {
+        console.error('Failed to delete:', error);
+        throw error;
+    }
+}
+
 // 채용공고 목록 조회
 export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, selectedProvinceValue) => {
     try {
@@ -35,3 +47,4 @@ export const confirmDelete = async (postId) => {
         throw error;
     }
 };
+

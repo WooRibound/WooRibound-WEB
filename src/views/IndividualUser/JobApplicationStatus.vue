@@ -3,46 +3,32 @@ import {formatDate1} from "@/utils/format";
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {ROUTES} from "@/router/routes";
+import {fetchJobApply} from "@/api/services/individualUserService";
+import {APPLY_TYPES} from "@/constants/applyTypes";
 
 export default {
   name: "JobApplicationStatus",
-  methods: { formatDate: formatDate1 },
+  methods: { formatDate1 },
   setup() {
     const router = useRouter();
 
     const jopApplicationCount = ref(0);
     const jobApplicationList = ref();
 
-    const fetchJopApplication = () => {
-      // todo 채용지원 리스트 API 구현 시 아래에 로직 구현 하기
-      // viewType이 career, new, all에 따라 데이터 불러오기
+    const fetchJopApplication = async () => {
+      const response = await fetchJobApply();
 
-      const data = [
-        {
-          postId: 1,
-          entId: 1,
-          postTitle: '2024년 하반기 시니어 개발자 모집',
-          entName: '우리 바운드 (주)',
-          jobName: '서비스',
-          postImg: require('@/assets/images/logo/company_sample.png'), // 이미지 경로를 require로 수정
-          startDate: '2024-11-01',
-          endDate: '2024-11-15',
-          postState: 'PASSED',
-        },
-        {
-          postId: 1,
-          entId: 1,
-          postTitle: '2024년 하반기 시니어 개발자 모집',
-          entName: '우리 바운드 (주)',
-          jobName: '서비스',
-          postImg: require('@/assets/images/logo/company_sample.png'), // 이미지 경로를 require로 수정
-          startDate: '2024-11-01',
-          endDate: '2024-11-15',
-          postState: 'PENDING',
-        },
-      ];
+      jobApplicationList.value = response.map((item) => ({
+        applyId: item.applyId,
+        result: item.result,
+        entName: item.entName,
+        postTitle: item.postTitle,
+        startDate: formatDate1(item.startDate),
+        endDate: formatDate1(item.endDate),
+        entAddr1: item.entAddr1,
+        entAddr2: item.entAddr2
+      }));
 
-      jobApplicationList.value = data;
       jopApplicationCount.value = jobApplicationList.value.length;
     }
 
@@ -50,24 +36,26 @@ export default {
       fetchJopApplication();
     })
 
-    const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
+    const onMoveDetailPageClick = (applyId) => {
+      console.log(applyId);
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
         params:{
-          id: postId
+          applyId: applyId
         },
       })
     }
 
     const recruitmentPhase = (postState) => {
       switch (postState) {
-        case 'PASSED':
+        case APPLY_TYPES.ACCEPTED:
           return '합격';
-        case 'PENDING':
+        case APPLY_TYPES.PENDING:
           return '결과 대기중';
-        case 'FAILED':
+        case APPLY_TYPES.FAILED:
           return '불합격';
+        case APPLY_TYPES.CANCELED:
+          return '지원 취소';
         default:
           return '';
       }
@@ -75,12 +63,14 @@ export default {
 
     const recruitmentPhaseClass = (postState) => {
       switch (postState) {
-        case 'PASSED':
+        case APPLY_TYPES.ACCEPTED:
           return 'phase-passed'; // 합격
-        case 'PENDING':
+        case APPLY_TYPES.PENDING:
           return 'phase-pending'; // 결과 대기중
-        case 'FAILED':
+        case APPLY_TYPES.FAILED:
           return 'phase-failed'; // 불합격
+        case APPLY_TYPES.CANCELED:
+          return 'phase-canceled';
         default:
           return '';
       }
@@ -105,12 +95,12 @@ export default {
       <div class="job-posting-list" v-for="jobApplication in jobApplicationList" :key="jobApplication">
         <div class="job-posting-list-top">
           <div class="course-title">{{ jobApplication.entName }}</div>
-          <div :class="['recruitment-phase', recruitmentPhaseClass(jobApplication.postState)]">{{ recruitmentPhase(jobApplication.postState) }}</div>
+          <div :class="['recruitment-phase', recruitmentPhaseClass(jobApplication.result)]">{{ recruitmentPhase(jobApplication.result) }}</div>
         </div>
         <div class="course-subtitle">{{ jobApplication.postTitle }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ formatDate(new Date(jobApplication.startDate)) }} ~ {{ formatDate(new Date(jobApplication.endDate)) }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(jobApplication.postId)">
+          <div class="schedule-info">{{ jobApplication.startDate }} ~ {{ jobApplication.endDate }}</div>
+          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(jobApplication.applyId)">
         </div>
       </div>
     </div>
@@ -154,14 +144,14 @@ export default {
 
 .job-posting-list-top {
   display: flex;
-  justify-content: space-between; /* Aligns items on both ends */
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
 }
 
 .course-title {
   font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
+  margin-right: auto;
 }
 
 .recruitment-phase {
@@ -185,6 +175,9 @@ export default {
 
 .phase-failed {
   background-color: #686D76; /* 불합격 */
+}
+.phase-canceled {
+  background-color: #DE7C7D; /* 지원 취소 */
 }
 
 
