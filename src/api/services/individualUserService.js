@@ -140,3 +140,22 @@ export const updateIndividualUserResume= async (resume) => {
     throw error;
   }
 }
+
+// 채용공고 조회
+export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, selectedProvinceValue) => {
+  try {
+      const params = {
+          entName: searchInputValue,
+          entField: selectedIndustryValue === '전체 산업' ? null : selectedIndustryValue,
+          addrCity: selectedProvinceValue === '전체 지역' ? null : selectedProvinceValue,
+      };
+
+      const response = await handleApiCall('get', '/admin/jobposting', null, {
+          params: params
+      });
+      return response.data;
+  } catch (error) {
+      console.error("fetchJobPostings API 호출 오류:", error);
+      throw error;
+  }
+};
