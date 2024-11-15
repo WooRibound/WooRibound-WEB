@@ -21,9 +21,9 @@ export default {
 
     const fetchJobPosting = async () => {
       try {
-        console.debug("Fetching job postings");
+        console.log("Fetching job postings");
         const response = await fetchMyPostingList();
-        console.debug("API Response:", response);
+        console.log("API Response:", response);
         jobPostingList.value = response.data || [];
         jobpostingCount.value = jobPostingList.value.length;
       } catch (error) {
@@ -115,7 +115,7 @@ export default {
         <div class="job-posting-list-middle">
           <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
           <div class="applicants-info" @click="onMoveApplicantDetailPageClick(jobPosting.postId)">{{
-              applicantCount
+              jobPosting.applicantCount
             }}명
           </div>
         </div>
@@ -236,6 +236,7 @@ export default {
   margin-bottom: 8px;          /* 위쪽 여백 */
   margin-right: 20px;          /* 위쪽 여백 */
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .course-schedule {

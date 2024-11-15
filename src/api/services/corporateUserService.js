@@ -63,6 +63,44 @@ export const fetchMyPostingList = async () => {
     }
 };
 
+// 내 기업 공고 상세 조회
+export const fetchMyPostingDetail = async (postId) => {
+    try {
+        console.debug("Making API call to fetch job postings detail"+ postId);
+        const encodedPostId = encodeURIComponent(postId);
+        const data = await handleApiCall("get", `/corporate/jobposting/detail?postId=${encodedPostId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchMyPostingDetail] Error:", error);
+        throw error;
+    }
+};
+
+// 지원자 목록 조회
+export const fetchApplicantList = async (postId) => {
+    try {
+        console.debug("Making API call to fetch applicant list"+ postId);
+        const encodedPostId = encodeURIComponent(postId);
+        const data = await handleApiCall("get", `/corporate/jobposting/applicant?postId=${encodedPostId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchApplicantList] Error:", error);
+        throw error;
+    }
+};
+
+// 지원자 결과 설정
+export const setApplicantResult = async (payload) => {
+    try {
+        console.debug("Making API call to set applicant result");
+        const data = await handleApiCall("post", "/corporate/jobposting/applicant/result", payload);
+        return data;
+    } catch (error) {
+        console.error("[setApplicantResult] Error:", error);
+        throw error;
+    }
+};
+
 /*// 내 기업 공고 목록 조회 - OAuth 변경 전
 export const fetchMyPostingList = async (entId) => {
     try {

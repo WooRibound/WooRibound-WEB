@@ -1,15 +1,64 @@
 <script>
 import {useRoute, useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
+import { formatDate1 } from "@/utils/format"
+import {fetchApplicantList, fetchMyPostingDetail, setApplicantResult} from "@/api/services/corporateUserService";
+import {computed, onMounted, ref} from "vue";
 
 export default {
   name: "ApplicantDetailPage",
   setup() {
     const route = useRoute();
-    const router = useRouter();
+    const router = useRouter();``
+
+    const postId = route.params.id;
+    const applicantsList = ref([]);
+    const jobposting = ref({});
+    const startDate = ref("");
+    const endDate = ref("");
+    const userId = ref([]);
+    const applyStatus = ref([]);
 
     const id = route.params.id
     console.log(id);
+
+    // 시작일과 종료일 포맷팅
+    const formattedStartDate = computed(() =>
+        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
+    );
+    const formattedEndDate = computed(() =>
+        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
+    );
+
+    const fetchJobPostingInfo = async (postId) => {
+      try {
+        console.debug("Fetching job application info");
+        const response = await fetchMyPostingDetail(postId);
+        console.debug("API Response (Job Info):", response);
+        jobposting.value = response.data || {};
+        startDate.value = jobposting.value.startDate;
+        endDate.value = jobposting.value.endDate;
+      } catch (error) {
+        console.error("[fetchJobPostingInfo] Error:", error);
+        jobposting.value = {};
+      }
+    };
+
+    const fetchApplicantsList = async (postId) => {
+      try {
+        console.info("Fetching applicant lists");
+        const response = await fetchApplicantList(postId);
+        console.info("API Response:", response);
+
+        applicantsList.value = response.data || [];
+        applyStatus.value = applicantsList.value.map((applicant) => applicant.result);
+        userId.value = applicantsList.value.map((applicant) => applicant.userId);
+
+      } catch (error) {
+        console.error("[fetchApplicantsList] Error:", error);
+        applicantsList.value = [];
+      }
+    };
 
     const onMoveResumePageClick = (userId) => {
       router.push({
@@ -20,15 +69,38 @@ export default {
       })
     }
 
-    const onApplicantStateClick = (status) => {
-      // todo 지원자 합,불 API 구현시 아래 로직 구현하기
-      if (status === "accepted") {
-        console.log("합격");
-      } else {
-        console.log("불합격");
+    onMounted(() => {
+      fetchJobPostingInfo(postId);
+      fetchApplicantsList(postId);
+    });
+
+
+    const onApplicantStateClick = async (index, status) => {
+      const payload = {
+        applicantId: applicantsList.value[index].applicantId, // 🔴 지원자 ID 전달
+        status,
+      };
+
+      try {
+        const response = await setApplicantResult(payload);
+        if (response.success) {
+          applicantsList.value[index].result = status === "ACCEPTED" ? "ACCEPTED" : "FAILED"; // 🔴 API 성공 시 상태 업데이트
+          console.log(`지원자 상태 업데이트 완료: ${status}`);
+        } else {
+          console.error("지원자 상태 업데이트 실패:", response.message);
+        }
+      } catch (error) {
+        console.error("[onApplicantStateClick] Error:", error);
       }
-    }
+    };
+
+
     return {
+      applyStatus,
+      formattedStartDate,
+      formattedEndDate,
+      jobposting,
+      applicantsList,
       onMoveResumePageClick,
       onApplicantStateClick
     };
@@ -39,12 +111,13 @@ export default {
 <template>
   <main class="body">
     <div class="header">공고 관리</div>
-    <div class="subtitle">지원자</div>
     <div class="applicant-info">
+    <div class="subtitle">지원자 목록</div>
       <div class="job-application-info">
-        <div class="company-name">우리바운드 (주)</div>
-        <div class="job-title">2024년 하반기 시니어 개발자 모집</div>
-        <div class="job-duration">10월1일(월) ~ 11월10일(일)</div>
+       <!-- <div class="company-name">우리바운드 (주)</div> -->
+        <div class="job-title">{{ jobposting.postTitle }}</div>
+        <div class="job-name">{{  jobposting.jobName }}</div>
+        <div class="job-duration">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
       </div>
       <table class="applicant-table">
         <thead>
@@ -56,14 +129,22 @@ export default {
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>이승준</td>
-          <td>남/30</td>
+        <tr v-for="applicant in applicantsList" :key="applicant">
+          <td>{{ applicant.applicantName }}</td>
+          <td> {{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
           <td><div class="resume-link" @click="onMoveResumePageClick">보기</div></td>
           <td>
             <div class="status-container">
-              <div class="status-accepted" @click="onApplicantStateClick('accepted')">합격</div>
-              <div class="status-rejected" @click="onApplicantStateClick('rejected')">불합격</div>
+              <div v-if="applicant.result === 'PENDING'">
+              <div class="status-accepted" @click="onApplicantStateClick('ACCEPTED')">합격</div>
+              <div class="status-rejected" @click="onApplicantStateClick('REJECTED')">불합격</div>
+            </div>
+            <div v-else-if="applicant.result === 'ACCEPTED'" class="status-accepted disabled">
+              합격 처리 완료
+            </div>
+            <div v-else-if="applicant.result === 'REJECTED'" class="status-rejected disabled">
+              불합격 처리 완료
+            </div>
             </div>
           </td>
         </tr>
@@ -148,6 +229,7 @@ export default {
   text-align: center; /* 텍스트 중앙 정렬 */
   white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
   font-size: 8pt;
+  cursor: pointer;
 }
 
 .status-rejected {
@@ -159,5 +241,10 @@ export default {
   text-align: center; /* 텍스트 중앙 정렬 */
   white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
   font-size: 8pt;
+  cursor: pointer;
+}
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

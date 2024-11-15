@@ -1,7 +1,8 @@
 <script>
-import { ref,computed } from "vue";
+import {ref, computed, onMounted} from "vue";
 import { formatDate1 } from "@/utils/format";
 import {useRoute} from "vue-router";
+import {fetchMyPostingDetail} from "@/api/services/corporateUserService";
 
 export default {
   name: "JobPostingDetail",
@@ -9,23 +10,59 @@ export default {
     const route = useRoute();
     const postId = route.params.id
     const isDelete = route.query.delete
-    // todo postId값으로 채용공고 상세 API 구현 후 아래에 로직 구현
     console.log(postId);
 
-    const entName = ref("우리바운드 (주)");
-    const postTitle = ref("2024 하반기 시니어 개발자 모집");
-    const postImg = require("@/assets/images/logo/company_sample.png");
-    const startDate = ref(new Date('2024-11-01'));  // 채용 시작일
-    const endDate = ref(new Date('2024-11-15'));    // 채용 마감일
-    const entAddr = ref("서울특별시 강서구 사암대로 179 상암타워");
+    const jobPostingDetail = ref("");
+    const postImg = ref(null);
 
-    const formattedStartDate = computed(() => formatDate1(startDate.value));
-    const formattedEndDate = computed(() => formatDate1(endDate.value));
+    // 기본값 초기화 (API 데이터 로드 전까지 표시)
+    const entName = ref("");
+    const postTitle = ref("");
+    const jobName = ref("");
+    const startDate = ref(null);
+    const endDate = ref(null);
+    const entAddr1 = ref("");
+    const entAddr2 = ref("");
+
+    // 시작일과 종료일 포맷팅
+    const formattedStartDate = computed(() =>
+        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
+    );
+    const formattedEndDate = computed(() =>
+        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
+    );
 
     const onDeletedClick = (postId) => {
-      // todo API 구현 시 아래에 로직 구현 하기
       console.log("postId:", postId);
     }
+
+    // API 호출 함수
+    const fetchJobDetail = async (postId) => {
+      try {
+        console.debug("Fetching job postings");
+        const response = await fetchMyPostingDetail(postId);
+        console.debug("API Response:", response);
+        // API 응답 데이터 매핑
+          const detail = response.data;
+          entName.value = detail.entName;
+          postTitle.value = detail.postTitle;
+          jobName.value = detail.jobName;
+          startDate.value = detail.startDate;
+          endDate.value = detail.endDate;
+          entAddr1.value = detail.entAddr1;
+          entAddr2.value = detail.entAddr2;
+          postImg.value = detail.postImg || require("@/assets/images/logo/company_sample.png");
+
+      } catch (error) {
+        console.error("[fetchJobDetail] Error:", error);
+        jobPostingDetail.value = null;
+      }
+    };
+
+    onMounted(() => {
+      fetchJobDetail(postId);
+    });
+
 
     return {
       isDelete,
@@ -33,9 +70,11 @@ export default {
       entName,
       postTitle,
       postImg,
+      jobName,
       formattedStartDate,
       formattedEndDate,
-      entAddr,
+      entAddr1,
+      entAddr2,
       onDeletedClick,
     };
   }
@@ -52,10 +91,11 @@ export default {
       <div class="job-posting-info">
         <div class="company-name">{{ entName }}</div>
         <div class="job-title">{{ postTitle }}</div>
+        <div class="job-name"> {{ jobName }} 직무 </div>
         <div class="application-period">공고 게시 및 서류 접수</div>
         <div class="application-dates">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
         <div class="company-address-label">기업 주소</div>
-        <div class="company-address">{{ entAddr }}</div>
+        <div class="company-address">{{ entAddr1 }} {{ entAddr2 }}</div>
       </div>
     </div>
     <div class="delete-button" v-if="isDelete" @click="onDeletedClick(postId)">삭제하기</div>
@@ -114,7 +154,14 @@ export default {
 }
 
 .job-title {
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.job-name {
+  font-size: 15px;
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
