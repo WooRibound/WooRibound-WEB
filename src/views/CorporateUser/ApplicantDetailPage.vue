@@ -18,6 +18,8 @@ export default {
     const endDate = ref("");
     const userId = ref([]);
     const applyStatus = ref([]);
+    const index = ref([]);
+    const applyId = ref([]);
 
     const id = route.params.id
     console.log(id);
@@ -50,9 +52,14 @@ export default {
         const response = await fetchApplicantList(postId);
         console.info("API Response:", response);
 
-        applicantsList.value = response.data || [];
+        applicantsList.value = response.data.map((applicant, index) => ({
+          ...applicant,
+          index,
+        }));
         applyStatus.value = applicantsList.value.map((applicant) => applicant.result);
         userId.value = applicantsList.value.map((applicant) => applicant.userId);
+        applyId.value = applicantsList.value.map((applicant) => applicant.applyId);
+        index.value = applicantsList.value.map((applicant) => applicant.index);
 
       } catch (error) {
         console.error("[fetchApplicantsList] Error:", error);
@@ -75,17 +82,20 @@ export default {
     });
 
 
-    const onApplicantStateClick = async (index, status) => {
+    const onApplicantStateClick = async (index, applyId, applyResult) => {
+      console.info("index, applyId, applyResult:", index, applyId, applyResult, );
+
       const payload = {
-        applicantId: applicantsList.value[index].applicantId, // 🔴 지원자 ID 전달
-        status,
+        applyId,
+        applyResult
       };
 
       try {
         const response = await setApplicantResult(payload);
-        if (response.success) {
-          applicantsList.value[index].result = status === "ACCEPTED" ? "ACCEPTED" : "FAILED"; // 🔴 API 성공 시 상태 업데이트
-          console.log(`지원자 상태 업데이트 완료: ${status}`);
+        if (response.status === 200) {
+          // 상태 업데이트
+          applicantsList.value[index].result = applyResult === "ACCEPTED" ? "ACCEPTED" : "FAILED";
+          console.log(`지원자 상태 업데이트 완료: ${applyResult}`);
         } else {
           console.error("지원자 상태 업데이트 실패:", response.message);
         }
@@ -129,15 +139,15 @@ export default {
         </tr>
         </thead>
         <tbody>
-        <tr v-for="applicant in applicantsList" :key="applicant">
+        <tr v-for="applicant in applicantsList" :key="applicant.userId">
           <td>{{ applicant.applicantName }}</td>
           <td> {{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
           <td><div class="resume-link" @click="onMoveResumePageClick">보기</div></td>
           <td>
             <div class="status-container">
               <div v-if="applicant.result === 'PENDING'">
-              <div class="status-accepted" @click="onApplicantStateClick('ACCEPTED')">합격</div>
-              <div class="status-rejected" @click="onApplicantStateClick('REJECTED')">불합격</div>
+              <div class="status-accepted" @click="onApplicantStateClick(applicant.index, applicant.applyId,'ACCEPTED')">합격</div>
+              <div class="status-rejected" @click="onApplicantStateClick(applicant.index, applicant.applyId,'REJECTED')">불합격</div>
             </div>
             <div v-else-if="applicant.result === 'ACCEPTED'" class="status-accepted disabled">
               합격 처리 완료

@@ -1,16 +1,43 @@
 <script>
 import {ref, computed, onMounted} from "vue";
 import { formatDate1 } from "@/utils/format";
-import {useRoute} from "vue-router";
+import { ROUTES } from "@/router/routes";
+import { useRoute, useRouter } from "vue-router";
+import TwoButtonModal from '@/components/TwoButtonModal.vue';
+import handleApiCall from '@/api/apiService';
 import {fetchMyPostingDetail} from "@/api/services/corporateUserService";
 
 export default {
   name: "JobPostingDetail",
+  components: { TwoButtonModal },
+  computed: {
+    ROUTES() {
+      return ROUTES;
+    }
+  },
   setup() {
     const route = useRoute();
     const postId = route.params.id
     const isDelete = route.query.delete
     console.log(postId);
+    const router = useRouter();
+
+    const modalPopupStatue = ref(false);
+    const modalMessage = ref('');
+
+    const formattedStartDate = computed(() => formatDate1(jobposting.value.startDate));
+    const formattedEndDate = computed(() => formatDate1(jobposting.value.endDate));
+
+    const jobposting = ref({
+      entName: "",
+      postTitle: "",
+      postImg: "",
+      startDate: "",
+      endDate: "",
+      jobName: "",
+      entAddr1: "",
+      entAddr2: ""
+    });
 
     const jobPostingDetail = ref("");
     const postImg = ref(null);
@@ -24,17 +51,40 @@ export default {
     const entAddr1 = ref("");
     const entAddr2 = ref("");
 
-    // 시작일과 종료일 포맷팅
-    const formattedStartDate = computed(() =>
-        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
-    );
-    const formattedEndDate = computed(() =>
-        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
-    );
+    const showDeleteModal = ref(false);
 
-    const onDeletedClick = (postId) => {
+    const onApplyClick = (postId) => {
       console.log("postId:", postId);
-    }
+    };
+
+    const onDeletedClick = () => {
+      modalMessage.value = "채용공고를 삭제하시겠습니까?";
+      showDeleteModal.value = true;
+    };
+
+    const confirmDelete = async () => {
+      try {
+        const response = await handleApiCall('post', '/admin/jobposting/delete', null, {
+          params: { postId: postId },
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log("삭제 결과:", response);
+
+        closeModal(true);
+
+      } catch (error) {
+        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+      }
+    };
+
+    const closeModal = (shouldRedirect = false) => {
+      showDeleteModal.value = false;
+      if (shouldRedirect) {
+        router.push(ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path);
+      }
+    };
 
     // API 호출 함수
     const fetchJobDetail = async (postId) => {
@@ -65,17 +115,24 @@ export default {
 
 
     return {
-      isDelete,
-      postId,
       entName,
       postTitle,
       postImg,
       jobName,
+      showDeleteModal,
+      modalMessage,
+      modalPopupStatue,
       formattedStartDate,
       formattedEndDate,
       entAddr1,
       entAddr2,
+      isDelete,
+      postId,
+      jobposting,
+      onApplyClick,
       onDeletedClick,
+      confirmDelete,
+      closeModal
     };
   }
 }
@@ -98,8 +155,14 @@ export default {
         <div class="company-address">{{ entAddr1 }} {{ entAddr2 }}</div>
       </div>
     </div>
-    <div class="delete-button" v-if="isDelete" @click="onDeletedClick(postId)">삭제하기</div>
+    <div class="delete-button" v-if="!isDelete" @click="onApplyClick(postId)">지원하기</div>
+    <div class="delete-button" v-else @click="onDeletedClick(postId)">삭제하기</div>
+
+    <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
+      @close-modal="closeModal" @confirm="confirmDelete" />
   </main>
+  <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
+    :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
 
 <style scoped>
@@ -124,17 +187,17 @@ export default {
 
 .company-logo {
   height: 300px;
-  border-radius: 10px 10px 0 0; /* 꼭지점 둥글게 */
+  border-radius: 10px 10px 0 0;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f1f1f1;    /* 배경색으로 지정 */
+  background-color: #f1f1f1;
 }
 
 .company-logo img {
-  max-height: 100%;            /* 높이에 맞춰 이미지 크기 조절 */
-  max-width: 100%;             /* 너비에 맞춰 이미지 크기 조절 */
+  max-height: 100%;
+  max-width: 100%;
 }
 
 .job-posting-info {
@@ -161,39 +224,42 @@ export default {
 }
 
 .job-name {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
 }
 
 .application-period {
-  font-size: 16px;
+  font-size: 18px;
+  margin-top: 20px;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
 .application-dates {
-  font-size: 16px;
-  color: #333; /* 기존 색상과 통일 */
-  margin-bottom: 10px; /* 아래쪽 여백 */
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
 }
 
 .company-address-label {
-  font-size: 16px;
-  margin-top: 10px; /* 위쪽 여백 추가 */
+  font-size: 18px;
+  margin-top: 20px;
   font-weight: bold;
 }
 
 .company-address {
-  font-size: 16px;
+  font-size: 18px;
   color: #333;
 }
 
 .delete-button {
   width: 90%;
+  max-width: 400px;
   padding: 10px;
-  margin-top: 20px;
+  margin: 20px auto 0 auto;
+  /* 가운데 정렬을 위한 속성 추가 */
   background-color: #024CAA;
   color: white;
   text-align: center;

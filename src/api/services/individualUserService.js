@@ -26,7 +26,7 @@ export const fetchAllWisdomShare = async (knowhowTitle, knowhowJob) => {
     const response = await handleApiCall('get', `/individual/knowhow/share?knowhowTitle=${knowhowTitle}&knowhowJob=${knowhowJob}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch join info:', error);
+    console.error('Failed to fetch:', error);
     throw error;
   }
 }
@@ -49,7 +49,7 @@ export const insertWisdomShare = async (postData) => {
     const response = await handleApiCall('post', '/individual/knowhow/share/register', postData);
     return response.data;
   } catch (error) {
-    console.error('Failed to insert post:', error);
+    console.error('Failed to insert:', error);
     throw error;
   }
 }
@@ -60,7 +60,7 @@ export const fetchAllWisdomExplore = async (knowhowTitle, knowhowJob) => {
     const response = await handleApiCall('get', `/individual/knowhow/explore?knowhowTitle=${knowhowTitle}&knowhowJob=${knowhowJob}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch join info:', error);
+    console.error('Failed to fetch:', error);
     throw error;
   }
 }
@@ -71,7 +71,72 @@ export const fetchWisdomDetail = async (knowhowId) => {
     const response = await handleApiCall('get', `/individual/knowhow/detail?knowhowId=${knowhowId}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch join info:', error);
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 알림 메시지 전체 목록 조회
+export const fetchAllNotification = async () => {
+  try {
+    const response = await handleApiCall('get', `/individual/notifications`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 알림 메세지 읽음 표시 업데이트
+export const updateNotification = async (notiId) => {
+  try {
+    const response = await handleApiCall('put', `/individual/notifications/read?notiId=${notiId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 이력서 조회
+export const fetchIndividualUserResume = async () => {
+  try {
+    const response = await handleApiCall('get', `/individual/info/resume`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 이력서 등록
+export const insertIndividualUserResume= async (resume) => {
+  const formData = new FormData();
+  formData.append('userImg', resume.userImg);
+  formData.append('resumeEmail', resume.resumeEmail);
+  formData.append('userIntro', resume.userIntro);
+
+  try {
+    const response = await handleApiCall('post', `/individual/info/resume/regist`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to regist:', error);
+    throw error;
+  }
+}
+
+// 이력서 수정
+export const updateIndividualUserResume= async (resume) => {
+  const formData = new FormData();
+  formData.append('userImg', resume.userImg);
+  formData.append('resumeEmail', resume.resumeEmail);
+  formData.append('userIntro', resume.userIntro);
+
+  try {
+    const response = await handleApiCall('post', `/individual/info/resume/update`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update:', error);
     throw error;
   }
 }
