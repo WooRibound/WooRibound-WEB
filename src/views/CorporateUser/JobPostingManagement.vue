@@ -6,7 +6,7 @@ import {onMounted, ref} from "vue";
 
 export default {
   name: "JobPostingManagement",
-  methods: { formatDate: formatDate1 },
+  methods: { formatDate1 },
   setup() {
     const router = useRouter();
 
@@ -70,9 +70,8 @@ export default {
     }
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
-        name: ROUTES.JOB_POSTING_DETAIL.name,
+        name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
         params:{
           id: postId
         },
@@ -80,7 +79,6 @@ export default {
     }
 
     const onMoveApplicantDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
         name: ROUTES.APPLICANT_DETAIL_PAGE.name,
         params:{
@@ -121,7 +119,7 @@ export default {
           <div class="applicants-info" @click="onMoveApplicantDetailPageClick(jobPosting.postId)">{{ applicantCount }}명</div>
         </div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ formatDate(new Date(jobPosting.startDate)) }} ~ {{ formatDate(new Date(jobPosting.endDate)) }}</div>
+          <div class="schedule-info">{{ formatDate1(jobPosting.startDate) }} ~ {{ formatDate1(jobPosting.endDate) }}</div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(jobPosting.postId)">
         </div>
       </div>

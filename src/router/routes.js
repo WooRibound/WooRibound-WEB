@@ -113,6 +113,11 @@ export const ROUTES = {
         path: "/job-posting/register",
         name: "JobPostingRegister"
     },
+    // [개인회원] 공고 상세페이지
+    CORPORATE_USER_JOB_POSTING_DETAIL: {
+        path: "/corporate-user/:id",
+        name: "CorporateUserJobPostingDetail",
+    },
     // [기업회원] 공고 지원자
     APPLICANT_DETAIL_PAGE: {
         path: "/job-posting/applicants/:id",
@@ -182,6 +187,11 @@ export const ROUTES = {
     CORPORATE_JOB_POSTING_MANAGEMENT: {
         path: '/admin/corporate-job-posting-management',
         name: 'CorporateJobPostingManagement',
+    },
+    // [서비스 관리자] 공고 상세페이지
+    ADMIN_JOB_POSTING_DETAIL: {
+        path: "/admin/corporate-job-posting-management/detail/:id",
+        name: "AdminJobPostingDetail",
     },
     // [서비스 관리자] 지혜 마당 관리
     WISDOM_MANAGEMENT: {
