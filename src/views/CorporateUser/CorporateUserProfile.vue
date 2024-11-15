@@ -1,57 +1,85 @@
 <script>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, onMounted } from 'vue';
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { searchAddress } from "@/utils/addressFinder";
+import { fetchEnterprise, updateEnterpriseInfo } from "@/api/services/corporateUserService";
 
 export default {
   name: "CorporateUserProfile",
   computed: {
     ROUTES() {
-      return ROUTES
+      return ROUTES;
+    },
+    isModified() {
+      const requiredFields = [
+        'ceoName',
+        'entName',
+        'regNum',
+        'entAddr1',
+        'entAddr2',
+        'entSize',
+        'entField'
+      ];
+
+      const hasEmptyField = requiredFields.some(field =>
+        !this.enterprise[field] ||
+        this.enterprise[field].toString().trim() === ''
+      );
+
+      const isRevenueValid = parseInt(this.revenue) >= 0;
+
+      if (hasEmptyField || !isRevenueValid) {
+        return false;
+      }
+
+      const enterpriseModified = Object.keys(this.originalInfo).some(key =>
+        this.originalInfo[key] !== this.enterprise[key]
+      );
+
+      const revenueModified = this.originalInfo.revenue !== parseInt(this.revenue);
+
+      return enterpriseModified || revenueModified;
     }
   },
   components: { ModalPopup },
   setup() {
     const modalPopupStatue = ref(false);
-    const idInput = ref(""); // 아이디 입력 값
-    const duplicateIdMessage = ref(""); // 중복 확인 메시지
-    const entAddr1 = ref(""); // 초기화를 null로 변경
+    const idInput = ref("");
 
     const industries = ref([
-      "제조업", "정보통신", "금융업", "서비스업", "건설업",
-      "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
+      "제조업", "요식업", "IT",
+      "금융업", "서비스업", "건설업",
+      "운수업", "농업/어업", "제약/생명과학",
+      "교육업", "의료업", "예술/문화",
+      "관광/레저", "의류", "기타",
     ]);
 
-    const revenue = ref(""); // 원본 숫자 값
+    const revenue = ref("");
 
     const formattedRevenue = computed({
       get() {
         return revenue.value ? new Intl.NumberFormat('ko-KR').format(revenue.value) : "";
       },
       set(value) {
-        // 콤마를 제거한 후 숫자로 변환하여 원본 값에 저장
         revenue.value = value.replace(/,/g, '');
+        enterprise.value.revenue = parseInt(revenue.value) || 0;
       }
     });
 
     const formatRevenue = (event) => {
       const input = event.target.value;
-      // 숫자와 콤마만 허용
-      const sanitizedInput = input.replace(/[^0-9,]/g, ''); // 숫자와 콤마를 제외한 모든 문자 제거
-      formattedRevenue.value = sanitizedInput; // computed setter가 호출되어 포맷 적용
+      const sanitizedInput = input.replace(/[^0-9,]/g, '');
+      formattedRevenue.value = sanitizedInput;
     };
 
     const onAddressSearchClick = async () => {
       try {
-        // formData가 초기화될 때까지 기다립니다.
         await nextTick();
-
         const result = await searchAddress();
         if (result) {
-          entAddr1.value = result.address; // entAddr1 변수를 업데이트
+          enterprise.value.entAddr1 = result.address;
 
-          // 상세주소 입력란으로 포커스 이동
           nextTick(() => {
             const detailInput = document.querySelector('input[placeholder="상세 주소"]');
             if (detailInput) detailInput.focus();
@@ -64,37 +92,66 @@ export default {
       }
     };
 
-    const onUpdateProfilerClick = () => {
-      modalPopupStatue.value = true;
-    }
-
-    // 중복 확인 함수
-    const onCheckDuplicateIdClick = () => {
-      // todo [아이디 중복 확인 API] 구현 시 아래 로직 구현하기
-      const existingIds = ["user1", "user2"]; // 하드코딩된 기존 아이디 예시
-      if (!idInput.value) {
-        alert("아이디를 입력해주세요.");
-        return;
+    const onUpdateProfilerClick = async () => {
+      try {
+        const response = await updateEnterpriseInfo(enterprise.value);
+        originalInfo.value = { ...enterprise.value };
+        console.log(response)
+      } catch (error) {
+        console.error("API 호출 중 오류 발생:", error);
       }
+    };
 
-      if (existingIds.includes(idInput.value)) {
-        duplicateIdMessage.value = "* 해당 아이디는 중복입니다.";
-      } else {
-        duplicateIdMessage.value = "* 사용 가능한 아이디입니다.";
+    const originalInfo = ref({
+      entId: "",
+      ceoName: "",
+      entName: "",
+      regNum: "",
+      entAddr1: "",
+      entAddr2: "",
+      entSize: "",
+      entField: "",
+      revenue: 0
+    });
+
+    const enterprise = ref({
+      entId: "",
+      ceoName: "",
+      entName: "",
+      regNum: "",
+      entAddr1: "",
+      entAddr2: "",
+      entSize: "",
+      entField: "",
+      revenue: 0
+    });
+
+    const fetchEnterpriseInfo = async () => {
+      try {
+        const response = await fetchEnterprise();
+        originalInfo.value = { ...response };
+        enterprise.value = { ...response };
+        revenue.value = response.revenue?.toString() || "0";
+      } catch (error) {
+        console.error("fetchEnterprise API 호출 오류:", error);
       }
-    }
+    };
+
+    onMounted(() => {
+      fetchEnterpriseInfo();
+    });
 
     return {
       modalPopupStatue,
       industries,
       formattedRevenue,
+      revenue,
       idInput,
-      duplicateIdMessage,
       formatRevenue,
       onAddressSearchClick,
       onUpdateProfilerClick,
-      onCheckDuplicateIdClick,
-      entAddr1 // entAddr1 변수를 반환
+      originalInfo,
+      enterprise,
     };
   }
 }
@@ -108,83 +165,67 @@ export default {
       <div class="input-section">
         <!-- 아이디 입력 -->
         <div class="input-label">
-          <input
-              class="input-field"
-              placeholder="아이디"
-              v-model="idInput"
-              readonly
-          />
-        </div>
-        <!-- 중복 확인 메시지 출력 -->
-        <div class="input-label" style="margin-left: 30px; font-size: 10pt">
-          <span :class="{ 'error-message': duplicateIdMessage.includes('중복입니다'), 'success-message': duplicateIdMessage.includes('사용 가능한') }">
-            {{ duplicateIdMessage }}
-          </span>
+          <span class="input-title">아이디</span>
+          <input class="input-field" placeholder="아이디" v-model="enterprise.entId" readonly />
         </div>
         <!-- 대표자명 입력 -->
         <div class="input-label">
-          <input class="input-field" placeholder="대표자명">
+          <span class="input-title">대표자명</span>
+          <input class="input-field" placeholder="대표자명" v-model="enterprise.ceoName">
         </div>
         <!-- 기업명 입력 -->
         <div class="input-label">
-          <input class="input-field" placeholder="기업명">
+          <span class="input-title">기업명</span>
+          <input class="input-field" placeholder="기업명" v-model="enterprise.entName">
         </div>
         <!-- 사업자번호 입력 -->
         <div class="input-label">
-          <input class="input-field" placeholder="사업자 번호">
+          <span class="input-title">사업자 번호</span>
+          <input class="input-field" placeholder="사업자 번호" v-model="enterprise.regNum">
         </div>
         <!-- 주소 입력 -->
         <div class="input-label">
-          <input
-              v-if="entAddr1.value !== null"
-              class="input-field"
-              placeholder="주소"
-              v-model="entAddr1"
-          />
-          <button class="image-register-button" @click="onAddressSearchClick">검색</button>
+          <span class="input-title">주소</span>
+          <input class="addr-field" placeholder="주소" v-model="enterprise.entAddr1" />
+          <button class="addr-search-button" @click="onAddressSearchClick">검색</button>
         </div>
         <!-- 상세주소 입력 -->
         <div class="input-label">
-          <input class="input-field" placeholder="상세 주소">
+          <input class="addr-detail-field" placeholder="상세 주소" v-model="enterprise.entAddr2">
         </div>
-        <!-- 성별 선택 -->
+        <!-- 기업 규모 선택 -->
         <div class="input-label">
-          <select class="input-field" aria-label="기업 규모">
+          <span class="input-title">기업 규모</span>
+          <select class="input-field" v-model="enterprise.entSize">
             <option value="" disabled selected>기업 규모</option>
-            <option value="large">대기업</option>
-            <option value="medium">중견기업</option>
-            <option value="small">중소기업</option>
-            <option value="startup">스타트업</option>
+            <option value="LARGE">대기업</option>
+            <option value="MEDIUM">중견기업</option>
+            <option value="SMALL">중소기업</option>
+            <option value="STARTUP">스타트업</option>
           </select>
         </div>
         <!-- 산업 선택 -->
         <div class="input-label">
-          <select class="input-field" aria-label="산업">
+          <span class="input-title">산업</span>
+          <select class="input-field" v-model="enterprise.entField">
             <option value="" disabled selected>산업</option>
             <option v-for="industry in industries" :key="industry" :value="industry">{{ industry }}</option>
           </select>
         </div>
         <!-- 매출액 입력 -->
         <div class="input-label">
-          <input
-              class="input-field"
-              placeholder="매출액"
-              type="text"
-              v-model="formattedRevenue"
-              @input="formatRevenue"
-              @keydown="formatRevenue"
-              @keyup="formatRevenue"
-          />
+          <span class="input-title">매출액</span>
+          <input class="input-field" placeholder="매출액" type="text" v-model="formattedRevenue" @input="formatRevenue" />
         </div>
-        <div class="delete-button" @click="onUpdateProfilerClick">수정하기</div>
+        <!-- 수정하기 버튼 -->
+        <div class="modify-button" @click="onUpdateProfilerClick" :class="{ 'disabled-button': !isModified }"
+          :style="{ backgroundColor: isModified ? '#024CAA' : '#e0e0e0' }">
+          수정하기
+        </div>
       </div>
     </div>
   </main>
-  <modal-popup
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
-      :modal-message="'수정이 완료되었습니다.'"
-  />
+  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="'수정이 완료되었습니다.'" />
 </template>
 
 <style scoped>
@@ -202,11 +243,11 @@ export default {
   margin-bottom: 20px;
 }
 
-.subtitle {                     /* 소제목 스타일 */
-  font-size: 18px;              /* 글자 크기 */
-  font-weight: bold;            /* 글자 두께 */
-  margin-bottom: 10px;          /* 아래쪽 여백 */
-  color: #333;                  /* 텍스트 색상 */
+.subtitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .content {
@@ -220,26 +261,28 @@ export default {
 .input-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  flex: 1;
+  align-items: flex-start;
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .input-label {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
+  margin-bottom: 15px;
 }
 
-.required {
-  color: #F60F0F;
-  margin-right: 5px;
+.input-title {
+  width: 30%;
+  font-weight: bold;
 }
 
 .input-field {
-  width: 100%;
+  width: 70%;
   padding: 10px;
-  margin: 10px 10px 10px 0; /* 오른쪽 여백 추가 */
   box-sizing: border-box;
   font-size: 16px;
   border-radius: 8px;
@@ -247,28 +290,55 @@ export default {
   color: #413F42;
 }
 
-.image-register-button {
-  padding: 0 15px; /* 상하 패딩을 0으로 설정 */
-  background-color: #024CAA; /* 버튼 배경색 */
-  color: white; /* 글자색 */
-  border: none; /* 테두리 없앰 */
-  border-radius: 8px; /* 버튼 모서리 둥글게 */
-  cursor: pointer; /* 커서 포인터로 변경 */
-  margin-left: 10px; /* 아이디 입력 필드와 버튼 간격 */
-  font-size: 14px; /* 글자 크기 */
-  height: 40px; /* 버튼 높이를 아이디 입력 필드와 동일하게 설정 */
-  white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 설정 */
-  margin-right: 10px;
+.addr-field {
+  width: 60%;
+  /* 입력 필드 너비 고정으로 정렬 유지 */
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+  color: #413F42;
 }
 
-.image-register-button:hover {
-  background-color: #023c7a; /* 버튼 호버 시 배경색 변경 */
+.addr-detail-field {
+  width: 80%;
+  margin-left: 180px;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+  color: #413F42;
 }
 
-.delete-button {
+.required {
+  color: #F60F0F;
+  margin-right: 5px;
+}
+
+.addr-search-button {
+  padding: 0 15px;
+  background-color: #024CAA;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+  height: 40px;
+  white-space: nowrap;
+}
+
+addr-search-button:hover {
+  background-color: #023c7a;
+}
+
+.modify-button {
   width: 90%;
   padding: 10px;
-  margin-top: 20px;
+  /* 가운데 정렬을 위한 속성 추가 */
+  margin: 20px auto 0 auto;
   background-color: #024CAA;
   color: white;
   text-align: center;
