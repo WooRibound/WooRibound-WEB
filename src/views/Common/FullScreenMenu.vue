@@ -41,7 +41,8 @@ export default {
         router.push(ROUTES.LOGIN);
       } else {
         logout();
-        console.log("로그아웃");
+        onCloseFullScreenMenuClick();
+        router.push(ROUTES.MAIN);
       }
     }
 
