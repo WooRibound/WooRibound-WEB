@@ -4,7 +4,8 @@ import { formatDate1 } from "@/utils/format";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
-import handleApiCall from '@/api/apiService';
+import { confirmDelete } from "@/api/services/adminServiece";
+import { fetchJobPostings } from "@/api/services/individualUserService";
 
 export default {
   name: "JobPostingDetail",
@@ -37,30 +38,16 @@ export default {
       entAddr2: ""
     });
 
-    const fetchJobPosting = async () => {
+    const loadJobPosting = async () => {
       try {
-        const response = await handleApiCall('get', '/individualuser/jobposting/detail', null, {
-          params: {
-            postId: postId
-          }
-        });
-        jobposting.value = {
-          entName: response.data.entName,
-          postTitle: response.data.postTitle,
-          postImg: response.data.postImg,
-          startDate: response.data.startDate,
-          endDate: response.data.endDate,
-          jobName: response.data.jobName,
-          entAddr1: response.data.entAddr1,
-          entAddr2: response.data.entAddr2,
-        };
+        jobposting.value = await fetchJobPostings(postId);
       } catch (error) {
-        console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
+        console.error("채용공고 상세 불러오기 실패:", error);
       }
     };
 
     onMounted(() => {
-      fetchJobPosting();
+      loadJobPosting();
     });
 
     const showDeleteModal = ref(false);
@@ -74,20 +61,13 @@ export default {
       showDeleteModal.value = true;
     };
 
-    const confirmDelete = async () => {
+    const handleDelete = async () => {
       try {
-        const response = await handleApiCall('post', '/admin/jobposting/delete', null, {
-          params: { postId: postId },
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        console.log("삭제 결과:", response);
-
+        const response = await confirmDelete(postId);
+        console.log(response)
         closeModal(true);
-
       } catch (error) {
-        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+        console.error("채용공고 삭제 실패:", error);
       }
     };
 
@@ -109,7 +89,7 @@ export default {
       jobposting,
       onApplyClick,
       onDeletedClick,
-      confirmDelete,
+      handleDelete,
       closeModal
     };
   }
@@ -136,7 +116,7 @@ export default {
     <div class="delete-button" v-else @click="onDeletedClick(postId)">삭제하기</div>
 
     <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
-      @close-modal="closeModal" @confirm="confirmDelete" />
+      @close-modal="closeModal" @confirm="handleDelete" />
   </main>
   <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
     :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
