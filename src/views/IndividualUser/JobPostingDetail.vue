@@ -1,14 +1,15 @@
 <script>
-import { ref, computed, onMounted } from "vue";
+import {ref, onMounted} from "vue";
 import { formatDate1 } from "@/utils/format";
 import { ROUTES } from "@/router/routes";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
-import handleApiCall from '@/api/apiService';
+import {deleteUserApply, fetchJobPostingDetail, insertUserApply} from "@/api/services/individualUserService";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "JobPostingDetail",
-  components: { TwoButtonModal },
+  components: {SingleButtonModal, TwoButtonModal},
   computed: {
     ROUTES() {
       return ROUTES;
@@ -16,101 +17,82 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const router = useRouter();
-    const postId = route.params.id;
-    const isDelete = route.query.delete;
+    const applyId = route.params.applyId;
+    const postId = route.params.postId;
 
-    const modalPopupStatue = ref(false);
+    const singleModalPopupStatue = ref(false);
+    const twoButtonModalPopupStatue = ref(false);
     const modalMessage = ref('');
 
-    const formattedStartDate = computed(() => formatDate1(jobposting.value.startDate));
-    const formattedEndDate = computed(() => formatDate1(jobposting.value.endDate));
-
-    const jobposting = ref({
-      entName: "",
-      postTitle: "",
-      postImg: "",
-      startDate: "",
-      endDate: "",
-      jobName: "",
-      entAddr1: "",
-      entAddr2: ""
+    const jobPosting = ref({
+      entName: '',
+      postTitle: '',
+      postImg: '',
+      startDate: '',
+      endDate: '',
+      jobName: '',
+      entAddr1: '',
+      entAddr2: ''
     });
 
     const fetchJobPosting = async () => {
       try {
-        const response = await handleApiCall('get', '/individualuser/jobposting/detail', null, {
-          params: {
-            postId: postId
-          }
-        });
-        jobposting.value = {
-          entName: response.data.entName,
-          postTitle: response.data.postTitle,
-          postImg: response.data.postImg,
-          startDate: response.data.startDate,
-          endDate: response.data.endDate,
-          jobName: response.data.jobName,
-          entAddr1: response.data.entAddr1,
-          entAddr2: response.data.entAddr2,
+        const response = await fetchJobPostingDetail(applyId);
+        jobPosting.value = {
+          entName: response.entName,
+          postTitle: response.postTitle,
+          postImg: response.postImg,
+          startDate: formatDate1(response.startDate),
+          endDate: formatDate1(response.endDate),
+          jobName: response.jobName,
+          entAddr1: response.entAddr1,
+          entAddr2: response.entAddr2,
         };
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
+
     };
 
     onMounted(() => {
       fetchJobPosting();
+
     });
 
-    const showDeleteModal = ref(false);
-
-    const onApplyClick = (postId) => {
-      console.log("postId:", postId);
-    };
-
-    const onDeletedClick = () => {
-      modalMessage.value = "채용공고를 삭제하시겠습니까?";
-      showDeleteModal.value = true;
-    };
-
-    const confirmDelete = async () => {
+    const onApplyClick = async (postId) => {
       try {
-        const response = await handleApiCall('post', '/admin/jobposting/delete', null, {
-          params: { postId: postId },
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        console.log("삭제 결과:", response);
-
-        closeModal(true);
-
-      } catch (error) {
-        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+        const response = await insertUserApply(postId);
+        modalMessage.value = response;
+        singleModalPopupStatue.value = true;
+      } catch (e) {
+        console.log(e);
       }
     };
 
-    const closeModal = (shouldRedirect = false) => {
-      showDeleteModal.value = false;
-      if (shouldRedirect) {
-        router.push(ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path);
+    const onApplyCancelClick = async (applyId) => {
+      const isConfirm = confirm("정말로 삭제하시겠습니까?");
+      if (isConfirm) {
+        try {
+          const response = await deleteUserApply(applyId);
+          modalMessage.value = response;
+          singleModalPopupStatue.value = true;
+          console.log(response);
+        } catch (e) {
+          console.log(e);
+        }
       }
-    };
+    }
+
 
     return {
-      showDeleteModal,
+      singleModalPopupStatue,
+      twoButtonModalPopupStatue,
       modalMessage,
-      modalPopupStatue,
-      formattedStartDate,
-      formattedEndDate,
-      isDelete,
+      applyId,
       postId,
-      jobposting,
+      jobPosting,
       onApplyClick,
-      onDeletedClick,
-      confirmDelete,
-      closeModal
+      onApplyCancelClick,
     };
   }
 };
@@ -121,25 +103,35 @@ export default {
     <div class="job-posting-header">채용공고 상세페이지</div>
     <div class="job-posting-content">
       <div class="company-logo">
-        <img :src="jobposting.postImg" alt="Company Logo">
+        <img :src="jobPosting.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
-        <div class="company-name">{{ jobposting.entName }}</div>
-        <div class="job-title">{{ jobposting.postTitle }}</div>
+        <div class="company-name">{{ jobPosting.entName }}</div>
+        <div class="job-title">{{ jobPosting.postTitle }}</div>
+        <div class="job-title">{{ jobPosting.jobName }}</div>
         <div class="application-period">공고 게시 및 서류 접수</div>
-        <div class="application-dates">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
+        <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
         <div class="company-address-label">기업 주소</div>
-        <div class="company-address">{{ jobposting.entAddr1 }} {{ jobposting.entAddr2 }}</div>
+        <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
       </div>
     </div>
-    <div class="delete-button" v-if="!isDelete" @click="onApplyClick(postId)">지원하기</div>
-    <div class="delete-button" v-else @click="onDeletedClick(postId)">삭제하기</div>
-
-    <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
-      @close-modal="closeModal" @confirm="confirmDelete" />
+    <div class="delete-button" v-if="postId" @click="onApplyClick(postId)">지원하기</div>
+    <div class="delete-button" v-if="applyId" @click="onApplyCancelClick(applyId)">지원취소</div>
   </main>
-  <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
-    :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
+  <single-button-modal
+      v-if="singleModalPopupStatue"
+      @close-modal="singleModalPopupStatue = false"
+      :modal-message="modalMessage"
+      :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
+  />
+  <TwoButtonModal
+      v-if="twoButtonModalPopupStatue"
+      @close-modal="twoButtonModalPopupStatue = false"
+      :modal-message="modalMessage"
+      leftButtonText="확인"
+      rightButtonText="취소"
+      :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
+  />
 </template>
 
 <style scoped>

@@ -140,3 +140,47 @@ export const updateIndividualUserResume= async (resume) => {
     throw error;
   }
 }
+
+// 지원 현황 조회
+export const fetchJobApply = async () => {
+  try {
+    const response = await handleApiCall('get', `/individualuser/info/jobposting/myapply?userId=USER001`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용 공고 상세 조회
+export const fetchJobPostingDetail = async (postId) => {
+  try {
+    const response = await handleApiCall('get', `/individualuser/jobposting/detail?postId=${postId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용 공고 지원
+export const insertUserApply = async (postId) => {
+  try {
+    const response = await handleApiCall('post', `/individualuser/jobposting/apply?postId=${postId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용 공고 지원 취소
+export const deleteUserApply = async (applyId) => {
+  try {
+    const response = await handleApiCall('post', `/individualuser/info/apply/cancel?applyId=${applyId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
