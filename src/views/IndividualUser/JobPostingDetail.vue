@@ -25,9 +25,12 @@ export default {
     const modalPopupStatue = ref(false);
     const modalMessage = ref('');
 
-    const formattedStartDate = computed(() => formatDate1(jobposting.value.startDate));
-    const formattedEndDate = computed(() => formatDate1(jobposting.value.endDate));
-
+    const formattedStartDate = computed(() =>
+        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
+    );
+    const formattedEndDate = computed(() =>
+        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
+    );
     const jobposting = ref({
       entName: "",
       postTitle: "",

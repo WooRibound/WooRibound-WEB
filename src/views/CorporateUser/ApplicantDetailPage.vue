@@ -68,6 +68,7 @@ export default {
     };
 
     const onMoveResumePageClick = (userId) => {
+      console.info("userId: "+ userId);
       router.push({
         name: ROUTES.READONLY_RESUME_PAGE.name,
         params: {
@@ -142,7 +143,7 @@ export default {
         <tr v-for="applicant in applicantsList" :key="applicant.userId">
           <td>{{ applicant.applicantName }}</td>
           <td> {{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
-          <td><div class="resume-link" @click="onMoveResumePageClick">보기</div></td>
+          <td><div class="resume-link" @click="onMoveResumePageClick(applicant.userId)">보기</div></td>
           <td>
             <div class="status-container">
               <div v-if="applicant.result === 'PENDING'">

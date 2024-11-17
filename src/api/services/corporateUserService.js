@@ -101,6 +101,19 @@ export const setApplicantResult = async (payload) => {
     }
 };
 
+// 지원자 이력서 조회
+export const fetchApplicantResume = async (userId) => {
+    try {
+        console.debug("Making API call to fetch Applicant Resume"+ userId);
+        const encodedUserId = encodeURIComponent(userId);
+        const data = await handleApiCall("get", `/corporate/jobposting/applicant/detail?userId=${encodedUserId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchApplicantResume] Error:", error);
+        throw error;
+    }
+};
+
 /*// 내 기업 공고 목록 조회 - OAuth 변경 전
 export const fetchMyPostingList = async (entId) => {
     try {
