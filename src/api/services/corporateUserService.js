@@ -52,3 +52,21 @@ export const deleteData = async (id) => {
     throw error; // 오류를 다시 던져서 호출자가 처리할 수 있게 함
   }
 };
+
+// 공고 등록
+export const insertJobPosting= async (jobPosting) => {
+  const formData = new FormData();
+  formData.append('postImg', jobPosting.postImg);
+  formData.append('postTitle', jobPosting.postTitle);
+  formData.append('jobId', jobPosting.jobId);
+  formData.append('startDate', jobPosting.startDate);
+  formData.append('endDate', jobPosting.endDate);
+
+  try {
+    const response = await handleApiCall('post', `corporate/jobposting/register`, formData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to regist:', error);
+    throw error;
+  }
+}
