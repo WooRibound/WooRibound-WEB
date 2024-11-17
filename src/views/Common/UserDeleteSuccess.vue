@@ -1,11 +1,14 @@
 <script>
-import {useRouter} from 'vue-router';
-import { ROUTES } from '@/router/routes'
+import {useRouter, useRoute} from 'vue-router';
+import {ROUTES} from '@/router/routes'
 
 export default {
-  name: "UserDeleteSuccess",
+  name: "DeleteSuccess",
   setup() {
     const router = useRouter();
+    const route = useRoute();
+
+    const isIndividual = route.params.type === 'individual';
 
     const onGoToHomeClick = () => {
       router.push(ROUTES.MAIN.path);
@@ -13,6 +16,7 @@ export default {
 
     return {
       onGoToHomeClick,
+      isIndividual,
     };
   },
 };
@@ -21,8 +25,8 @@ export default {
 <template>
   <main class="body">
     <div class="content">
-      <h1>탈퇴가 완료되었습니다.</h1>
-      <p>이용해 주셔서 감사합니다.<br />앞으로 더 나은 서비스를 위해 노력하겠습니다.</p>
+      <h1>{{ isIndividual ? '탈퇴가 완료되었습니다.' : '탈퇴 신청이 완료되었습니다.' }}</h1>
+      <p>이용해 주셔서 감사합니다.<br/>앞으로 더 나은 서비스를 위해 노력하겠습니다.</p>
       <button @click="onGoToHomeClick" class="home-button">홈으로 돌아가기</button>
     </div>
   </main>

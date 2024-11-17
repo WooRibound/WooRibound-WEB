@@ -85,9 +85,9 @@ export const ROUTES = {
         name: "CorporateUserDelete",
     },
     // [개인회원, 기업회원] 탈퇴성공
-    USER_DELETE_SUCCESS: {
-        path: "/delete-success",
-        name: "UserDeleteSuccess",
+    DELETE_SUCCESS: {
+        path: "/delete-success/:cat",
+        name: "DeleteSuccess",
     },
     CORPORATE_DELETE_SUCCESS: {
         path: "/corporate-delete-success",
