@@ -116,12 +116,6 @@ export default {
 </template>
 
 <style scoped>
-.bottom-navigation {
-  background-color: #fff;
-  padding: 10px;           /* 패딩 추가 */
-  border-top: 2px solid #D9D9D9;
-}
-
 .bottom-nav-list {
   display: flex;           /* 수평 정렬 */
   list-style: none;       /* 기본 리스트 스타일 제거 */
