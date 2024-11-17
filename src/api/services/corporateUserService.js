@@ -54,7 +54,7 @@ export const deleteData = async (id) => {
 // 내 기업 공고 목록 조회
 export const fetchMyPostingList = async () => {
     try {
-        console.debug("Making API call to fetch job postings"); // 디버깅용
+        console.debug("Making API call to fetch job postings");
         const data = await handleApiCall("get", "/corporate/jobposting");
         return data;
     } catch (error) {
@@ -114,21 +114,30 @@ export const fetchApplicantResume = async (userId) => {
     }
 };
 
-/*// 내 기업 공고 목록 조회 - OAuth 변경 전
-export const fetchMyPostingList = async (entId) => {
+// 직원목록 조회
+export const fetchEmployeeList = async () => {
     try {
-        if (!entId) {
-            throw new Error("entId is required and cannot be null or undefined.");
-        }
-        const encodedEntId = encodeURIComponent(entId); // URL 인코딩 추가
-        console.debug("Making API call with entId:", encodedEntId); // 디버깅용
-        const data = await handleApiCall("get", `/corporate/jobposting?entId=${encodedEntId}`); // 🔴 수정된 호출 방식
+        console.debug("Making API call to fetch employee list ");
+        const data = await handleApiCall("get", "/corporate/info/employee");
         return data;
     } catch (error) {
-        console.error("[fetchMyPostingList] Error:", error);
+        console.error("[fetchEmployeeList] Error:", error);
         throw error;
     }
-};*/
+};
+
+// 직원 추천, 비추천 설정
+export const setEmployeeRating = async (payload) => {
+    try {
+        console.debug("Making API call to set employee recommendation");
+        const data = await handleApiCall("post", "/corporate/info/employee/rating", payload);
+        return data;
+    } catch (error) {
+        console.error("[setApplicantResult] Error:", error);
+        throw error;
+    }
+};
+
 
 
 
