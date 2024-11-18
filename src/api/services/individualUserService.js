@@ -145,7 +145,6 @@ export const updateIndividualUserResume= async (resume) => {
 export const fetchJobPostings = async (payload = {}) => {
   try {
     const response = await handleApiCall('post', '/individualuser/jobposting', payload);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error posting data:', error);
@@ -157,7 +156,6 @@ export const fetchJobPostings = async (payload = {}) => {
 export const fetchJobPostingsNew = async (payload = {}) => {
   try {
     const response = await handleApiCall('post', '/individualuser/jobposting/new', payload);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error posting data:', error);
@@ -169,7 +167,6 @@ export const fetchJobPostingsNew = async (payload = {}) => {
 export const fetchJobPostingsCareer = async (payload = {}) => {
   try {
     const response = await handleApiCall('post', '/individualuser/jobposting/career', payload);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error posting data:', error);
