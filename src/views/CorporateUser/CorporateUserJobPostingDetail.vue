@@ -123,6 +123,7 @@ export default {
       <div class="job-posting-info">
         <div class="company-name">{{ jobPosting.entName }}</div>
         <div class="job-title">{{ jobPosting.postTitle }}</div>
+        <div class="job-name">{{ jobPosting.jobName }}</div>
         <div class="application-period">공고 게시 및 서류 접수</div>
         <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
         <div class="company-address-label">기업 주소</div>
@@ -231,5 +232,12 @@ export default {
   cursor: pointer;
   font-weight: bold;
   border-radius: 8px;
+}
+
+.job-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
 }
 </style>
