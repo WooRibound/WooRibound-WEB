@@ -4,7 +4,8 @@ import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
 import { formatDate1 } from "@/utils/format";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
-import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
+import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
+import { fetchJobPostingsCareer, fetchJobPostingsNew, fetchJobPostings } from "@/api/services/individualUserService";
 
 export default {
   name: "JobPostingsPage",
@@ -106,7 +107,7 @@ export default {
     const onMoveDetailPageClick = (postId) => {
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
-        params:{
+        params: {
           postId: postId
         },
       })
@@ -151,22 +152,15 @@ export default {
   <main class="body">
     <div class="header">채용 공고</div>
     <div class="search-wrap">
-      <input
-          class="search-input"
-          placeholder="기업명을 입력하세요"
-          type="text"
-          v-model="searchInput"
-          @keyup.enter="searchJobPosting"
-      >
+      <input class="search-input" placeholder="기업명을 입력하세요" type="text" v-model="searchInput"
+        @keyup.enter="searchJobPosting">
       <div class="filter-section">
-        <div class="filter-item"
-             @click="onFilterClick(SEARCH_FILTER_TYPES.JOB)"
-             :style="{ color: selectedJob === '전체 직무' ? 'black' : '#024CAA' }">
+        <div class="filter-item" @click="onFilterClick(SEARCH_FILTER_TYPES.JOB)"
+          :style="{ color: selectedJob === '전체 직무' ? 'black' : '#024CAA' }">
           {{ selectedJob }}
         </div>
-        <div class="filter-item"
-             @click="onFilterClick(SEARCH_FILTER_TYPES.REGIONS)"
-             :style="{ color: selectedProvince === '전체 지역' ? 'black' : '#024CAA' }">
+        <div class="filter-item" @click="onFilterClick(SEARCH_FILTER_TYPES.REGIONS)"
+          :style="{ color: selectedProvince === '전체 지역' ? 'black' : '#024CAA' }">
           {{ selectedProvince }}
         </div>
       </div>
@@ -190,17 +184,13 @@ export default {
             {{ formatDate1(new Date(jobPosting.endDate)) }}
           </div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
-               @click="onMoveDetailPageClick(jobPosting.postId)">
+            @click="onMoveDetailPageClick(jobPosting.postId)">
         </div>
       </div>
     </div>
   </main>
-  <search-filter-modal
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
-      @select-filter="handleSelectFilter"
-      :filter-type="filterTypes"
-  />
+  <search-filter-modal v-if="modalPopupStatue" @close-modal="modalPopupStatue = false"
+    @select-filter="handleSelectFilter" :filter-type="filterTypes" />
 </template>
 
 <style scoped>
@@ -275,14 +265,16 @@ export default {
 
 .job-posting-list-top {
   display: flex;
-  justify-content: space-between; /* Aligns items on both ends */
+  justify-content: space-between;
+  /* Aligns items on both ends */
   align-items: center;
   margin-bottom: 5px;
 }
 
 .course-title {
   font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
+  margin-right: auto;
+  /* Ensures it stays on the left */
 }
 
 .recruitment-phase {
