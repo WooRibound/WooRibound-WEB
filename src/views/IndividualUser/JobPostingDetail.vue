@@ -1,11 +1,10 @@
 <script>
-import {ref, computed, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 import { formatDate1 } from "@/utils/format";
 import { ROUTES } from "@/router/routes";
 import { useRoute } from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import {deleteUserApply, fetchJobPostingDetail, insertUserApply} from "@/api/services/individualUserService";
-import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "JobPostingDetail",
