@@ -141,6 +141,44 @@ export const updateIndividualUserResume= async (resume) => {
   }
 }
 
+// 1. 공고 조회 - 검색(회사명, 직무, 지역)
+export const fetchJobPostings = async (payload = {}) => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/jobposting', payload);
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+};
+
+// 2. 공고 조회 - 새로운 일 구하기
+export const fetchJobPostingsNew = async (payload = {}) => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/jobposting/new', payload);
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+};
+
+// 3. 공고 조회 - 경력 살리기
+export const fetchJobPostingsCareer = async (payload = {}) => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/jobposting/career', payload);
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+};
+
+
+
 
 // 지원 현황 조회
 export const fetchJobApply = async () => {

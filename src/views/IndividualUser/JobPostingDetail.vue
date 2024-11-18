@@ -1,5 +1,5 @@
 <script>
-import {ref, onMounted} from "vue";
+import {ref, computed, onMounted} from "vue";
 import { formatDate1 } from "@/utils/format";
 import { ROUTES } from "@/router/routes";
 import { useRoute } from "vue-router";
@@ -9,7 +9,7 @@ import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "JobPostingDetail",
-  components: {SingleButtonModal, TwoButtonModal},
+  components: { TwoButtonModal },
   computed: {
     ROUTES() {
       return ROUTES;
@@ -186,6 +186,13 @@ export default {
 }
 
 .job-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.job-name {
   font-size: 20px;
   font-weight: bold;
   color: #333;

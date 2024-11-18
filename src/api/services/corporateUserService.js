@@ -53,6 +53,111 @@ export const deleteData = async (id) => {
   }
 };
 
+// 내 기업 공고 목록 조회
+export const fetchMyPostingList = async () => {
+    try {
+        console.debug("Making API call to fetch job postings");
+        const data = await handleApiCall("get", "/corporate/jobposting");
+        return data;
+    } catch (error) {
+        console.error("[fetchMyPostingList] Error:", error);
+        throw error;
+    }
+};
+
+// 내 기업 공고 상세 조회
+export const fetchMyPostingDetail = async (postId) => {
+    try {
+        console.debug("Making API call to fetch job postings detail"+ postId);
+        const encodedPostId = encodeURIComponent(postId);
+        const data = await handleApiCall("get", `/corporate/jobposting/detail?postId=${encodedPostId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchMyPostingDetail] Error:", error);
+        throw error;
+    }
+};
+
+// 지원자 목록 조회
+export const fetchApplicantList = async (postId) => {
+    try {
+        console.debug("Making API call to fetch applicant list"+ postId);
+        const encodedPostId = encodeURIComponent(postId);
+        const data = await handleApiCall("get", `/corporate/jobposting/applicant?postId=${encodedPostId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchApplicantList] Error:", error);
+        throw error;
+    }
+};
+
+// 지원자 결과 설정
+export const setApplicantResult = async (payload) => {
+    try {
+        console.debug("Making API call to set applicant result");
+        const data = await handleApiCall("post", "/corporate/jobposting/applicant/result", payload);
+        return data;
+    } catch (error) {
+        console.error("[setApplicantResult] Error:", error);
+        throw error;
+    }
+};
+
+// 지원자 이력서 조회
+export const fetchApplicantResume = async (userId) => {
+    try {
+        console.debug("Making API call to fetch Applicant Resume"+ userId);
+        const encodedUserId = encodeURIComponent(userId);
+        const data = await handleApiCall("get", `/corporate/jobposting/applicant/detail?userId=${encodedUserId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchApplicantResume] Error:", error);
+        throw error;
+    }
+};
+
+// 직원목록 조회
+export const fetchEmployeeList = async () => {
+    try {
+        console.debug("Making API call to fetch employee list ");
+        const data = await handleApiCall("get", "/corporate/info/employee");
+        return data;
+    } catch (error) {
+        console.error("[fetchEmployeeList] Error:", error);
+        throw error;
+    }
+};
+
+// 직원 추천, 비추천 설정
+export const setEmployeeRating = async (payload) => {
+    try {
+        console.debug("Making API call to set employee recommendation");
+        const data = await handleApiCall("post", "/corporate/info/employee/rating", payload);
+        return data;
+    } catch (error) {
+        console.error("[setApplicantResult] Error:", error);
+        throw error;
+    }
+};
+
+// 추천 직원목록 조회
+export const fetchRecommendList = async (jobId) => {
+    try {
+        console.debug("Making API call to fetch recommend employee list ");
+       // const encodedJobId = encodeURIComponent(jobId);
+        const data = await handleApiCall("get", `/corporate/jobposting/applicant-recommend?jobId=${jobId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchRecommendList] Error:", error);
+        throw error;
+    }
+};
+
+
+
+
+
+
 // 공고 등록
 export const insertJobPosting= async (jobPosting) => {
   const formData = new FormData();

@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute } from "vue-router";
-import handleApiCall from '@/api/apiService';
+import { fetchApplicantResume } from "@/api/services/corporateUserService";
 
 export default {
   name: "ReadonlyResumePage",
@@ -29,14 +29,13 @@ export default {
     const photoPreview = ref(null); // 이미지 미리보기 URL 저장
 
     const fetchResume = async (userId) => {
+      console.log("fetchResume called with userId:", userId);
       try {
-        const response = await handleApiCall('get', `/admin/individual/detail`, null, {
-          params: { userId }
-        });
+        const response = await fetchApplicantResume(userId);
+        resume.value = response.data || {};
 
         console.log(response.data)
-        // API 응답 데이터로 resume 정보 업데이트
-        resume.value = response.data;
+
         if (response.data.userImg) {
           photoPreview.value = response.data.userImg;
         }

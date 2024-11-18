@@ -8,7 +8,6 @@ export default {
     const router = useRouter();
 
     const navigateToJobPostings = (viewType) => {
-      console.log("viewType:", viewType);
       router.push({
         name: ROUTES.JOB_POSTINGS_PAGE.name,
         params:{

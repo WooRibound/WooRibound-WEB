@@ -110,7 +110,7 @@ const handleApiCall = async (method, url, data = null, options = {}) => {
             }
         };
 
-        // GET 요청에서 request 파라미터가 존재하는 경우
+        // GET 요청에서 params로 data를 전달
         if (method.toLowerCase() === 'get' && data) {
             config.params = { ...data }; // data 객체를 params에 직접 매핑
         }
