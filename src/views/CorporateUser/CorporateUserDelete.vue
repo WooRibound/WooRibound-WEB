@@ -3,6 +3,7 @@ import {ref} from "vue";
 import {ROUTES} from "@/router/routes";
 import {withdrawCorporate} from "@/api/services/authenticationService";
 import {useUserStore} from "@/stores/userStore";
+import router from "@/router";
 
 export default {
   name: "CorporateUserDelete",
@@ -23,6 +24,15 @@ export default {
       isButtonEnabled.value = confirmText.value === REQUIRED_TEXT && password.value.length > 0;
     };
 
+    const moveToSuccessPage = () => {
+      router.push({
+        name: ROUTES.DELETE_SUCCESS.name,
+        params: {
+          cat: 'corporate'
+        },
+      })
+    }
+
     const onWithdraw = async () => {
       if (confirmText.value !== REQUIRED_TEXT) {
         return;
@@ -36,7 +46,7 @@ export default {
         if (response && response.status === 200) {
           await userStore.logout();
           console.log("탈퇴 처리 완료");
-          window.location.href = ROUTES.CORPORATE_DELETE_SUCCESS.path;
+          moveToSuccessPage();
         } else {
           throw new Error('탈퇴 처리 실패');
         }

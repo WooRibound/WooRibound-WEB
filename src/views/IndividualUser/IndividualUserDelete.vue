@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { ROUTES } from "@/router/routes";
 import { withdrawIndividual } from '@/api/services/authenticationService';
 import {useUserStore} from "@/stores/userStore";
+import router from "@/router";
 
 export default {
   name: "IndividualUserDelete",
@@ -16,6 +17,15 @@ export default {
     const errorModalStatus = ref(false);
     const REQUIRED_TEXT = '탈퇴하기';
     const isButtonEnabled = ref(false);
+
+    const moveToSuccessPage = () => {
+      router.push({
+        name: ROUTES.DELETE_SUCCESS.name,
+        params: {
+          cat: 'individual'
+        },
+      })
+    }
 
     const validateConfirmText = () => {
       isButtonEnabled.value = confirmText.value === REQUIRED_TEXT;
@@ -33,7 +43,7 @@ export default {
         console.log("탈퇴 API 응답:", response);
         if (response && response.status === 200) {
           console.log("탈퇴 처리 완료");
-          window.location.href = ROUTES.USER_DELETE_SUCCESS.path;
+          moveToSuccessPage();
         } else {
           throw new Error('탈퇴 처리 실패');
         }
