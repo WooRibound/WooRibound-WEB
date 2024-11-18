@@ -15,7 +15,7 @@ export default {
     }
   },
   components: { SearchFilterModal },
-  methods: { formatDate: formatDate1 },
+  methods: { formatDate1 },
   setup() {
     const router = useRouter();
     const route = useRoute();
@@ -180,8 +180,8 @@ export default {
         </div>
         <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ formatDate1(new Date(jobPosting.startDate)) }} ~
-            {{ formatDate1(new Date(jobPosting.endDate)) }}
+          <div class="schedule-info">{{ formatDate1(jobPosting.startDate) }} ~
+            {{ formatDate1(jobPosting.endDate) }}
           </div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
             @click="onMoveDetailPageClick(jobPosting.postId)">
