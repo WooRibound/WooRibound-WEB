@@ -225,7 +225,7 @@ export const deleteUserApply = async (applyId) => {
 }
 
 // 채용공고 조회
-export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, selectedProvinceValue) => {
+/*export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, selectedProvinceValue) => {
   try {
       const params = {
           entName: searchInputValue,
@@ -241,5 +241,5 @@ export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, 
       console.error("fetchJobPostings API 호출 오류:", error);
       throw error;
   }
-};
+};*/
 

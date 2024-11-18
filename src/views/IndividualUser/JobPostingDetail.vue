@@ -1,11 +1,10 @@
 <script>
-import {ref, computed, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 import { formatDate1 } from "@/utils/format";
 import { ROUTES } from "@/router/routes";
 import { useRoute } from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import {deleteUserApply, fetchJobPostingDetail, insertUserApply} from "@/api/services/individualUserService";
-import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "JobPostingDetail",
@@ -108,7 +107,7 @@ export default {
       <div class="job-posting-info">
         <div class="company-name">{{ jobPosting.entName }}</div>
         <div class="job-title">{{ jobPosting.postTitle }}</div>
-        <div class="job-title">{{ jobPosting.jobName }}</div>
+        <div class="job-name">{{ jobPosting.jobName }}</div>
         <div class="application-period">공고 게시 및 서류 접수</div>
         <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
         <div class="company-address-label">기업 주소</div>

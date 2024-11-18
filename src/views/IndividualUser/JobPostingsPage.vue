@@ -5,6 +5,8 @@ import { ROUTES } from "@/router/routes";
 import { formatDate1 } from "@/utils/format";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
+import {fetchJobPostingsCareer, fetchJobPostingsNew} from "@/api/services/individualUserService";
+import {fetchJobPostings} from "@/api/services/adminServiece";
 
 export default {
   name: "JobPostingsPage",
