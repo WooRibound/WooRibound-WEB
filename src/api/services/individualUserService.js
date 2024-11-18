@@ -177,3 +177,69 @@ export const fetchJobPostingsCareer = async (payload = {}) => {
   }
 };
 
+
+
+
+// 지원 현황 조회
+export const fetchJobApply = async () => {
+  try {
+    const response = await handleApiCall('get', `/individualuser/info/jobposting/myapply?userId=USER001`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용 공고 상세 조회
+export const fetchJobPostingDetail = async (postId) => {
+  try {
+    const response = await handleApiCall('get', `/individualuser/jobposting/detail?postId=${postId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용 공고 지원
+export const insertUserApply = async (postId) => {
+  try {
+    const response = await handleApiCall('post', `/individualuser/jobposting/apply?postId=${postId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용 공고 지원 취소
+export const deleteUserApply = async (applyId) => {
+  try {
+    const response = await handleApiCall('post', `/individualuser/info/apply/cancel?applyId=${applyId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 채용공고 조회
+export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, selectedProvinceValue) => {
+  try {
+      const params = {
+          entName: searchInputValue,
+          entField: selectedIndustryValue === '전체 산업' ? null : selectedIndustryValue,
+          addrCity: selectedProvinceValue === '전체 지역' ? null : selectedProvinceValue,
+      };
+
+      const response = await handleApiCall('get', '/admin/jobposting', null, {
+          params: params
+      });
+      return response.data;
+  } catch (error) {
+      console.error("fetchJobPostings API 호출 오류:", error);
+      throw error;
+  }
+};
+

@@ -97,8 +97,8 @@ const router = createRouter({
             component: () => import("@/views/CorporateUser/CorporateUserDelete.vue"),
         },
         {
-            path: ROUTES.USER_DELETE_SUCCESS.path,
-            name: ROUTES.USER_DELETE_SUCCESS.name,
+            path: ROUTES.DELETE_SUCCESS.path,
+            name: ROUTES.DELETE_SUCCESS.name,
             component: () => import("@/views/Common/UserDeleteSuccess.vue"),
         },
         {
@@ -125,6 +125,11 @@ const router = createRouter({
             path: ROUTES.JOB_POSTING_REGISTER.path,
             name: ROUTES.JOB_POSTING_REGISTER.name,
             component: () => import("@/views/CorporateUser/JobPostingRegister.vue"),
+        },
+        {
+            path: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.path,
+            name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
+            component: () => import("@/views/CorporateUser/CorporateUserJobPostingDetail.vue"),
         },
         {
             path: ROUTES.APPLICANT_DETAIL_PAGE.path,
@@ -200,6 +205,11 @@ const router = createRouter({
             path: ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path,
             name: ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.name,
             component: () => import("@/views/Admin/CorporateJobPostingManagement.vue"),
+        },
+        {
+            path: ROUTES.ADMIN_JOB_POSTING_DETAIL.path,
+            name: ROUTES.ADMIN_JOB_POSTING_DETAIL.name,
+            component: () => import("@/views/CorporateUser/CorporateUserJobPostingDetail.vue"),
         },
         {
             path: ROUTES.WISDOM_MANAGEMENT.path,

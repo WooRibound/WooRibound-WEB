@@ -5,9 +5,6 @@ import { ROUTES } from "@/router/routes";
 import { formatDate1 } from "@/utils/format";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import { fetchJobPostings } from "@/api/services/individualUserService.js";
-import { fetchJobPostingsNew } from "@/api/services/individualUserService.js";
-import { fetchJobPostingsCareer } from "@/api/services/individualUserService.js";
 
 export default {
   name: "JobPostingsPage",
@@ -109,8 +106,8 @@ export default {
     const onMoveDetailPageClick = (postId) => {
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
-        params: {
-          id: postId
+        params:{
+          postId: postId
         },
       })
     }

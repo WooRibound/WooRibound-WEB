@@ -1,15 +1,17 @@
 <script>
-import {ref, computed, onMounted} from "vue";
-import { formatDate1 } from "@/utils/format";
-import { ROUTES } from "@/router/routes";
-import { useRoute } from "vue-router";
-import TwoButtonModal from '@/components/TwoButtonModal.vue';
-import {deleteUserApply, fetchJobPostingDetail, insertUserApply} from "@/api/services/individualUserService";
-import SingleButtonModal from "@/components/SingleButtonModal.vue";
+import {useUserStore} from "@/stores/userStore";
+import {computed, onMounted, ref} from "vue";
+import TwoButtonModal from "@/components/TwoButtonModal.vue";
+import {ROUTES} from "@/router/routes";
+import {useRoute, useRouter} from "vue-router";
+import {fetchJobPostingDetail} from "@/api/services/individualUserService";
+import {formatDate1} from "@/utils/format";
+import {deleteJobPosting} from "@/api/services/adminServiece";
+import {USER_TYPES} from "@/constants/userTypes";
 
 export default {
-  name: "JobPostingDetail",
-  components: { TwoButtonModal },
+  name: "CorporateUserJobPostingDetail",
+  components: {TwoButtonModal},
   computed: {
     ROUTES() {
       return ROUTES;
@@ -17,27 +19,28 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const applyId = route.params.applyId;
-    const postId = route.params.postId;
-
-    const singleModalPopupStatue = ref(false);
-    const twoButtonModalPopupStatue = ref(false);
+    const router = useRouter();
+    const userStore = useUserStore();
+    
+    const userType = computed(() => userStore.userType);
+    const postId = route.params.id;
+    const modalPopupStatue = ref(false);
     const modalMessage = ref('');
 
     const jobPosting = ref({
-      entName: '',
-      postTitle: '',
-      postImg: '',
-      startDate: '',
-      endDate: '',
-      jobName: '',
-      entAddr1: '',
-      entAddr2: ''
+      entName: "",
+      postTitle: "",
+      postImg: "",
+      startDate: "",
+      endDate: "",
+      jobName: "",
+      entAddr1: "",
+      entAddr2: ""
     });
 
     const fetchJobPosting = async () => {
       try {
-        const response = await fetchJobPostingDetail(applyId);
+        const response = await fetchJobPostingDetail(postId);
         jobPosting.value = {
           entName: response.entName,
           postTitle: response.postTitle,
@@ -56,46 +59,58 @@ export default {
 
     onMounted(() => {
       fetchJobPosting();
-
     });
 
-    const onApplyClick = async (postId) => {
+    const onDeleteClick = async (userType, postId) => {
+      console.log("userType:", userType);
       try {
-        const response = await insertUserApply(postId);
-        modalMessage.value = response;
-        singleModalPopupStatue.value = true;
+        if (userType === USER_TYPES.SERVICE_ADMIN) {
+          const response = await deleteJobPosting(postId);
+          console.log("삭제 결과:", response);
+        }
+
+        if (userType === USER_TYPES.CORPORATE_MEMBER) {
+          // todo 기업회원 공고 삭제 API
+        }
+
       } catch (e) {
         console.log(e);
       }
-    };
-
-    const onApplyCancelClick = async (applyId) => {
-      const isConfirm = confirm("정말로 삭제하시겠습니까?");
-      if (isConfirm) {
-        try {
-          const response = await deleteUserApply(applyId);
-          modalMessage.value = response;
-          singleModalPopupStatue.value = true;
-          console.log(response);
-        } catch (e) {
-          console.log(e);
-        }
-      }
     }
 
+    const showDeleteModal = ref(false);
+
+    const confirmDelete = async () => {
+      try {
+        const response = deleteJobPosting(postId);
+        console.log("삭제 결과:", response);
+        closeModal(true);
+
+      } catch (error) {
+        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+      }
+    };
+
+    const closeModal = (shouldRedirect = false) => {
+      showDeleteModal.value = false;
+      if (shouldRedirect) {
+        router.push(ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path);
+      }
+    };
 
     return {
-      singleModalPopupStatue,
-      twoButtonModalPopupStatue,
+      showDeleteModal,
       modalMessage,
-      applyId,
+      modalPopupStatue,
       postId,
+      userType,
       jobPosting,
-      onApplyClick,
-      onApplyCancelClick,
+      closeModal,
+      confirmDelete,
+      onDeleteClick,
     };
   }
-};
+}
 </script>
 
 <template>
@@ -108,30 +123,19 @@ export default {
       <div class="job-posting-info">
         <div class="company-name">{{ jobPosting.entName }}</div>
         <div class="job-title">{{ jobPosting.postTitle }}</div>
-        <div class="job-title">{{ jobPosting.jobName }}</div>
         <div class="application-period">공고 게시 및 서류 접수</div>
         <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
         <div class="company-address-label">기업 주소</div>
         <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
       </div>
     </div>
-    <div class="delete-button" v-if="postId" @click="onApplyClick(postId)">지원하기</div>
-    <div class="delete-button" v-if="applyId" @click="onApplyCancelClick(applyId)">지원취소</div>
+    <div class="delete-button" @click="onDeleteClick(userType, postId)">삭제하기</div>
+
+    <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
+                    @close-modal="closeModal" @confirm="confirmDelete" />
   </main>
-  <single-button-modal
-      v-if="singleModalPopupStatue"
-      @close-modal="singleModalPopupStatue = false"
-      :modal-message="modalMessage"
-      :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
-  />
-  <TwoButtonModal
-      v-if="twoButtonModalPopupStatue"
-      @close-modal="twoButtonModalPopupStatue = false"
-      :modal-message="modalMessage"
-      leftButtonText="확인"
-      rightButtonText="취소"
-      :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
-  />
+  <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
+               :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
 
 <style scoped>
@@ -192,13 +196,6 @@ export default {
   margin-bottom: 5px;
 }
 
-.job-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-}
-
 .application-period {
   font-size: 18px;
   margin-top: 20px;
@@ -228,7 +225,6 @@ export default {
   max-width: 400px;
   padding: 10px;
   margin: 20px auto 0 auto;
-  /* 가운데 정렬을 위한 속성 추가 */
   background-color: #024CAA;
   color: white;
   text-align: center;

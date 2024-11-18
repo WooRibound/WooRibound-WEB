@@ -4,7 +4,7 @@ import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import { useRouter } from "vue-router";
 import { ROUTES } from "@/router/routes";
-import handleApiCall from '@/api/apiService';
+import { fetchJobPostings } from "@/api/services/adminServiece";
 
 export default {
   name: "CorporateJobPostingManagement",
@@ -26,7 +26,7 @@ export default {
     const jobPostingCount = ref(0);
 
     const searchJobPosting = () => {
-      fetchJobPostings();
+      loadJobPostings();
     }
 
     const onFilterClick = (filterType) => {
@@ -37,35 +37,31 @@ export default {
     const handleSelectFilter = (selected) => {
       if (selected.filterType === SEARCH_FILTER_TYPES.INDUSTRY) {
         selectedIndustry.value = selected.filterValue;
-        fetchJobPostings();
+        loadJobPostings();
       }
 
       if (selected.filterType === SEARCH_FILTER_TYPES.REGIONS) {
         selectedProvince.value = selected.filterValue;
-        fetchJobPostings();
+        loadJobPostings();
       }
     }
 
-    const fetchJobPostings = async () => {
+    const loadJobPostings = async () => {
       try {
-        const params = {
-          entName: searchInput.value,
-          entField: selectedIndustry.value === '전체 산업' ? null : selectedIndustry.value,
-          addrCity: selectedProvince.value === '전체 지역' ? null : selectedProvince.value,
-        };
-
-        const response = await handleApiCall('get', '/admin/jobposting', null, {
-          params: params
-        });
-        jobPostingList.value = response.data;
-        jobPostingCount.value = jobPostingList.value.length;
+        const jobPostings = await fetchJobPostings(
+          searchInput.value,
+          selectedIndustry.value,
+          selectedProvince.value
+        );
+        jobPostingList.value = jobPostings;
+        jobPostingCount.value = jobPostings.length;
       } catch (error) {
-        console.error("fetchCorporateUsers API 호출 오류:", error);
+        console.error("fetchJobPostings API 호출 오류:", error);
       }
-    }
+    };
 
     onMounted(() => {
-      fetchJobPostings();
+      loadJobPostings();
     })
 
     const recruitmentPhase = (postState) => {
@@ -95,15 +91,11 @@ export default {
     }
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
-        name: ROUTES.JOB_POSTING_DETAIL.name,
+        name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
         params: {
           id: postId
         },
-        query: {
-          delete: true
-        }
       })
     }
 

@@ -63,17 +63,15 @@ export default {
     };
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
-        name: ROUTES.JOB_POSTING_DETAIL.name,
-        params: {
-          id: postId,
+        name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
+        params:{
+          id: postId
         },
-      });
-    };
+      })
+    }
 
     const onMoveApplicantDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
         name: ROUTES.APPLICANT_DETAIL_PAGE.name,
         params: {
