@@ -1,7 +1,9 @@
 <script>
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {useJobStore} from "@/stores/useJobStore";
+import {insertJobPosting} from "@/api/services/corporateUserService";
 
 export default {
   name: "JobPostingRegister",
@@ -12,18 +14,55 @@ export default {
   },
   components: {ModalPopup},
   setup() {
-    const modalPopupStatue = ref(false);
+    const jobStore = useJobStore();
 
-    const onRegisterClick = () => {
-      modalPopupStatue.value = true;
-    }
+    const modalPopupStatue = ref(false);
+    const modalMessage = ref("");
+    const photoPreview = ref(null);
+    const jobs = computed(() => jobStore.getJobs);
+
+    const jobPosting = ref({
+      postImg: null,
+      postTitle: '',
+      jobId: null,
+      startDate: null,
+      endDate: null,
+    });
+
+    const onPhotoChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          photoPreview.value = reader.result; // 미리보기 이미지 설정
+          jobPosting.value.postImg = file; // 파일 정보 저장
+        };
+        reader.readAsDataURL(file);
+      }
+    };
 
     const onImageRegisterClick = () => {
+      const inputFile = document.getElementById("file");
+      inputFile.click();
+    };
 
+    const onRegisterClick = async () => {
+      try {
+        const response = await insertJobPosting(jobPosting.value);
+        modalMessage.value = response;
+        modalPopupStatue.value = true;
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     return {
+      jobs,
       modalPopupStatue,
+      photoPreview,
+      jobPosting,
+      modalMessage,
+      onPhotoChange,
       onRegisterClick,
       onImageRegisterClick,
     };
@@ -38,25 +77,41 @@ export default {
     <div class="content">
       <div class="input-section">
         <!-- 공고 이미지 등록 -->
-        <div class="input-label">
-          <span class="required">*</span>
-          <input class="input-field" placeholder="공고사진" />
+        <div class="photo-label">
+          <div v-if="!photoPreview" class="photo-placeholder">사진</div>
+          <img v-if="photoPreview" :src="photoPreview" class="photo-preview" />
           <button class="image-register-button" @click="onImageRegisterClick">사진등록</button>
+          <input
+              type="file"
+              accept="image/*"
+              id="file"
+              class="photo-input"
+              @change="onPhotoChange"
+              style="display: none"
+          />
         </div>
         <!-- 공고제목 입력  -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="공고 제목">
+          <input class="input-field" placeholder="공고 제목" v-model="jobPosting.postTitle" />
+        </div>
+        <!-- 직종 선택  -->
+        <div class="input-label">
+          <span class="required">*</span>
+          <select  class="input-field" aria-label="직종 선택" v-model="jobPosting.jobId">
+            <option value="" disabled selected>직종 선택</option>
+            <option v-for="job in jobs" :key="job.jobName" :value="job.jobId">{{ job.jobName }}</option>
+          </select>
         </div>
         <!-- 공고 시작 일자 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" type="date" data-placeholder="공고 시작 일자" required/>
+          <input class="input-field" type="date" data-placeholder="공고 시작 일자" required v-model="jobPosting.startDate" />
         </div>
         <!-- 공고 시작 마감 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" type="date" data-placeholder="공고 마감 일자" required/>
+          <input class="input-field" type="date" data-placeholder="공고 마감 일자" required v-model="jobPosting.endDate"/>
         </div>
         <div class="delete-button" @click="onRegisterClick">공고 등록</div>
       </div>
@@ -65,7 +120,7 @@ export default {
   <modal-popup
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
-      :modal-message="'공고 등록이 완료 되었습니다.'"
+      :modal-message="modalMessage"
       :router-path="ROUTES.JOB_POSTING_MANAGEMENT.path"
   />
 </template>
@@ -173,17 +228,40 @@ input[type="date"]:valid::before {
   display: none;
 }
 
+.photo-label {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.photo-placeholder {
+  font-size: 16px;
+  color: #999;
+}
+
+.photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .image-register-button {
-  padding: 0 15px; /* 상하 패딩을 0으로 설정 */
-  background-color: #024CAA; /* 버튼 배경색 */
-  color: white; /* 글자색 */
-  border: none; /* 테두리 없앰 */
-  border-radius: 8px; /* 버튼 모서리 둥글게 */
-  cursor: pointer; /* 커서 포인터로 변경 */
-  margin-left: 10px; /* 아이디 입력 필드와 버튼 간격 */
-  font-size: 14px; /* 글자 크기 */
-  height: 40px; /* 버튼 높이를 아이디 입력 필드와 동일하게 설정 */
-  white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 설정 */
-  margin-right: 10px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: #024caa;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
 }
 </style>

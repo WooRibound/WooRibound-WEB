@@ -96,14 +96,6 @@ export default {
 </template>
 
 <style scoped>
-.body {
-  flex: 1;
-  padding: 20px;
-  box-sizing: border-box;
-  background-color: #f8f9fa;
-  overflow-y: auto;
-}
-
 .content {
   max-width: 800px;
   margin: 0 auto;
