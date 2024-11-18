@@ -2,12 +2,7 @@
 import { ref, onMounted } from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import {ROUTES} from "@/router/routes";
-import {
-  fetchIndividualUserResume,
-  insertIndividualUserResume,
-  updateIndividualUserResume
-} from "@/api/services/individualUserService";
-import {isEmailValid} from "@/utils/validators";
+import {registerResume} from "@/api/services/individualUserService";
 
 export default {
   name: "ResumePage",
@@ -19,136 +14,52 @@ export default {
   components: {ModalPopup},
   setup() {
     const modalPopupStatue = ref(false);
-    const modalMessage = ref("");
-
-    const userImgSelect = ref(null);
-    const resumeEmailSelect = ref(null);
-    const userIntroSelect = ref(null);
-    const isResumeFirst = ref(true);
-    const emailError = ref(false);
-    const photoPreview = ref(null);
-
-    const initialResume = ref({
-      userId: '',
-      userImg: '',
-      userName: '',
-      userPhone: '',
-      resumeEmail: '',
-      userIntro: '',
-    });
 
     const resume = ref({
-      userId: '',
-      userImg: '',
-      userName: '',
-      userPhone: '',
-      resumeEmail: '',
-      userIntro: '',
+      userName: "",
+      userImg: "",
+      userPhoneNumber: "",
+      userEmail: "",
+      introduction: ""
     });
 
-    const fetchResume = async () => {
-      try {
-        const response = await fetchIndividualUserResume();
-        resume.value = response;
+    const photoPreview = ref(null); // 이미지 미리보기 URL 저장
+    const isLoading = ref(false);
 
-        initialResume.value = { ...resume.value };
+    const fetchResume = () => {
+      const data = {
+        userName: '이승준',
+        userPhoneNumber: '010-1111-1111',
+        userImg: require('@/assets/images/logo/id_photo_sample.png'), // 이미지 경로를 require로 수정
+        userEmail: 'test@example.com',
+        introduction: '자기소개 내용입니다.'
+      };
 
-        if (resume.value.userImg) {
-          photoPreview.value = resume.value.userImg;
-        }
-
-        isResumeFirst.value = !resume.value.userIntro;
-      } catch (e) {
-        console.log(e)
+      resume.value = data;
+      if (data.userImg) {
+        photoPreview.value = data.userImg;
       }
     };
 
     const onPhotoChange = (event) => {
       const file = event.target.files[0];
       if (file) {
-        const img = new Image();
-        img.src = URL.createObjectURL(file); // 미리보기 URL 생성
-        img.onload = () => {
-          if (!(img.width <= 826 && img.height <= 1063)) {
-            alert("826x1063px 이하의 이미지를 업로드해주세요.");
-            return;
-          }
-          photoPreview.value = img.src;
-          resume.value.userImg = file;
-        }
+        photoPreview.value = URL.createObjectURL(file); // 미리보기 URL 생성
       }
     };
 
-    const onRegisterResumeClick = async () => {
-      if (!photoPreview.value) {
-        alert("사진을 첨부해주세요.");
-        return;
-      }
-
-      if (
-          (!resume.value.resumeEmail) ||
-          (!isEmailValid(resume.value.resumeEmail))
-      ) {
-        alert("이메일을 입력해주세요.");
-        resumeEmailSelect.value.focus();
-        return;
-      }
-
-      if (!resume.value.userIntro) {
-        alert("자기소개를 입력해주세요.");
-        userIntroSelect.value.focus();
-        return;
-      }
-
+    const onUploadResumeClick = async () => {
+      isLoading.value = true;
+      console.log("Sending data:", resume.value);
       try {
-        const response = await insertIndividualUserResume(resume.value);
-        resume.value = response;
-
-        if (resume.value.userImg) {
-          photoPreview.value = resume.value.userImg;
-        }
-
-        isResumeFirst.value = !resume.value.userIntro;
-
-        modalMessage.value = "등록이 완료 되었습니다";
-        modalPopupStatue.value = true;
-      } catch (e) {
-        console.log(e);
+        await registerResume(resume.value); // 서버로 데이터 전송
+        modalPopupStatue.value = true; // 성공 시 모달 표시
+      } catch (error) {
+        console.error("Failed to upload resume:", error);
+        alert("이력서 등록에 실패했습니다.");
+      } finally {
+        isLoading.value = false;
       }
-    }
-
-    const onUpdateResumeClick = async () => {
-      if ((resume.value.userImg !== initialResume.value.userImg) ||
-          (resume.value.userName !== initialResume.value.userName) ||
-          (resume.value.userPhone !== initialResume.value.userPhone) ||
-          (resume.value.resumeEmail !== initialResume.value.resumeEmail) ||
-          (resume.value.userIntro !== initialResume.value.userIntro)
-      ) {
-
-        if (!(resume.value.userImg instanceof File)) {
-          delete resume.value.userImg;
-        }
-
-        const response = await updateIndividualUserResume(resume.value);
-        resume.value = response;
-
-        initialResume.value = { ...resume.value };
-
-        if (resume.value.userImg) {
-          photoPreview.value = resume.value.userImg;
-        }
-
-        isResumeFirst.value = !resume.value.userIntro;
-        modalMessage.value = "수정이 완료 되었습니다";
-      } else {
-        modalMessage.value = "수정 된 사항이 없습니다";
-      }
-
-      modalPopupStatue.value = true;
-    }
-
-    const validateEmail = () => {
-      emailError.value = !isEmailValid(resume.value.resumeEmail);
     };
 
     onMounted(() => {
@@ -157,18 +68,10 @@ export default {
 
     return {
       modalPopupStatue,
-      userImgSelect,
-      resumeEmailSelect,
-      userIntroSelect,
       resume,
-      isResumeFirst,
-      emailError,
       photoPreview,
-      modalMessage,
       onPhotoChange,
-      onRegisterResumeClick,
-      onUpdateResumeClick,
-      validateEmail,
+      onUploadResumeClick
     };
   }
 };
@@ -182,65 +85,40 @@ export default {
       <div class="input-section photo-section">
         <div class="photo-label">
           <div v-if="!photoPreview">사진</div>
-          <img v-if="photoPreview" :src="photoPreview" class="photo-preview"/>
+          <img v-if="photoPreview" :src="photoPreview" class="photo-preview" />
         </div>
         <div class="file-upload-button">
           <label for="file">사진첨부</label>
-          <input type="file" accept="image/*" id="file" class="photo-input" @change="onPhotoChange" ref="userImgSelect" />
+          <input type="file" id="file" class="photo-input" @change="onPhotoChange" />
         </div>
       </div>
       <!-- 이름 -->
       <div class="input-section">
         <div class="input-label">
-          <input class="input-field" placeholder="이름" v-model="resume.userName" readonly />
+          <input class="input-field" placeholder="이름" v-model="resume.userName" readonly/>
         </div>
         <!-- 휴대폰번호 -->
         <div class="input-label">
-          <input class="input-field" placeholder="휴대폰 번호" type="tel" v-model="resume.userPhone" readonly />
+          <input class="input-field" placeholder="휴대폰 번호" type="tel" v-model="resume.userPhoneNumber" readonly/>
         </div>
         <!-- 이메일 입력 -->
         <div class="input-label">
-          <input
-              class="input-field"
-              placeholder="이메일 주소 (예: example@domain.com)"
-              type="email"
-              v-model="resume.resumeEmail"
-              @blur="validateEmail"
-              ref="resumeEmailSelect"
-          />
-          <div v-if="emailError" class="error-message">이메일 형식을 맞춰주세요</div>
+          <input class="input-field" placeholder="이메일" type="email" v-model="resume.userEmail"/>
         </div>
         <!-- 자기소개 글 입력 -->
         <div class="input-label">
           <span class="bold-text">자기소개 글</span>
-          <textarea
-              class="textarea-field"
-              placeholder="자기소개를 입력하세요"
-              v-model="resume.userIntro"
-              ref="userIntroSelect"
-          />
+          <textarea class="textarea-field" placeholder="자기소개를 입력하세요" v-model="resume.introduction" />
         </div>
-        <div
-            class="resume-update-button"
-            @click="onRegisterResumeClick"
-            v-if="isResumeFirst"
-        >
-          등록하기
-        </div>
-        <div
-            class="resume-update-button"
-            @click="onUpdateResumeClick"
-            v-else
-        >
-          수정하기
-        </div>
+        <div class="resume-update-button" @click="onUploadResumeClick">등록하기</div>
       </div>
     </div>
   </main>
   <modal-popup
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
-      :modal-message="modalMessage"
+      :modal-message="'이력서 등록(수정)이 완료되었습니다.'"
+      :router-path="ROUTES.MAIN.path"
   />
 </template>
 
@@ -358,12 +236,5 @@ export default {
   cursor: pointer;
   font-weight: bold;
   border-radius: 8px;
-}
-
-.error-message {
-  color: red;
-  font-size: 0.875em;
-  margin-bottom: 8px;
-  margin-left: 8px;
 }
 </style>

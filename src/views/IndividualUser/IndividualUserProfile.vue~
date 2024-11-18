@@ -75,7 +75,7 @@ export default {
 
         // 성공 처리
         modalPopupStatue.value = true; // 성공 팝업 표시
-        console.log("Update successful:", response.data);
+        console.log("Update successful:", response);
       } catch (error) {
         // 에러 처리
         console.error("Update failed:", error);

@@ -20,51 +20,62 @@ export const join = async (data) => {
   }
 }
 
-// 지혜 나눔 전체 목록 조회
-export const fetchAllWisdomShare = async (knowhowTitle, knowhowJob) => {
+export const fetchResume = async () => {
   try {
-    const response = await handleApiCall('get', `/individual/knowhow/share?knowhowTitle=${knowhowTitle}&knowhowJob=${knowhowJob}`);
+    const data = await handleApiCall('get', '/individual/info/resume');
+    return data;
+  } catch (error) {
+    console.error('Error fetching resume data:', error);
+    throw error;
+  }
+};
+
+export const registerResume = async (resumeData) => {
+  try {
+    const response = await handleApiCall('post', '/individual/info/resume/regist', resumeData);
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch:', error);
+    console.error('Failed to register resume:', error);
     throw error;
   }
-}
+};
 
-// 지헤 나눔 삭제
-export const deleteWisdomDetail = async (knowhowId) => {
+export const fetchJobPoint = async () => {
   try {
-    const response = await handleApiCall('delete', `/individual/knowhow/share/delete?knowhowId=${knowhowId}`);
-    return response;
+    const response = await handleApiCall('get', '/individualuser/info/wbpoint');
+    console.log("API Response:", response); // 전체 응답 확인
+
+    return response.data; // 신뢰도 점수 반환
   } catch (error) {
-    console.error('Failed to delete wisdom detail:', error);
+    console.error('신뢰도 점수 조회 실패', error);
     throw error;
   }
-}
+};
 
-
-// 지헤 나눔 등록
-export const insertWisdomShare = async (postData) => {
+export const fetchUserProfile = async () => {
   try {
-    const response = await handleApiCall('post', '/individual/knowhow/share/register', postData);
-    return response.data;
+    const response = await handleApiCall('get', '/individualuser/info');
+    console.log("User Profile Response:", response.data); // API 응답 확인
+    return response.data; // 회원 정보를 반환
   } catch (error) {
-    console.error('Failed to insert:', error);
+    console.error("회원 정보 조회 실패", error);
     throw error;
   }
-}
+};
 
-// 지헤 탐색 전체 목록 조회
-export const fetchAllWisdomExplore = async (knowhowTitle, knowhowJob) => {
+export const fetchUpdateUserProfile = async (payload) => {
   try {
-    const response = await handleApiCall('get', `/individual/knowhow/explore?knowhowTitle=${knowhowTitle}&knowhowJob=${knowhowJob}`);
-    return response.data;
+    console.log("Update payload:", payload);
+    const response = await handleApiCall('post', '/individualuser/info/update', payload);
+    console.log("User Profile Update Response:", response.data); // API 응답 확인
+    return response.data; // 업데이트 결과 반환
   } catch (error) {
-    console.error('Failed to fetch:', error);
+    console.error("회원 정보 수정 실패", error);
     throw error;
   }
-}
+};
 
+<<<<<<< Updated upstream
 // 지혜 나눔/탐색 상세 조회
 export const fetchWisdomDetail = async (knowhowId) => {
   try {
@@ -243,3 +254,5 @@ export const fetchJobPostings = async (searchInputValue, selectedIndustryValue, 
   }
 };
 
+=======
+>>>>>>> Stashed changes
