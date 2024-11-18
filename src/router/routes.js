@@ -118,6 +118,11 @@ export const ROUTES = {
         path: "/job-posting/applicants/:id",
         name: "ApplicantDetailPage"
     },
+    // [기업회원] 공고 추천 지원자
+    APPLICANT_RECOMMEND_PAGE: {
+        path: "/job-posting/applicants/recommend/:jobId/:postId",
+        name: "ApplicantRecommendPage"
+    },
     // [기업회원] 이력서 보기
     READONLY_RESUME_PAGE: {
         path: "/corporate-user/resume/:id?",

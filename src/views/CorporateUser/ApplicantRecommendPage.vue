@@ -2,16 +2,24 @@
 import {useRoute, useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
 import { formatDate1 } from "@/utils/format"
-import {fetchApplicantList, fetchMyPostingDetail, setApplicantResult} from "@/api/services/corporateUserService";
+import {
+  fetchMyPostingDetail,
+  fetchRecommendList
+} from "@/api/services/corporateUserService";
 import {computed, onMounted, ref} from "vue";
 
 export default {
-  name: "ApplicantDetailPage",
+  name: "ApplicantRecommendPage",
   setup() {
     const route = useRoute();
     const router = useRouter();``
 
-    const postId = route.params.id;
+    const jobId = route.params.jobId;
+    const postId = route.params.postId;
+
+    console.log("Job ID:", jobId);
+    console.log("Post Id:", postId);
+
     const applicantsList = ref([]);
     const jobposting = ref({});
     const startDate = ref("");
@@ -19,10 +27,7 @@ export default {
     const userId = ref([]);
     const applyStatus = ref([]);
     const index = ref([]);
-    const applyId = ref([]);
-    const jobId = ref();
 
-    // 시작일과 종료일 포맷팅
     const formattedStartDate = computed(() =>
         startDate.value ? formatDate1(new Date(startDate.value)) : "-"
     );
@@ -38,30 +43,27 @@ export default {
         jobposting.value = response.data || {};
         startDate.value = jobposting.value.startDate;
         endDate.value = jobposting.value.endDate;
-        jobId.value = jobposting.value.jobId;
       } catch (error) {
         console.error("[fetchJobPostingInfo] Error:", error);
         jobposting.value = {};
       }
     };
 
-    const fetchApplicantsList = async (postId) => {
+    const fetchRecommendApplicantsList = async (jobId) => {
       try {
-        console.info("Fetching applicant lists");
-        const response = await fetchApplicantList(postId);
+        console.info("Fetching recommend applicant lists"+jobId);
+        const response = await fetchRecommendList(jobId);
         console.info("API Response:", response);
 
         applicantsList.value = response.data.map((applicant, index) => ({
           ...applicant,
           index,
         }));
-        applyStatus.value = applicantsList.value.map((applicant) => applicant.result);
         userId.value = applicantsList.value.map((applicant) => applicant.userId);
-        applyId.value = applicantsList.value.map((applicant) => applicant.applyId);
         index.value = applicantsList.value.map((applicant) => applicant.index);
 
       } catch (error) {
-        console.error("[fetchApplicantsList] Error:", error);
+        console.error("[fetchRecommendApplicantsList] Error:", error);
         applicantsList.value = [];
       }
     };
@@ -78,55 +80,20 @@ export default {
 
     onMounted(() => {
       fetchJobPostingInfo(postId);
-      fetchApplicantsList(postId);
+      fetchRecommendApplicantsList(postId);
     });
 
 
-    const onApplicantStateClick = async (index, applyId, applyResult) => {
-      console.info("index, applyId, applyResult:", index, applyId, applyResult, );
-
-      const payload = {
-        applyId,
-        applyResult
-      };
-
-      try {
-        const response = await setApplicantResult(payload);
-        if (response.status === 200) {
-          // 상태 업데이트
-          applicantsList.value[index].result = applyResult === "ACCEPTED" ? "ACCEPTED" : "FAILED";
-          console.log(`지원자 상태 업데이트 완료: ${applyResult}`);
-        } else {
-          console.error("지원자 상태 업데이트 실패:", response.message);
-        }
-      } catch (error) {
-        console.error("[onApplicantStateClick] Error:", error);
-      }
-    };
-
-    const onRecommendButtonClick = (postId, jobId) => {
-      console.log("추천지원자 API 호출 "+ postId +" " + jobId);
-      router.push({
-        name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
-        params: {
-          postId: postId,
-          jobId: jobId
-        }
-      })
-    };
-
-
-
     return {
+      postId,
+      jobId,
+      jobposting,
       applyStatus,
       formattedStartDate,
       formattedEndDate,
-      jobposting,
       applicantsList,
+      fetchRecommendApplicantsList,
       onMoveResumePageClick,
-      onApplicantStateClick,
-      onRecommendButtonClick,
-      postId
     };
   }
 }
@@ -136,22 +103,18 @@ export default {
   <main class="body">
     <div class="header">공고 관리</div>
     <div class="applicant-info">
-      <div class="subtitle">지원자 목록</div>
+      <div class="subtitle">추천 지원자 목록</div>
       <div class="job-application-info">
         <div class="job-title">{{ jobposting.postTitle }}</div>
         <div class="job-name">{{ jobposting.jobName }}</div>
       </div>
-      <div class="table-controls">
-        <div class="job-duration">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
-        <button class="recommend-button" @click="onRecommendButtonClick(postId, jobposting.jobId)">추천 지원자</button>
-      </div>
+      <div class="job-duration">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
       <table class="applicant-table">
         <thead>
         <tr>
           <th>이름</th>
           <th>성별/나이</th>
           <th>이력서</th>
-          <th>합격 여부</th>
         </tr>
         </thead>
         <tbody>
@@ -160,18 +123,6 @@ export default {
           <td>{{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
           <td><div class="resume-link" @click="onMoveResumePageClick(applicant.userId)">보기</div></td>
           <td>
-            <div class="status-container">
-              <div v-if="applicant.result === 'PENDING'">
-                <div class="status-accepted" @click="onApplicantStateClick(applicant.index, applicant.applyId, 'ACCEPTED')">합격</div>
-                <div class="status-rejected" @click="onApplicantStateClick(applicant.index, applicant.applyId, 'REJECTED')">불합격</div>
-              </div>
-              <div v-else-if="applicant.result === 'ACCEPTED'" class="status-accepted disabled">
-                합격 처리 완료
-              </div>
-              <div v-else-if="applicant.result === 'REJECTED'" class="status-rejected disabled">
-                불합격 처리 완료
-              </div>
-            </div>
           </td>
         </tr>
         </tbody>

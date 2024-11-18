@@ -138,6 +138,19 @@ export const setEmployeeRating = async (payload) => {
     }
 };
 
+// 추천 직원목록 조회
+export const fetchRecommendList = async (jobId) => {
+    try {
+        console.debug("Making API call to fetch recommend employee list ");
+       // const encodedJobId = encodeURIComponent(jobId);
+        const data = await handleApiCall("get", `/corporate/jobposting/applicant-recommend?jobId=${jobId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchRecommendList] Error:", error);
+        throw error;
+    }
+};
+
 
 
 

@@ -17,7 +17,7 @@ export default {
     }
   },
   components: { SearchFilterModal },
-  methods: { formatDate1 },
+  methods: { formatDate: formatDate1 },
   setup() {
     const router = useRouter();
     const route = useRoute();
@@ -41,7 +41,7 @@ export default {
     }
 
     const fetchJobPosting = async (viewType) => {
-      console.log("viewType:", viewType , typeof viewType );
+      console.log("viewType:", viewType, typeof viewType);
       let payload = {
         entName: searchInput.value,
         jobName: getFormattedValue(selectedJob.value, "전체 직무"),
@@ -107,7 +107,6 @@ export default {
     }
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
         params: {
