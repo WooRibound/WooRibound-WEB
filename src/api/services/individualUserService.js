@@ -220,3 +220,33 @@ export const deleteUserApply = async (applyId) => {
     throw error;
   }
 }
+
+export const fetchJobPoint = async () => {
+  try {
+    const response = await handleApiCall('get', '/individualuser/info/wbpoint');
+        return response.data; // 신뢰도 점수 반환
+  } catch (error) {
+    console.error('신뢰도 점수 조회 실패', error);
+    throw error;
+  }
+};
+
+export const fetchUserProfile = async () => {
+  try {
+    const response = await handleApiCall('get', '/individualuser/info');
+    return response.data; // 회원 정보를 반환
+  } catch (error) {
+    console.error("회원 정보 조회 실패", error);
+    throw error;
+  }
+};
+
+export const fetchUpdateUserProfile = async (payload) => {
+  try {
+    const response = await handleApiCall('post', '/individualuser/info/update', payload);
+    return response.data; // 업데이트 결과 반환
+  } catch (error) {
+    console.error("회원 정보 수정 실패", error);
+    throw error;
+  }
+};
