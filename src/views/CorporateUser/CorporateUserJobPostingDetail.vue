@@ -1,17 +1,17 @@
 <script>
-import {useUserStore} from "@/stores/userStore";
-import {computed, onMounted, ref} from "vue";
+import { useUserStore } from "@/stores/userStore";
+import { computed, onMounted, ref } from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
-import {ROUTES} from "@/router/routes";
-import {useRoute, useRouter} from "vue-router";
-import {fetchJobPostingDetail} from "@/api/services/individualUserService";
-import {formatDate1} from "@/utils/format";
-import {deleteJobPosting} from "@/api/services/adminServiece";
-import {USER_TYPES} from "@/constants/userTypes";
+import { ROUTES } from "@/router/routes";
+import { useRoute, useRouter } from "vue-router";
+import { fetchJobPostingDetail } from "@/api/services/individualUserService";
+import { formatDate1 } from "@/utils/format";
+import { deleteJobPosting } from "@/api/services/adminServiece";
+import { USER_TYPES } from "@/constants/userTypes";
 
 export default {
   name: "CorporateUserJobPostingDetail",
-  components: {TwoButtonModal},
+  components: { TwoButtonModal },
   computed: {
     ROUTES() {
       return ROUTES;
@@ -21,7 +21,7 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const userStore = useUserStore();
-    
+
     const userType = computed(() => userStore.userType);
     const postId = route.params.id;
     const modalPopupStatue = ref(false);
@@ -65,6 +65,8 @@ export default {
       console.log("userType:", userType);
       try {
         if (userType === USER_TYPES.SERVICE_ADMIN) {
+          modalMessage.value = "채용공고를 삭제하시겠습니까?";
+          showDeleteModal.value = true;
           const response = await deleteJobPosting(postId);
           console.log("삭제 결과:", response);
         }
@@ -133,10 +135,10 @@ export default {
     <div class="delete-button" @click="onDeleteClick(userType, postId)">삭제하기</div>
 
     <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
-                    @close-modal="closeModal" @confirm="confirmDelete" />
+      @close-modal="closeModal" @confirm="confirmDelete" />
   </main>
   <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
-               :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
+    :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
 </template>
 
 <style scoped>
