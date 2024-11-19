@@ -1,10 +1,35 @@
 <script>
+
+import { ref, onMounted } from "vue";
+import { fetchJobPoint } from "@/api/services/individualUserService"; // API 호출 함수
+
 export default {
   name: "WooriboundElevationInfo",
   setup() {
-    const curruntElevation = 1;
+    const currentElevation = ref(0); // 신뢰도 점수
+    const isLoading = ref(false); // 로딩 상태
+
+    // 신뢰도 점수 가져오기
+    const loadJobPoint = async () => {
+      isLoading.value = true; // 로딩 시작
+      try {
+        currentElevation.value = await fetchJobPoint(); // API 호출 및 점수 설정
+        console.log("Fetched job point:", currentElevation.value); // 점수 출력
+      } catch (error) {
+        console.error("Failed to fetch job point:", error);
+        alert("신뢰도 점수 조회에 실패했습니다.");
+      } finally {
+        isLoading.value = false; // 로딩 종료
+      }
+    };
+
+    // 컴포넌트 로드 시 데이터 호출
+    onMounted(() => {
+      loadJobPoint();
+    });
+
     return {
-      curruntElevation
+      currentElevation
     };
   }
 }
@@ -15,7 +40,7 @@ export default {
     <div class="header">우바 고도</div>
     <div class="job-posting-wrap">
       <div class="job-posting-info">설안산 총 고도 : 1,708m</div>
-      <div class="job-posting-info">현재고도 : {{ curruntElevation }}m</div>
+      <div class="job-posting-info">현재고도 : {{ currentElevation }}m</div>
       <img src="@/assets/images/icons/mountains.png" class="mountains-icon">
     </div>
   </main>
