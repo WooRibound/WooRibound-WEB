@@ -246,6 +246,11 @@ router.beforeEach((to, from, next) => {
 
     const userStore = useUserStore();
 
+    // NotFound로 가는 경우는 리다이렉션 하지 않음
+    if (to.name === 'NotFound') {
+        return next();
+    }
+
     // 로그인한 관리자 사용자의 메인 페이지 리다이렉션
     if (userStore.isLoggedIn &&
         (userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN)) {
