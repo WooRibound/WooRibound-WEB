@@ -351,7 +351,8 @@ export default {
         </div>
         <!-- 관심 직종 선택 -->
         <div class="input-label" style="padding-top: 15px;">
-          <span class="bold-text" style="margin-left: 25px">관심 직종</span>
+          <span class="not-required">‣</span>
+          <span class="bold-text" >관심 직종</span>
           <span class="small-text">* 관심 직종 등록 시 우바 고도가 올라갑니다.</span>
         </div>
         <div v-for="(interestJob, index) in selectedInterestJobs" :key="index" class="job-category">
@@ -379,7 +380,7 @@ export default {
           >
           <div class="consent-content">
             <label for="thirdPartyConsent" class="consent-label">
-              제3자 정보제공에 동의합니다
+              [선택] 이용약관 및 개인정보 수집 관련 동의, 개인정보 제3자 제공에 동의
             </label>
             <p class="consent-description">
               채용 담당자의 인재 추천 서비스 이용 시 정보가 제공됩니다.
@@ -467,6 +468,10 @@ input[type="radio"] {
 .required {
   color: #F60F0F; /* 필수 입력 사항 색상 */
   margin-right: 5px; /* 입력 필드와의 간격 */
+}
+
+.not-required {
+  margin-right: 5px;
 }
 
 .delete-button {
@@ -573,7 +578,7 @@ input[type="date"]:valid::before {
 }
 .consent-wrapper {
   width: 90%;
-  margin: 15px 0;
+  margin-top: 25px;
   display: flex;
   align-items: flex-start;
   padding: 0 10px;
