@@ -36,7 +36,7 @@ export default {
 
     const fetchJobPosting = async () => {
       try {
-        const response = await fetchJobPostingDetail(applyId);
+        const response = await fetchJobPostingDetail(postId);
         jobPosting.value = {
           entName: response.entName,
           postTitle: response.postTitle,
@@ -54,7 +54,7 @@ export default {
     };
 
     onMounted(() => {
-      fetchJobPosting();
+      fetchJobPosting(postId);
 
     });
 

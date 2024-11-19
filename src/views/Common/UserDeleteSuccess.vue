@@ -8,7 +8,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const isIndividual = route.params.type === 'individual';
+    const isIndividual = route.params.cat === 'individual';
 
     const onGoToHomeClick = () => {
       router.push(ROUTES.MAIN.path);
