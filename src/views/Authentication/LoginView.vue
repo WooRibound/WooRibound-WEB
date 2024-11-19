@@ -134,7 +134,6 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between; /* 콘텐츠와 요소를 공간을 균등하게 분배 */
-  height: 100%; /* 전체 높이를 사용하도록 설정 */
 }
 
 .user-type-selection {
