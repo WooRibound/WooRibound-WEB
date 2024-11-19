@@ -67,12 +67,11 @@ export default {
         if (userType === USER_TYPES.SERVICE_ADMIN) {
           modalMessage.value = "채용공고를 삭제하시겠습니까?";
           showDeleteModal.value = true;
-          const response = await deleteJobPosting(postId);
-          console.log("삭제 결과:", response);
         }
 
         if (userType === USER_TYPES.CORPORATE_MEMBER) {
           // todo 기업회원 공고 삭제 API
+          console.log(postId)
         }
 
       } catch (e) {
@@ -84,7 +83,7 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        const response = deleteJobPosting(postId);
+        const response = await deleteJobPosting(postId);
         console.log("삭제 결과:", response);
         closeModal(true);
 
