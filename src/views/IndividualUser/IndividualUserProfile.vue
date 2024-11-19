@@ -253,7 +253,8 @@ export default {
         </div>
         <!-- 관심 직종 선택 -->
         <div class="input-label" style="padding-top: 15px;">
-          <span class="bold-text" style="margin-left: 25px">관심 직종</span>
+          <span class="not-required">‣</span>
+          <span class="bold-text">관심 직종</span>
           <span class="small-text">* 관심 직종 등록 시 우바 고도가 올라갑니다.</span>
         </div>
         <div v-for="(interestJob, index) in selectedInterestJobs" :key="index" class="job-category">
@@ -274,7 +275,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="delete-button" @click="onUpdateProfileClick">수정하기</div>
+        <div class="update-button" @click="onUpdateProfileClick">수정하기</div>
         <div class="delete-button" @click="onDeleteAccountClick">탈퇴하기</div>
       </div>
     </div>
@@ -357,14 +358,18 @@ input[type="radio"] {
 }
 
 .required {
-  color: #F60F0F; /* 필수 입력 사항 색상 */
-  margin-right: 5px; /* 입력 필드와의 간격 */
+  color: #F60F0F;
+  margin-right: 5px;
 }
 
-.delete-button {
+.not-required {
+  margin-right: 5px;
+}
+
+.update-button {
   width: 90%;
   padding: 10px;
-  margin-top: 20px;
+  margin-top: 35px;
   background-color: #024CAA;
   color: white;
   text-align: center;
@@ -428,11 +433,11 @@ input[type="radio"] {
 }
 
 .delete-button {
-  margin-top: 40px; /* 수정하기 버튼과의 간격을 조정 */
-  margin-left: 10px;
+  margin: 40px 0 20px 10px;
   color: #6c757d; /* 회색 텍스트 색상 */
   cursor: pointer; /* 포인터 커서 추가 */
   font-size: 10pt;
   align-self: flex-start; /* 왼쪽 정렬 */
 }
+
 </style>
