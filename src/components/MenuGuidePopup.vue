@@ -10,41 +10,83 @@ export default {
     }
   },
   setup(props, {emit}) {
-
     const closeModal = () => {
       emit('close-modal', false);
     }
 
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    const handleTouchStart = (event) => {
+      startY = event.touches[0].clientY;
+      isDragging = true;
+    };
+
+    const handleTouchMove = (event) => {
+      if (!isDragging) return;
+      currentY = event.touches[0].clientY;
+      const distance = Math.max(currentY - startY, 0); // 위로 올리는 동작 방지
+      const modalContent = document.querySelector(".modal-container");
+      modalContent.style.transform = `translateY(${distance}px)`;
+    };
+
+    const handleTouchEnd = () => {
+      isDragging = false;
+      const distance = currentY - startY;
+      const modalContent = document.querySelector(".modal-container");
+
+      if (distance > window.innerHeight * 0.3) {
+        // 30% 이상 드래그하면 닫기
+        closeModal();
+      } else {
+        // 원래 위치로 복원
+        modalContent.style.transform = "translateY(0)";
+      }
+    };
+
     return {
-      closeModal
+      closeModal,
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
     };
   }
 }
 </script>
 
 <template>
-  <div class="modal-overlay">
-    <div class="menu-content">
-      <div class="menu_title">
-        내 정보 보기
-        <div class="close-button" @click="closeModal">
-          <img src="@/assets/images/icons/close.png" alt="Close" />
+  <div
+      class="modal-overlay"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+  >
+    <div class="modal-container">
+      <div class="modal-handle"></div>
+      <div class="menu-content">
+        <div class="menu_title">
+          내 정보 보기
+          <div class="close-button" @click="closeModal" v-if="false">
+            <img src="@/assets/images/icons/close.png" alt="Close" />
+          </div>
+        </div>
+        <div class="menu-items" @click="closeModal">
+          <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
+            <div class="menu-item">지원 현황</div>
+          </router-link>
+          <router-link :to="ROUTES.RESUME_PAGE.path">
+            <div class="menu-item">이력서</div>
+          </router-link>
+          <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
+            <div class="menu-item">개인 정보</div>
+          </router-link>
+          <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
+            <div class="menu-item">우바 고도</div>
+          </router-link>
         </div>
       </div>
-      <div class="menu-items" @click="closeModal">
-        <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
-          <div class="menu-item">지원 현황</div>
-        </router-link>
-        <router-link :to="ROUTES.RESUME_PAGE.path">
-          <div class="menu-item">이력서</div>
-        </router-link>
-        <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
-          <div class="menu-item">개인 정보</div>
-        </router-link>
-        <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
-          <div class="menu-item">우바 고도</div>
-        </router-link>
-      </div>
+
     </div>
   </div>
 </template>
@@ -58,19 +100,33 @@ export default {
   height: calc(100% - 72px);
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  z-index: 999;
+  flex-direction: column; /* 세로 배치 설정 */
+  justify-content: flex-end; /* 요소를 아래쪽으로 정렬 */
+  align-items: center; /* 수평 중앙 정렬 */
+  z-index: 500;
+}
+
+.modal-container {
+  width: 100%;
+  transform: translateY(0); /* 초기 위치 */
+  transition: transform 0.3s ease-out; /* 복원 애니메이션 */
+  will-change: transform; /* 성능 최적화 */
+}
+
+.modal-handle {
+  width: 50px; /* 핸들의 너비 */
+  height: 5px; /* 핸들의 높이 */
+  background-color: #ccc; /* 핸들의 색상 */
+  border-radius: 50px; /* 둥근 모서리 */
+  margin: 10px auto; /* 상단 여백과 중앙 정렬 */
 }
 
 .menu-content {
   background-color: #fff;
-  padding: 20px;
   border-radius: 20px 20px 0 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  height: 50%;
-  margin-bottom: 0;
+  height: 100%;
+  margin-bottom: 20px;
 }
 
 .menu_title {
@@ -79,7 +135,7 @@ export default {
   align-items: center; /* 수직 중앙 정렬 */
   font-weight: bold;
   font-size: 24px;
-  margin-bottom: 15px;
+  padding: 20px;
 }
 
 .close-button {
@@ -93,8 +149,8 @@ export default {
 }
 
 .menu-items {
-  margin-top: 15px; /* 메뉴 제목과 메뉴 항목 사이의 여백 */
   font-size: 19px;
+  padding: 0 20px;
 }
 
 .menu-item {
