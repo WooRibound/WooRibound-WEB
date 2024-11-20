@@ -48,3 +48,13 @@ export const confirmDelete = async (postId) => {
     }
 };
 
+// 채용 공고 상세 조회
+export const fetchJobPostingDetail = async (postId) => {
+    try {
+      const response = await handleApiCall('get',  `/admin/jobposting/detail?postId=${postId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch:', error);
+      throw error;
+    }
+  }
