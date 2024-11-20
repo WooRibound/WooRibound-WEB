@@ -82,7 +82,7 @@ export default {
           기업 회원
         </div>
       </div>
-      <img src="@/assets/images/logo/wooribound_logo.png" class="wooribound-logo">
+      <img src="@/assets/images/logo/wooribound_logo.png" class="wooribound-logo" v-if="false">
       <div class="input-section" v-if="activeUserType === USER_TYPES.INDIVIDUAL_USER">
         <div class="login-type" @click="onIndividualUserLoginClick">
           <img src="@/assets/images/icons/naver.png" class="naver-logo">
@@ -230,11 +230,11 @@ export default {
 .login-type {
   display: flex;
   align-items: center; /* 이미지와 텍스트를 수직으로 정렬 */
-  margin-top: 10px; /* 상단 여백 추가 */
+  margin-top: 20px; /* 상단 여백 추가 */
   border: 1px solid #413F42; /* 선색 설정 */
   border-radius: 30px; /* 꼭지점 둥글게 설정 */
   padding: 10px; /* 여백 추가 */
-  width: 100%; /* 너비 100% */
+  width: 95%; /* 너비 100% */
   justify-content: center; /* 중앙 정렬 */
   font-weight: bold;
   height: 30px;
