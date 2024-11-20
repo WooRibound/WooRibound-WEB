@@ -60,6 +60,7 @@ export default {
         }
       } catch (error) {
         console.error("지혜 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
+        router.push({ name: "NotFound" });
       }
     }
 
