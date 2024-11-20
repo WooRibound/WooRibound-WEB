@@ -53,6 +53,21 @@ export default {
       // 에러 메시지 초기화
       errorMessage.value = "";
 
+      if (!isOnlyLetters(userName.value)) {
+        errorMessage.value = "이름은 영문자나 한글만 입력해주세요."
+        return;
+      }
+
+      if (!isEmailValid(userEmail.value)) {
+        errorMessage.value = "이메일 형식을 맞춰주세요.";
+        return;
+      }
+
+      if (!isPhoneNumberValid(userPhone.value)) {
+        errorMessage.value = "휴대폰번호 형식을 맞춰주세요.";
+        return;
+      }
+
       // 필수 필드 유효성 검사
       if (!userName.value || !userEmail.value || !userPhone.value ||
           !userGender.value || !userBirth.value ||
