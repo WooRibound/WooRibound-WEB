@@ -60,7 +60,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="isVisible">
+  <div v-if="isVisible" class="full-screen-wrap">
     <header class="header">
       <img src="../../assets/images/icons/home.png" class="home-image" @click="onMoveToMainClick">
       <img src="../../assets/images/icons/close.png" class="close-icon" @click="onCloseFullScreenMenuClick">
@@ -169,6 +169,10 @@ export default {
 </template>
 
 <style scoped>
+.full-screen-wrap {
+  overflow-y: auto;
+}
+
 .header {
   display: flex;
   justify-content: space-between; /* 양 끝에 배치 */
@@ -217,7 +221,6 @@ export default {
 .menu-content {
   background-color: #fff;
   padding: 20px;
-  width: 100%; /* 화면 사이즈에 따라 90%의 너비 사용 */
   height: 50%; /* 높이를 화면의 반으로 설정 */
   margin-bottom: 0; /* 아래쪽 여백 제거 */
   border-top: 1px solid rgba(65, 63, 66, 0.5); /* 상단 선 색상 연하게 설정 */
