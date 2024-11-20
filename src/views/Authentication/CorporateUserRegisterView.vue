@@ -20,6 +20,7 @@ export default {
     const duplicateIdMessage = ref("");
     const isDuplicated = ref(true);
     const errorMessage = ref("");
+    const isValidRegNum = ref(true);
 
     // 회원가입 폼 데이터
     const formData = ref({
@@ -50,6 +51,26 @@ export default {
         formData.value.revenue = Number(value.replace(/,/g, ''));
       }
     });
+
+    // 사업자번호 형식 검증
+    const validateRegNum = () => {
+      const pattern = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/; // 사업자번호 형식: ***-**-*****
+      isValidRegNum.value = pattern.test(formData.value.regNum);
+    };
+
+    // 사업자번호 포맷팅
+    const formatRegNum = () => {
+      const rawValue = formData.value.regNum.replace(/[^0-9]/g, ""); // 숫자만 추출
+      if (rawValue.length <= 3) {
+        formData.value.regNum = rawValue; // 앞부분만 유지
+      } else if (rawValue.length <= 5) {
+        formData.value.regNum = `${rawValue.slice(0, 3)}-${rawValue.slice(3)}`; // 3자리 뒤에 `-`
+      } else {
+        formData.value.regNum = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 5)}-${rawValue.slice(5, 10)}`; // 최종 포맷
+      }
+    };
+
+
 
     const formatRevenue = (event) => {
       const input = event.target.value;
@@ -107,11 +128,15 @@ export default {
         errorMessage.value = "사업자번호를 입력해주세요.";
         return false;
       }
+      if (!isValidRegNum.value) {
+        errorMessage.value = "사업자번호 형식이 올바르지 않습니다.";
+        return false;
+      }
       if (!formData.value.entAddr1) {
         errorMessage.value = "주소를 입력해주세요.";
         return false;
       }
-      if (!formData.value.entAddr1) {
+      if (!formData.value.entAddr2) {
         errorMessage.value = "상세주소를 입력해주세요.";
         return false;
       }
@@ -191,6 +216,10 @@ export default {
       onAddressSearchClick,
       onRegisterClick,
       onCheckDuplicateIdClick,
+      isValidRegNum,
+      validateRegNum,
+      validateForm,
+      formatRegNum
     };
   }
 };
@@ -267,8 +296,10 @@ export default {
               class="input-field"
               placeholder="사업자 번호"
               v-model="formData.regNum"
-          >
+              @input="formatRegNum"
+          />
         </div>
+
 
         <!-- 주소 입력 -->
         <div class="input-label">
