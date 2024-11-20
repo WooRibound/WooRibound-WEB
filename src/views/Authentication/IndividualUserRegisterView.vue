@@ -1,17 +1,23 @@
 <script>
 import { ref, computed, onMounted } from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
+import TermsPrivacyOfServicePopup from "@/components/TermsPrivacyOfServicePopup.vue";
 import { useRegionsStore } from "@/stores/useRegionsStore";
 import { ROUTES } from "@/router/routes";
 import { useUserStore } from "@/stores/userStore";
 import { decodeToken } from "@/utils/tokenDecoder";
 import { fetchJoinInfo, join } from "@/api/services/individualUserService";
+import {isEmailValid, isOnlyLetters, isPhoneNumberValid} from "@/utils/validators";
+
 
 export default {
   name: "IndividualUserRegisterView",
-  components: { ModalPopup },
+  components: {ModalPopup,TermsPrivacyOfServicePopup},
   setup() {
     const regionsStore = useRegionsStore();
+
+    const termsPrivacyType = ref("");
+    const termsPrivacyOfServicePopupStatue = ref(false);
 
     // 사용자 정보를 저장할 반응형 변수들
     const userName = ref("");
@@ -175,8 +181,20 @@ export default {
       }
     };
 
+    const onTermsClick = () => {
+      termsPrivacyType.value = "Terms";
+      termsPrivacyOfServicePopupStatue.value = true;
+    }
+
+    const onPrivacyClick = () => {
+      termsPrivacyType.value = "Privacy";
+      termsPrivacyOfServicePopupStatue.value = true;
+    }
+
     return {
       modalPopupStatue,
+      termsPrivacyOfServicePopupStatue,
+      termsPrivacyType,
       userName,
       userEmail,
       userPhone,
@@ -198,6 +216,8 @@ export default {
       addInterestJobField,
       removeInterestJobField,
       onRegisterClick,
+      onTermsClick,
+      onPrivacyClick,
       ROUTES
     };
   },
@@ -379,12 +399,11 @@ export default {
               class="consent-checkbox"
           >
           <div class="consent-content">
-            <label for="thirdPartyConsent" class="consent-label">
-              [선택] 이용약관 및 개인정보 수집 관련 동의, 개인정보 제3자 제공에 동의
+            <label  class="consent-label">
+              [선택]
+              <span @click="onTermsClick" class="clickable-text">이용약관</span>동의 및
+              <span @click="onPrivacyClick" class="clickable-text">개인정보</span>제3자 제공 동의
             </label>
-            <p class="consent-description">
-              채용 담당자의 인재 추천 서비스 이용 시 정보가 제공됩니다.
-            </p>
           </div>
         </div>
         <div v-if="errorMessage" class="error-message">
@@ -399,6 +418,11 @@ export default {
       @close-modal="modalPopupStatue = false"
       :modal-message="'회원가입이 완료되었습니다.'"
       :router-path="ROUTES.MAIN.path"
+  />
+  <terms-privacy-of-service-popup
+      v-if="termsPrivacyOfServicePopupStatue"
+      @close-popup="termsPrivacyOfServicePopupStatue = false"
+      :type="termsPrivacyType"
   />
 </template>
 
@@ -577,8 +601,8 @@ input[type="date"]:valid::before {
   white-space: pre-line;  /* 줄바꿈을 위해 추가 */
 }
 .consent-wrapper {
-  width: 90%;
   margin-top: 25px;
+  margin-bottom: 10px;
   display: flex;
   align-items: flex-start;
   padding: 0 10px;
@@ -587,8 +611,6 @@ input[type="date"]:valid::before {
 .consent-checkbox {
   margin-right: 10px;
   margin-top: 3px;
-  width: 16px;
-  height: 16px;
   cursor: pointer;
 }
 
@@ -604,14 +626,21 @@ input[type="date"]:valid::before {
   cursor: pointer;
 }
 
-.consent-description {
-  font-size: 12px;
-  color: #6c757d;
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
 .consent-label .required {
   margin-right: 5px;
 }
+
+.clickable-text {
+  color: #133E87; /* 클릭 가능한 텍스트 색상 (예: 파란색) */
+  cursor: pointer; /* 마우스를 올리면 손가락 모양으로 변경 */
+  margin: 0 5px; /* 텍스트 간격 조정 */
+}
+
+.consent-label {
+  display: flex; /* 인라인 배치를 위한 플렉스 사용 */
+  flex-wrap: wrap; /* 내용이 길어질 경우 줄바꿈 */
+  align-items: center; /* 텍스트 세로 정렬 */
+  font-size: 14px;
+}
+
 </style>
