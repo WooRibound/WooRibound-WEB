@@ -72,14 +72,14 @@ export default {
           </div>
         </div>
         <div class="menu-items" @click="closeModal">
-          <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
-            <div class="menu-item">지원 현황</div>
+          <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
+            <div class="menu-item">개인 정보</div>
           </router-link>
           <router-link :to="ROUTES.RESUME_PAGE.path">
             <div class="menu-item">이력서</div>
           </router-link>
-          <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
-            <div class="menu-item">개인 정보</div>
+          <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
+            <div class="menu-item">지원 현황</div>
           </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
             <div class="menu-item">우바 고도</div>
