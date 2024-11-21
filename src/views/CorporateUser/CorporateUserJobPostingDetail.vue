@@ -4,9 +4,8 @@ import { computed, onMounted, ref } from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { fetchJobPostingDetail } from "@/api/services/individualUserService";
 import { formatDate1 } from "@/utils/format";
-import { deleteJobPosting } from "@/api/services/adminServiece";
+import { deleteJobPosting, fetchJobPostingDetail } from "@/api/services/adminServiece";
 import { USER_TYPES } from "@/constants/userTypes";
 
 export default {
@@ -41,6 +40,7 @@ export default {
     const fetchJobPosting = async () => {
       try {
         const response = await fetchJobPostingDetail(postId);
+        console.log(response.data)
         jobPosting.value = {
           entName: response.entName,
           postTitle: response.postTitle,
@@ -53,6 +53,7 @@ export default {
         };
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
+        router.push({ name: "NotFound" });
       }
 
     };

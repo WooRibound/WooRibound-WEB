@@ -1,7 +1,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import { ROUTES } from "@/router/routes";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import handleApiCall from '@/api/apiService';
 
 export default {
@@ -13,6 +13,7 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
 
     const enterprise = ref({
       entId: "",
@@ -36,6 +37,7 @@ export default {
 
       } catch (error) {
         console.error("fetchEnterprise API 호출 오류:", error);
+        router.push({ name: "NotFound" });
       }
     };
 

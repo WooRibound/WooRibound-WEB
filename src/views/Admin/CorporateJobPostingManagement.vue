@@ -275,7 +275,7 @@ export default {
   margin-left: 15px;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 2000px) {
 
   /* 전체 레이아웃에서 동일하게 보이도록 스타일 수정 */
   .job-posting-list {
