@@ -359,7 +359,7 @@ export default {
           </div>
         </div>
         <div class="update-button" @click="onUpdateProfileClick">수정하기</div>
-        <div class="delete-button" @click="onDeleteAccountClick">탈퇴하기</div>
+        <div class="delete-button" @click="onDeleteAccountClick">회원 탈퇴</div>
       </div>
     </div>
   </main>
