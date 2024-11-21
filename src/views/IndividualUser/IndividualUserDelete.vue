@@ -4,11 +4,12 @@ import { ROUTES } from "@/router/routes";
 import { withdrawIndividual } from '@/api/services/authenticationService';
 import {useUserStore} from "@/stores/userStore";
 import router from "@/router";
-import ModalPopup from "@/components/SingleButtonModal.vue";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
+import TwoButtonModal from "@/components/TwoButtonModal.vue";
 
 export default {
   name: "IndividualUserDelete",
-  components: {ModalPopup},
+  components: {TwoButtonModal, SingleButtonModal},
   computed: {
     ROUTES() {
       return ROUTES
@@ -17,6 +18,7 @@ export default {
   setup() {
     const confirmText = ref('');
     const errorModalStatus = ref(false);
+    const twoButtonModalStatus = ref(false);
     const REQUIRED_TEXT = '탈퇴하기';
     const isButtonEnabled = ref(false);
 
@@ -31,6 +33,10 @@ export default {
 
     const validateConfirmText = () => {
       isButtonEnabled.value = confirmText.value === REQUIRED_TEXT;
+    };
+
+    const handleConfirm = () => {
+      onWithdraw();
     };
 
     const onWithdraw = async () => {
@@ -57,10 +63,11 @@ export default {
     return {
       confirmText,
       errorModalStatus,
+      twoButtonModalStatus,
       REQUIRED_TEXT,
       isButtonEnabled,
       validateConfirmText,
-      onWithdraw,
+      handleConfirm,
     };
   }
 }
@@ -94,7 +101,7 @@ export default {
       <div class="button-section">
         <button
             class="delete-button"
-            @click="onWithdraw"
+            @click="twoButtonModalStatus = true"
             :disabled="!isButtonEnabled"
             :class="{ 'button-disabled': !isButtonEnabled }"
         >
@@ -103,10 +110,18 @@ export default {
       </div>
     </div>
   </div>
-  <modal-popup
+  <single-button-modal
       v-if="errorModalStatus"
       @close-modal="errorModalStatus = false"
       :modal-message="'탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'"
+  />
+  <two-button-modal
+      v-if="twoButtonModalStatus"
+      modal-message="정말로 탈퇴하시겠습니까?"
+      :leftButtonText="'확인'"
+      :rightButtonText="'취소'"
+      @confirm="handleConfirm"
+      @close-modal="twoButtonModalStatus = false"
   />
 </template>
 
