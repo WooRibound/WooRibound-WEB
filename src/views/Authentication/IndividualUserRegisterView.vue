@@ -8,16 +8,26 @@ import { useUserStore } from "@/stores/userStore";
 import { decodeToken } from "@/utils/tokenDecoder";
 import { fetchJoinInfo, join } from "@/api/services/individualUserService";
 import {isEmailValid, isOnlyLetters, isPhoneNumberValid} from "@/utils/validators";
+import {formatPhoneNumber} from "@/utils/formatters";
+import {useJobStore} from "@/stores/useJobStore";
 
 
 export default {
   name: "IndividualUserRegisterView",
+  computed: {
+    ROUTES() {
+      return ROUTES
+    }
+  },
   components: {ModalPopup,TermsPrivacyOfServicePopup},
   setup() {
     const regionsStore = useRegionsStore();
+    const jobStore = useJobStore();
 
+    const phoneError = ref("");
     const termsPrivacyType = ref("");
     const termsPrivacyOfServicePopupStatue = ref(false);
+    const jobs = computed(() => jobStore.getJobs);
 
     // 사용자 정보를 저장할 반응형 변수들
     const userName = ref("");
@@ -33,13 +43,6 @@ export default {
 
     // 경력 여부와 직종
     const careerStatus = ref("none");
-    const jobCategories = ref([
-      "기획-전략", "마케팅-홍보·조사", "회계-세무·재무", "인사-노무·HRD",
-      "총무-법무·사무", "IT개발-데이터", "디자인", "영업-판매-무역",
-      "고객상담-TM", "구매-자재-물류", "상품기획-MD", "운전-운송-배송",
-      "서비스", "생산", "건설-건축", "의료", "연구-R&D", "교육",
-      "미디어-문화-스포츠", "금융-보험", "공공-복지"
-    ]);
 
     const isJobCategoryEnabled = computed(() => careerStatus.value === "yes");
     const selectedJobs = ref([""]);
@@ -48,6 +51,16 @@ export default {
     const cities = computed(() => {
       return regionsStore.getCitiesByProvince(selectedProvince.value) || [];
     });
+
+    const handlePhoneNumberInput = (event) => {
+      const formattedValue = formatPhoneNumber(event.target.value);
+      event.target.value = formattedValue;
+      userPhone.value = formattedValue;
+    };
+
+    const validatePhone = () => {
+      phoneError.value = !isPhoneNumberValid(userPhone.value);
+    };
 
     const onRegisterClick = () => {
       // 에러 메시지 초기화
@@ -208,6 +221,7 @@ export default {
 
     return {
       modalPopupStatue,
+      phoneError,
       termsPrivacyOfServicePopupStatue,
       termsPrivacyType,
       userName,
@@ -220,7 +234,7 @@ export default {
       selectedCity,
       cities,
       careerStatus,
-      jobCategories,
+      jobs,
       thirdPartyConsent,
       isJobCategoryEnabled,
       selectedJobs,
@@ -233,7 +247,8 @@ export default {
       onRegisterClick,
       onTermsClick,
       onPrivacyClick,
-      ROUTES
+      handlePhoneNumberInput,
+      validatePhone,
     };
   },
   mounted() {
@@ -305,13 +320,18 @@ export default {
         <!-- 휴대폰번호 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input
-              v-model="userPhone"
-              class="input-field"
-              placeholder="휴대폰 번호"
-              type="tel"
-              :class="{ 'filled': userPhone }"
-          >
+          <div class="input-wrapper">
+            <input
+                v-model="userPhone"
+                class="input-field"
+                placeholder="휴대폰 번호"
+                type="tel"
+                :class="{ 'filled': userPhone }"
+                @input="handlePhoneNumberInput"
+                @blur="validatePhone"
+            >
+            <div v-if="phoneError" class="phone-error-message">휴대폰 형식을 맞춰주세요</div>
+          </div>
         </div>
         <!-- 성별 선택 -->
         <div class="input-label">
@@ -371,7 +391,7 @@ export default {
             <div class="select-wrapper">
               <select v-model="selectedJobs[index]" class="input-field" aria-label="직종 선택">
                 <option value="" disabled selected>직종 선택</option>
-                <option v-for="job in jobCategories" :key="job" :value="job">{{ job }}</option>
+                <option v-for="job in jobs" :key="job.jobId" :value="job.jobId">{{ job.jobName }}</option>
               </select>
             </div>
             <div class="button-wrapper">
@@ -394,7 +414,7 @@ export default {
           <div class="select-wrapper">
             <select v-model="selectedInterestJobs[index]" class="input-field" aria-label="관심 직종 선택">
               <option value="" disabled selected>관심 직종 선택</option>
-              <option v-for="job in jobCategories" :key="job" :value="job">{{ job }}</option>
+              <option v-for="job in jobs" :key="job.jobId" :value="job.jobId">{{ job.jobName }}</option>
             </select>
           </div>
           <div class="button-wrapper">
@@ -658,4 +678,17 @@ input[type="date"]:valid::before {
   font-size: 14px;
 }
 
+.input-wrapper {
+  position: relative; /* 위치 설정을 위해 relative 추가 */
+  display: flex;
+  flex-direction: column; /* 에러 메시지를 input 아래에 배치 */
+  width: 90%;
+}
+
+.phone-error-message {
+  color: red;
+  font-size: 0.875em; /* 에러 메시지 폰트 크기 */
+  margin-top: 4px; /* 위쪽 여백 추가 */
+  margin-left: 10px;
+}
 </style>
