@@ -175,13 +175,11 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 100%;
 }
 
 .input-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
   flex: 1;
 }
