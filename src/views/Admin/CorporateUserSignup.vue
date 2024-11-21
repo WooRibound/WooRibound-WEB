@@ -1,6 +1,6 @@
 <script>
 import { onMounted, ref } from "vue";
-import { formatDate2 } from "@/utils/format";
+import { formatDate2 } from "@/utils/formatters";
 import handleApiCall from '@/api/apiService';
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 

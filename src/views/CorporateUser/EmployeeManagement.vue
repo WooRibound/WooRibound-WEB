@@ -7,7 +7,7 @@ import {
   fetchEmployeeList,
   setEmployeeRating
 } from "@/api/services/corporateUserService";
-import {formatDate1} from "../../utils/format";
+import {formatDate1} from "../../utils/formatters";
 
 export default {
   name: "EmployeeManagement",
