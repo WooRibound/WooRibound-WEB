@@ -47,10 +47,11 @@ export default {
       fetchWisdom();
     })
 
-    const onDeletePostClick = (knowhowId) => {
+    const onDeletePostClick = async (knowhowId) => {
       try {
-          const promise = deleteWisdomDetail(knowhowId);
-          modalMessage.value = promise;
+          const response = await deleteWisdomDetail(knowhowId);
+
+          modalMessage.value = response;
           modalPopupStatue.value = true;
       } catch (error) {
         console.error("Failed to fetch wisdom details:", error);
