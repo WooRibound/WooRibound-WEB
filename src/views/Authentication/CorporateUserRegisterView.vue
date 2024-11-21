@@ -54,19 +54,20 @@ export default {
 
     // 사업자번호 형식 검증
     const validateRegNum = () => {
-      const pattern = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/; // 사업자번호 형식: ***-**-*****
+      const pattern = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/; // ***-**-*****
       isValidRegNum.value = pattern.test(formData.value.regNum);
+      console.log("사업자번호 검증 결과:", isValidRegNum.value);
     };
 
     // 사업자번호 포맷팅
     const formatRegNum = () => {
       const rawValue = formData.value.regNum.replace(/[^0-9]/g, ""); // 숫자만 추출
       if (rawValue.length <= 3) {
-        formData.value.regNum = rawValue; // 앞부분만 유지
+        formData.value.regNum = rawValue;
       } else if (rawValue.length <= 5) {
-        formData.value.regNum = `${rawValue.slice(0, 3)}-${rawValue.slice(3)}`; // 3자리 뒤에 `-`
+        formData.value.regNum = `${rawValue.slice(0, 3)}-${rawValue.slice(3)}`;
       } else {
-        formData.value.regNum = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 5)}-${rawValue.slice(5, 10)}`; // 최종 포맷
+        formData.value.regNum = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 5)}-${rawValue.slice(5, 10)}`;
       }
     };
 
@@ -100,6 +101,7 @@ export default {
 
     // 유효성 검사
     const validateForm = () => {
+      //validateRegNum(); // 사업자번호 형식 재검증
       if (!formData.value.entId) {
         errorMessage.value = "아이디를 입력해주세요.";
         return false;
@@ -247,6 +249,7 @@ export default {
           </span>
         </div>
 
+
         <!-- 비밀번호 입력 -->
         <div class="input-label">
           <span class="required">*</span>
@@ -290,14 +293,20 @@ export default {
         </div>
 
         <!-- 사업자번호 입력 -->
+<!--        TODO: 에러메세지 뜰때 필수입력값 * 표시 위치 수정-->
         <div class="input-label">
           <span class="required">*</span>
+          <div class="input-container">
           <input
               class="input-field"
-              placeholder="사업자 번호"
+              placeholder="사업자 번호 (***-**-*****)"
               v-model="formData.regNum"
-              @input="formatRegNum"
+              @input="() => { formatRegNum(); validateRegNum(); }"
           />
+          <p v-if="!isValidRegNum" class="error-message">
+            사업자번호는 ***-**-***** (10자리) 로 입력해주세요.
+          </p>
+          </div>
         </div>
 
 
@@ -315,12 +324,13 @@ export default {
         <!-- 상세주소 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input
-              class="input-field"
-              placeholder="상세 주소"
-              style="margin-left: 7px"
-              v-model="formData.entAddr2"
-          >
+          <div class="input-container">
+            <input
+                class="input-field"
+                placeholder="상세 주소"
+                v-model="formData.entAddr2"
+            />
+          </div>
         </div>
 
         <!-- 기업 규모 선택 -->
@@ -426,8 +436,9 @@ export default {
 
 .input-field {
   width: 100%;
+  max-width: 400px;
   padding: 10px;
-  margin: 10px 10px 10px 0; /* 오른쪽 여백 추가 */
+  margin: 10px 0;
   box-sizing: border-box;
   font-size: 16px;
   border-radius: 8px;
@@ -436,20 +447,20 @@ export default {
 }
 
 .image-register-button {
-  padding: 0 15px; /* 상하 패딩을 0으로 설정 */
-  background-color: #024CAA; /* 버튼 배경색 */
-  color: white; /* 글자색 */
-  border: none; /* 테두리 없앰 */
-  border-radius: 8px; /* 버튼 모서리 둥글게 */
-  cursor: pointer; /* 커서 포인터로 변경 */
-  margin-left: 10px; /* 아이디 입력 필드와 버튼 간격 */
-  font-size: 14px; /* 글자 크기 */
-  height: 40px; /* 버튼 높이를 아이디 입력 필드와 동일하게 설정 */
-  white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 설정 */
+  padding: 0 15px;
+  background-color: #024CAA;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+  height: 40px;
+  white-space: nowrap;
 }
 
 .image-register-button:hover {
-  background-color: #023c7a; /* 버튼 호버 시 배경색 변경 */
+  background-color: #023c7a;
 }
 
 .delete-button {
@@ -480,5 +491,17 @@ export default {
 }
 .error-message {
   color: #dc3545;  /* 빨간색 */
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column; /* 수직 정렬 */
+  width: 100%; /* 입력 필드 크기와 동일하게 설정 */
+}
+
+.error-message {
+  margin-top: 5px; /* 입력 필드와의 간격 */
+  font-size: 12px;
+  color: #dc3545; /* 오류 메시지 색상 */
 }
 </style>
