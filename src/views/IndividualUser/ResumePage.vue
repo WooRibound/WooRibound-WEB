@@ -20,6 +20,7 @@ export default {
   setup() {
     const modalPopupStatue = ref(false);
     const modalMessage = ref("");
+    const errorMessage = ref("");
 
     const userImgSelect = ref(null);
     const resumeEmailSelect = ref(null);
@@ -80,22 +81,23 @@ export default {
     };
 
     const onRegisterResumeClick = async () => {
+      errorMessage.value = "";
       if (!photoPreview.value) {
-        alert("사진을 첨부해주세요.");
+        errorMessage.value = "사진을 첨부해주세요.";
         return;
       }
 
       if (
-          (!resume.value.resumeEmail) ||
+          (!resume.value.resumeEmail?.trim()) ||
           (!isEmailValid(resume.value.resumeEmail))
       ) {
-        alert("이메일을 입력해주세요.");
+        errorMessage.value = "이메일을 입력해주세요.";
         resumeEmailSelect.value.focus();
         return;
       }
 
-      if (!resume.value.userIntro) {
-        alert("자기소개를 입력해주세요.");
+      if (!resume.value.userIntro?.trim()) {
+        errorMessage.value = "자기소개를 입력해주세요.";
         userIntroSelect.value.focus();
         return;
       }
@@ -114,6 +116,8 @@ export default {
         modalPopupStatue.value = true;
       } catch (e) {
         console.log(e);
+        modalMessage.value = "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+        modalPopupStatue.value = true;
       }
     }
 
@@ -139,9 +143,9 @@ export default {
         }
 
         isResumeFirst.value = !resume.value.userIntro;
-        modalMessage.value = "수정이 완료 되었습니다";
+        modalMessage.value = "수정이 완료 되었습니다.";
       } else {
-        modalMessage.value = "수정 된 사항이 없습니다";
+        modalMessage.value = "수정 된 사항이 없습니다.";
       }
 
       modalPopupStatue.value = true;
@@ -157,6 +161,8 @@ export default {
 
     return {
       modalPopupStatue,
+      modalMessage,
+      errorMessage,
       userImgSelect,
       resumeEmailSelect,
       userIntroSelect,
@@ -164,7 +170,6 @@ export default {
       isResumeFirst,
       emailError,
       photoPreview,
-      modalMessage,
       onPhotoChange,
       onRegisterResumeClick,
       onUpdateResumeClick,
@@ -208,7 +213,7 @@ export default {
               @blur="validateEmail"
               ref="resumeEmailSelect"
           />
-          <div v-if="emailError" class="error-message">이메일 형식을 맞춰주세요</div>
+          <div v-if="emailError" class="email-error-message">이메일 형식을 맞춰주세요</div>
         </div>
         <!-- 자기소개 글 입력 -->
         <div class="input-label">
@@ -219,6 +224,9 @@ export default {
               v-model="resume.userIntro"
               ref="userIntroSelect"
           />
+        </div>
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
         </div>
         <div
             class="resume-update-button"
@@ -360,10 +368,22 @@ export default {
   border-radius: 8px;
 }
 
-.error-message {
+.email-error-message {
   color: red;
   font-size: 0.875em;
   margin-bottom: 8px;
   margin-left: 8px;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 90%;
+  text-align: center;
+  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
 }
 </style>

@@ -20,6 +20,7 @@ export default {
     const modalPopupStatue = ref(false);
     const aiModalPopupStatue = ref(false);
     const modalMessage = ref('');
+    const errorMessage = ref('');
     const jobs = computed(() => {
       const originalJobs = jobStore.getJobs;
       return [...originalJobs.map((job) => job.jobName)];
@@ -33,25 +34,26 @@ export default {
     const knowhowContentSelect = ref(null);
 
     const onAIRecommendationClick = () => {
-      console.log("ai 추천");
       aiModalPopupStatue.value = true;
     }
 
     const onRegisterClick = async () => {
-      if (knowhowJob.value === '' || knowhowJob.value === null) {
-        alert("직종을 선택해주세요");
+      errorMessage.value = "";
+
+      if (!knowhowJob.value) {
+        errorMessage.value = "직종을 선택해주세요";
         knowhowJobSelect.value.focus();
         return;
       }
 
-      if (knowhowTitle.value === '' || knowhowTitle.value === null) {
-        alert("제목을 입력해주세요");
+      if (!knowhowTitle.value) {
+        errorMessage.value = "제목을 입력해주세요";
         knowhowTitleSelect.value.focus();
         return;
       }
 
-      if (knowhowContent.value === '' || knowhowContent.value === null) {
-        alert("내용 입력해주세요");
+      if (!knowhowContent.value) {
+        errorMessage.value = "내용 입력해주세요";
         knowhowContentSelect.value.focus();
         return;
       }
@@ -80,13 +82,14 @@ export default {
 
 
     return {
+      modalPopupStatue,
+      aiModalPopupStatue,
+      modalMessage,
+      errorMessage,
       jobs,
       knowhowJob,
       knowhowTitle,
       knowhowContent,
-      modalPopupStatue,
-      aiModalPopupStatue,
-      modalMessage,
       knowhowJobSelect,
       knowhowTitleSelect,
       knowhowContentSelect,
@@ -121,6 +124,9 @@ export default {
       <!-- 내용 입력 -->
       <div class="input-label">
         <textarea v-model="knowhowContent" class="textarea-field" placeholder="일 경험담을 작성해주세요" ref="knowhowContentSelect"/>
+      </div>
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
       </div>
       <div class="delete-button" @click="onRegisterClick">등록하기</div>
     </div>
@@ -175,13 +181,11 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 100%;
 }
 
 .input-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
   flex: 1;
 }
@@ -226,5 +230,17 @@ export default {
   cursor: pointer;
   font-weight: bold;
   border-radius: 8px;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 90%;
+  text-align: center;
+  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
 }
 </style>

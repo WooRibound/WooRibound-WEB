@@ -35,7 +35,7 @@ export const fetchAllWisdomShare = async (knowhowTitle, knowhowJob) => {
 export const deleteWisdomDetail = async (knowhowId) => {
   try {
     const response = await handleApiCall('delete', `/individual/knowhow/share/delete?knowhowId=${knowhowId}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error('Failed to delete wisdom detail:', error);
     throw error;

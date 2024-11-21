@@ -1,11 +1,13 @@
 <script>
 import { ref } from 'vue';
 import {getGptResponse} from "@/api/services/gptService";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "AICommendationModal",
+  components: {SingleButtonModal},
   setup(props, {emit}) {
-
+    const modalStatus = ref(false);
     const userInput = ref('');
 
     const closeModal = () => {
@@ -19,14 +21,19 @@ export default {
         return;
       }
 
-      const data = await getGptResponse(userInput.value);
-      console.log("답변: ", data);
+      try {
+        const data = await getGptResponse(userInput.value);
+        emit('receive-gpt-response', data);
+        closeModal();
 
-      emit('receive-gpt-response', data);
-      closeModal();
+      } catch (e) {
+        console.log(e);
+        modalStatus.value = true;
+      }
     }
 
     return {
+      modalStatus,
       userInput,
       closeModal,
       onGetGptCommentClick,
@@ -59,6 +66,11 @@ export default {
       </div>
     </div>
   </div>
+  <single-button-modal
+      v-if="modalStatus"
+      @close-modal="modalStatus = false"
+      :modal-message="'오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'"
+  />
 </template>
 
 <style scoped>
