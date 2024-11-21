@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
-import { formatDate2 } from "@/utils/format";
+import { formatDate2 } from "@/utils/formatters";
 import { ROUTES } from "@/router/routes";
 import { useRouter } from "vue-router";
 import { GENDER_TYPES } from "@/constants/genderTypes";

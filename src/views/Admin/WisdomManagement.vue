@@ -4,7 +4,7 @@ import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
 import { ROUTES } from "@/router/routes";
 import { useRouter } from "vue-router";
-import { formatDate2 } from "@/utils/format";
+import { formatDate2 } from "@/utils/formatters";
 import handleApiCall from '@/api/apiService';
 
 export default {

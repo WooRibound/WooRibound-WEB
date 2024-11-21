@@ -1,85 +1,186 @@
 <script>
-import {ref, computed, onMounted} from "vue";
+import {computed, onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
-import { useRegionsStore } from "@/stores/useRegionsStore";
+import {useRegionsStore} from "@/stores/useRegionsStore";
 import {useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
 import {fetchUpdateUserProfile, fetchUserProfile} from "@/api/services/individualUserService";
-import {fetchJobs} from "@/api/services/globalServiece";
+import {formatDate2, formatPhoneNumber} from "@/utils/formatters";
+import {useJobStore} from "@/stores/useJobStore";
+import {GENDER_TYPES} from "@/constants/genderTypes";
+import TermsPrivacyOfServicePopup from "@/components/TermsPrivacyOfServicePopup.vue";
+import {isOnlyLetters, isPhoneNumberValid} from "@/utils/validators";
+import {TERMS_PRIVACY_TYPES} from "@/constants/termsPrivacyTypes";
+
 export default {
   name: "IndividualUserProfile",
-  components: { ModalPopup },
+  computed: {
+    GENDER_TYPES() {
+      return GENDER_TYPES
+    }
+  },
+  components: {TermsPrivacyOfServicePopup, ModalPopup},
   setup() {
     const router = useRouter();
     const regionsStore = useRegionsStore();
-
-    const selectedProvince = ref('');
-    const selectedCity = ref('');
-
-    const provinces = computed(() => regionsStore.getProvinces);
-    const allCities = computed(() => regionsStore.getCitiesByProvince(selectedProvince.value));
-
-    const filteredCities = computed(() => {
-      return selectedProvince.value ? allCities.value : [];
-    });
+    const jobStore = useJobStore();
 
     const modalPopupStatue = ref(false);
+    const modalMessage = ref("");
+    const errorMessage = ref("");
+    const phoneError = ref("");
+    const termsPrivacyType = ref("");
+    const termsPrivacyOfServicePopupStatue = ref(false);
+    const jobs = computed(() => jobStore.getJobs);
 
-    // 경력 여부와 직종
-    const careerStatus = ref("none"); // 'none', 'yes', 'no' 중 선택
-    // todo 직종 리스트 받는 api로 값전 달하기
-    const jobCategories = ref([]);
+    const provinces = computed(() => regionsStore.getProvinces);
+    const selectedProvince = ref('');
+    const cities = computed(() => regionsStore.getCitiesByProvince(selectedProvince.value) || []);
 
+    const exjobChkStatus = ref("N");
+    const isJobCategoryEnabled = computed(() => exjobChkStatus.value === "Y");
 
-    const isJobCategoryEnabled = computed(() => careerStatus.value === "yes");
+    const initialUserInfo = ref({
+      name: '',
+      birth: '',
+      phone: '',
+      email: '',
+      gender: '',
+      addrProvince: '',     // 거주도
+      addrCity: '',         // 거주시
+      exjobChk: '',         // 경력 여부
+      interestChk: '',      // 관심 직종 선택 여부
+      jobInterest: '',      // 최초 관심 직종 선택 여부
+      workHistoryJobs: [],  // 경력 직종 리스트
+      interestJobs: [],      // 관심 직종 리스트
+      dataSharingConsent: ''
+    });
 
-    const selectedJobs = ref([""]);
-    const selectedInterestJobs = ref([""]);
+    const userInfo = ref({
+      name: '',
+      birth: '',
+      phone: '',
+      email: '',
+      gender: '',
+      addrProvince: '',     // 거주도
+      addrCity: '',         // 거주시
+      exjobChk: '',         // 경력 여부
+      interestChk: '',      // 관심 직종 선택 여부
+      jobInterest: '',      // 최초 관심 직종 선택 여부
+      workHistoryJobs: [],  // 경력 직종 리스트
+      interestJobs: [],      // 관심 직종 리스트
+      dataSharingConsent: ''
+    });
 
-    const addJobField = () => {
-      if (selectedJobs.value.length < 3) {
-        selectedJobs.value.push("");
+    const handlePhoneNumberInput = (event) => {
+      const formattedValue = formatPhoneNumber(event.target.value);
+      event.target.value = formattedValue;
+      userInfo.value.phone = formattedValue;
+    };
+
+    const validatePhone = () => {
+      phoneError.value = !isPhoneNumberValid(userInfo.value.phone);
+    };
+
+    const onAddJobFieldClick = () => {
+      if (userInfo.value.workHistoryJobs.length < 3) {
+        userInfo.value.workHistoryJobs.push("");
       }
     };
 
-    const removeJobField = (index) => {
-      selectedJobs.value.splice(index, 1);
+    const onRemoveJobFieldClick = (index) => {
+      userInfo.value.workHistoryJobs.splice(index, 1);
     };
 
-    const addInterestJobField = () => {
-      if (selectedInterestJobs.value.length < 3) {
-        selectedInterestJobs.value.push("");
+    const onAddInterestJobFieldClick = () => {
+      if (userInfo.value.interestJobs.length < 3) {
+        userInfo.value.interestJobs.push("");
       }
     };
 
-    const removeInterestJobField = (index) => {
-      selectedInterestJobs.value.splice(index, 1);
+    const onRemoveInterestJobFieldClick = (index) => {
+      userInfo.value.interestJobs.splice(index, 1);
     };
+
+    const initializeUserProfile = (response) => {
+      userInfo.value = response;
+
+      userInfo.value.birth = formatDate2(userInfo.value.birth);  // 생일 형식 포맷
+      selectedProvince.value = userInfo.value.addrProvince;      // 거주시 필터를 위해서 selectedProvince 에 값 할당
+      exjobChkStatus.value = userInfo.value.exjobChk;            // 경력 여부 상태 값 할당
+
+      initialUserInfo.value = JSON.parse(JSON.stringify(userInfo.value));
+
+      // workHistoryJobs, interestJobs가 빈 배열일 경우 공백인 값 추가
+      if (userInfo.value.workHistoryJobs.length === 0) {
+        userInfo.value.workHistoryJobs.push('');
+      }
+      if (userInfo.value.interestJobs.length === 0) {
+        userInfo.value.interestJobs.push('');
+      }
+    }
+
+    const loadUserProfile = async () => {
+      try {
+        const response = await fetchUserProfile();
+        initializeUserProfile(response);
+      } catch (error) {
+        console.error("회원 정보를 불러오는 데 실패했습니다 : ", error);
+      }
+    };
+
+    onMounted(() => {
+      loadUserProfile();
+    });
 
     const onUpdateProfileClick = async () => {
+      // workHistoryJobs, interestJobs 배열에 공백인 값 삭제
+      userInfo.value.workHistoryJobs = userInfo.value.workHistoryJobs.filter(job => job !== '');
+      userInfo.value.interestJobs = userInfo.value.interestJobs.filter(job => job !== '');
+
+      const isUserInfoUnchanged = JSON.stringify(initialUserInfo.value) === JSON.stringify(userInfo.value);
+
+      if (isUserInfoUnchanged) {
+        // workHistoryJobs, interestJobs 배열에 공백인 값 다시 추가
+        if (userInfo.value.workHistoryJobs.length === 0) {
+          userInfo.value.workHistoryJobs.push('');
+        }
+        if (userInfo.value.interestJobs.length === 0) {
+          userInfo.value.interestJobs.push('');
+        }
+
+        modalMessage.value = "변경사항이 없습니다.";
+        modalPopupStatue.value = true;
+        return;
+      }
+
       try {
-        const payload = {
-          userId: "",
-          name: name.value,
-          phone: phone.value,
-          gender: gender.value === "male" ? "M" : "F",
-          addrCity: selectedCity.value,
-          addrProvince: selectedProvince.value,
-          exjobChk: careerStatus.value === "yes" ? "Y" : "N",
-          workHistoryJobs: selectedJobs.value.filter((job) => job), // 빈 값 제거
-          interestJobs: selectedInterestJobs.value.filter((job) => job), // 빈 값 제거
-        };
+        if (!isOnlyLetters(userInfo.value.name)) {
+          errorMessage.value = "이름은 영문자나 한글만 입력해주세요.";
+          return;
+        }
 
-        // API 호출
-        const response = await fetchUpdateUserProfile(payload);
+        if (!userInfo.value.gender ||
+            !userInfo.value.addrProvince ||
+            !userInfo.value.addrCity ||
+            !userInfo.value.exjobChk
+        ) {
+          errorMessage.value = "모든 필수 항목을 입력해주세요.";
+          return;
+        }
 
-        // 성공 처리
-        modalPopupStatue.value = true; // 성공 팝업 표시
-        console.log("Update successful:", response.data);
+        const date = new Date(userInfo.value.birth);
+        userInfo.value.birth = date.toISOString();
+        userInfo.value.exjobChk = exjobChkStatus;
+
+        const response = await fetchUpdateUserProfile(userInfo.value);
+        initializeUserProfile(response);
+
+        modalMessage.value = "수정이 완료되었습니다.";
+        modalPopupStatue.value = true;
+
       } catch (error) {
-        // 에러 처리
-        console.error("Update failed:", error);
-        errorMessage.value = "사용자 정보를 수정하는 중 오류가 발생했습니다.";
+        console.error("사용자 정보를 수정하는 중 오류가 발생했습니다 : ", error);
       }
     };
 
@@ -87,96 +188,39 @@ export default {
       router.push(ROUTES.INDIVIDUAL_USER_DELETE.path);
     }
 
-    const isLoading = ref(false); // 로딩 상태
-    const errorMessage = ref(""); // 에러 메시지
+    const onTermsClick = () => {
+      termsPrivacyType.value = TERMS_PRIVACY_TYPES.TERMS;
+      termsPrivacyOfServicePopupStatue.value = true;
+    }
 
-    // 필요한 데이터만 정의
-    const name = ref("");
-    const phone = ref("");
-    const gender = ref("");
-    const addrProvince = ref("");
-    const addrCity = ref("");
-    const jobInterest = ref([]);
-
-    // API 데이터 로드
-    const loadUserProfile = async () => {
-      isLoading.value = true;
-      try {
-        const data = await fetchUserProfile(); // API 호출
-
-        // 데이터 매핑
-        name.value = data.name || "";
-        phone.value = data.phone || "";
-        gender.value = data.gender === "M" ? "male" : "female";
-        selectedProvince.value = data.addrProvince || "";
-        selectedCity.value = data.addrCity || "";
-        careerStatus.value = data.exjobChk === "Y" ? "yes" : "no";
-        jobInterest.value = data.jobInterest !== "N" ? [data.jobInterest] : [];
-        // 경력 직종 매핑
-        if (data.workHistoryJobs && Array.isArray(data.workHistoryJobs)) {
-          selectedJobs.value = data.workHistoryJobs; // 경력 직종
-        } else {
-          selectedJobs.value = [""]; // 기본값
-        }
-
-        // 관심 직종 매핑
-        if (data.interestJobs && Array.isArray(data.interestJobs)) {
-          selectedInterestJobs.value = data.interestJobs; // 관심 직종
-        } else {
-          selectedInterestJobs.value = [""]; // 기본값
-        }
-
-        console.log("Mapped selectedJobs (경력 직종):", selectedJobs.value);
-        console.log("Mapped selectedInterestJobs (관심 직종):", selectedInterestJobs.value);
-      } catch (error) {
-        errorMessage.value = "회원 정보를 불러오는 데 실패했습니다.";
-        console.error(error);
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    const loadJobCategories = async () => {
-      try {
-        const jobs = await fetchJobs(); // fetchJobs 호출
-        console.log("Fetched jobs:", jobs.data);
-        jobCategories.value = jobs.data.map((job) => job.jobName);
-      } catch (error) {
-        console.error("Failed to fetch job categories:", error);
-      }
-    };
-
-    // 컴포넌트 마운트 시 API 호출
-    onMounted(() => {
-      loadUserProfile();
-      loadJobCategories();
-    });
+    const onPrivacyClick = () => {
+      termsPrivacyType.value = TERMS_PRIVACY_TYPES.PRIVACY;
+      termsPrivacyOfServicePopupStatue.value = true;
+    }
 
     return {
       modalPopupStatue,
-      selectedProvince,
-      selectedCity,
+      modalMessage,
+      errorMessage,
+      phoneError,
+      termsPrivacyOfServicePopupStatue,
+      termsPrivacyType,
+      jobs,
       provinces,
-      filteredCities,
-      careerStatus,
-      jobCategories,
+      cities,
+      exjobChkStatus,
       isJobCategoryEnabled,
-      selectedJobs,
-      selectedInterestJobs,
-      addJobField,
-      removeJobField,
-      addInterestJobField,
-      removeInterestJobField,
+      userInfo,
+      handlePhoneNumberInput,
+      validatePhone,
+      onAddJobFieldClick,
+      onRemoveJobFieldClick,
+      onAddInterestJobFieldClick,
+      onRemoveInterestJobFieldClick,
+      onTermsClick,
+      onPrivacyClick,
       onUpdateProfileClick,
       onDeleteAccountClick,
-      isLoading,
-      errorMessage,
-      name,
-      phone,
-      gender,
-      addrProvince,
-      addrCity,
-      jobInterest,
     };
   }
 }
@@ -191,26 +235,47 @@ export default {
       <div class="input-section">
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="이름" v-model="name">
+          <input class="input-field" placeholder="이름" v-model="userInfo.name">
+        </div>
+        <!-- 생년월일 -->
+        <div class="input-label" style="margin-left: 8px;">
+          <span class="required"></span>
+          <input
+              v-model="userInfo.birth"
+              class="input-field"
+              placeholder="생년월일"
+              type="text"
+              readonly
+          >
         </div>
         <!-- 휴대폰번호 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" placeholder="휴대폰 번호" type="tel" v-model="phone">
+          <div class="input-wrapper">
+            <input
+                class="input-field"
+                placeholder="휴대폰 번호"
+                type="tel"
+                v-model="userInfo.phone"
+                @input="handlePhoneNumberInput"
+                @blur="validatePhone"
+            >
+            <div v-if="phoneError" class="phone-error-message">휴대폰 형식을 맞춰주세요</div>
+        </div>
         </div>
         <!-- 성별 선택 -->
         <div class="input-label">
           <span class="required">*</span>
-          <select class="input-field" aria-label="성별 선택" v-model="gender">
+          <select class="input-field" aria-label="성별 선택" v-model="userInfo.gender">
             <option value="" disabled selected>성별</option>
-            <option value="male">남성</option>
-            <option value="female">여성</option>
+            <option :value="GENDER_TYPES.M">남성</option>
+            <option :value="GENDER_TYPES.F">여성</option>
           </select>
         </div>
         <!-- 거주 도 선택 -->
         <div class="input-label">
           <span class="required">*</span>
-          <select v-model="selectedProvince" class="input-field" aria-label="거주 도">
+          <select v-model="userInfo.addrProvince" class="input-field" aria-label="거주 도">
             <option value="" disabled selected>거주 도</option>
             <option v-for="province in provinces" :key="province" :value="province">{{ province }}</option>
           </select>
@@ -218,33 +283,33 @@ export default {
         <!-- 거주 시 선택 -->
         <div class="input-label">
           <span class="required">*</span>
-          <select v-model="selectedCity" class="input-field" aria-label="거주 시">
+          <select v-model="userInfo.addrCity" class="input-field" aria-label="거주 시">
             <option value="" disabled selected>거주 시</option>
-            <option v-for="city in filteredCities" :key="city" :value="city">{{ city }}</option>
+            <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
           </select>
         </div>
         <!-- 경력 여부 선택 -->
         <div class="input-label" style="padding-top: 10px;">
           <span class="required">*</span>
           <span class="bold-text">경력 여부</span>
-          <label><input type="radio" v-model="careerStatus" value="yes"> 있음</label>
-          <label><input type="radio" v-model="careerStatus" value="no"> 없음</label>
+          <label><input type="radio" v-model="exjobChkStatus" value="Y"> 있음</label>
+          <label><input type="radio" v-model="exjobChkStatus" value="N"> 없음</label>
         </div>
         <!-- 직종 선택 -->
         <div v-if="isJobCategoryEnabled" class="input-label job-category-section">
-          <div v-for="(job, index) in selectedJobs" :key="index" class="job-category">
+          <div v-for="(jobId, index) in userInfo.workHistoryJobs" :key="index" class="job-category">
             <div class="select-wrapper">
-              <select v-model="selectedJobs[index]" class="input-field" aria-label="직종 선택">
+              <select v-model="userInfo.workHistoryJobs[index]" class="input-field" aria-label="직종 선택">
                 <option value="" disabled selected>직종 선택</option>
-                <option v-for="job in jobCategories" :key="job" :value="job">{{ job }}</option>
+                <option v-for="job in jobs" :key="job.jobId" :value="job.jobId">{{ job.jobName }}</option>
               </select>
             </div>
             <div class="button-wrapper">
-              <div v-if="index === selectedJobs.length - 1 && selectedJobs.length < 3" @click="addJobField"
-                   class="icon-button add-button">
+              <div v-if="index === userInfo.workHistoryJobs.length - 1 && userInfo.workHistoryJobs.length < 3"
+                   @click="onAddJobFieldClick" class="icon-button add-button">
                 <img src="@/assets/images/icons/plus.png" alt="추가">
               </div>
-              <div v-if="index > 0 && index === selectedJobs.length - 1" @click="removeJobField(index)"
+              <div v-if="userInfo.workHistoryJobs.length > 1" @click="onRemoveJobFieldClick(index)"
                    class="icon-button remove-button">
                 <img src="@/assets/images/icons/minus.png" alt="제거">
               </div>
@@ -257,22 +322,40 @@ export default {
           <span class="bold-text">관심 직종</span>
           <span class="small-text">* 관심 직종 등록 시 우바 고도가 올라갑니다.</span>
         </div>
-        <div v-for="(interestJob, index) in selectedInterestJobs" :key="index" class="job-category">
+        <div v-for="(interestJob, index) in userInfo.interestJobs" :key="index" class="job-category">
           <div class="select-wrapper">
-            <select v-model="selectedInterestJobs[index]" class="input-field" aria-label="관심 직종 선택">
+            <select v-model="userInfo.interestJobs[index]" class="input-field" aria-label="관심 직종 선택">
               <option value="" disabled selected>관심 직종 선택</option>
-              <option v-for="job in jobCategories" :key="job" :value="job">{{ job }}</option>
+              <option v-for="job in jobs" :key="job.jobName" :value="job.jobId">{{ job.jobName }}</option>
             </select>
           </div>
           <div class="button-wrapper">
-            <div v-if="index === selectedInterestJobs.length - 1 && selectedInterestJobs.length < 3"
-                 @click="addInterestJobField" class="icon-button add-button">
+            <div v-if="index === userInfo.interestJobs.length - 1 && userInfo.interestJobs.length < 3"
+                 @click="onAddInterestJobFieldClick" class="icon-button add-button">
               <img src="@/assets/images/icons/plus.png" alt="추가">
             </div>
-            <div v-if="index > 0 && index === selectedInterestJobs.length - 1" @click="removeInterestJobField(index)"
+            <div v-if="index > 0 && index === userInfo.interestJobs.length - 1" @click="onRemoveInterestJobFieldClick(index)"
                  class="icon-button remove-button">
               <img src="@/assets/images/icons/minus.png" alt="제거">
             </div>
+          </div>
+        </div>
+        <div class="consent-wrapper" v-if="userInfo.dataSharingConsent === 'N'">
+          <input
+              type="checkbox"
+              id="thirdPartyConsent"
+              v-model="userInfo.dataSharingConsent"
+              class="consent-checkbox"
+          >
+          <div class="consent-content">
+            <label  class="consent-label">
+              [선택]
+              <span @click="onTermsClick" class="clickable-text">이용약관</span>동의 및
+              <span @click="onPrivacyClick" class="clickable-text">개인정보</span>제3자 제공 동의
+            </label>
+          </div>
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
           </div>
         </div>
         <div class="update-button" @click="onUpdateProfileClick">수정하기</div>
@@ -283,7 +366,12 @@ export default {
   <modal-popup
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
-      :modal-message="'수정이 완료되었습니다.'"
+      :modal-message="modalMessage"
+  />
+  <terms-privacy-of-service-popup
+      v-if="termsPrivacyOfServicePopupStatue"
+      @close-popup="termsPrivacyOfServicePopupStatue = false"
+      :type="termsPrivacyType"
   />
 </template>
 
@@ -440,4 +528,78 @@ input[type="radio"] {
   align-self: flex-start; /* 왼쪽 정렬 */
 }
 
+.input-field[readonly] {
+  background-color: #e0e0e0;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.consent-wrapper {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  padding: 0 10px;
+}
+
+.consent-checkbox {
+  margin-right: 10px;
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.consent-content {
+  flex: 1;
+}
+
+.consent-label {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.consent-label .required {
+  margin-right: 5px;
+}
+
+.clickable-text {
+  color: #133E87; /* 클릭 가능한 텍스트 색상 (예: 파란색) */
+  cursor: pointer; /* 마우스를 올리면 손가락 모양으로 변경 */
+  margin: 0 5px; /* 텍스트 간격 조정 */
+}
+
+.consent-label {
+  display: flex; /* 인라인 배치를 위한 플렉스 사용 */
+  flex-wrap: wrap; /* 내용이 길어질 경우 줄바꿈 */
+  align-items: center; /* 텍스트 세로 정렬 */
+  font-size: 14px;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 90%;
+  text-align: center;
+  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
+}
+
+.input-wrapper {
+  position: relative; /* 위치 설정을 위해 relative 추가 */
+  display: flex;
+  flex-direction: column; /* 에러 메시지를 input 아래에 배치 */
+  width: 90%;
+}
+
+.phone-error-message {
+  color: red;
+  font-size: 0.875em; /* 에러 메시지 폰트 크기 */
+  margin-top: 4px; /* 위쪽 여백 추가 */
+  margin-left: 10px;
+}
 </style>

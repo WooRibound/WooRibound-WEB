@@ -1,6 +1,6 @@
 <script>
 import {ref, onMounted} from "vue";
-import { formatDate1 } from "@/utils/format";
+import { formatDate1 } from "@/utils/formatters";
 import { ROUTES } from "@/router/routes";
 import { useRoute } from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';

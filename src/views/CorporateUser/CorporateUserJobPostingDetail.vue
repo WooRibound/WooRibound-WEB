@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { formatDate1 } from "@/utils/format";
+import { formatDate1 } from "@/utils/formatters";
 import { deleteJobPosting, fetchJobPostingDetail } from "@/api/services/adminServiece";
 import { USER_TYPES } from "@/constants/userTypes";
 

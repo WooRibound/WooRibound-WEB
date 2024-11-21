@@ -60,7 +60,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="isVisible">
+  <div v-if="isVisible" class="full-screen-wrap">
     <header class="header">
       <img src="../../assets/images/icons/home.png" class="home-image" @click="onMoveToMainClick">
       <img src="../../assets/images/icons/close.png" class="close-icon" @click="onCloseFullScreenMenuClick">
@@ -78,14 +78,14 @@ export default {
       <div class="menu-content">
         <div class="menu_title">내 정보 보기</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
-            <div class="menu-item">지원 현황</div>
+          <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
+            <div class="menu-item">개인 정보</div>
           </router-link>
           <router-link :to="ROUTES.RESUME_PAGE.path">
             <div class="menu-item">이력서</div>
           </router-link>
-          <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
-            <div class="menu-item">개인 정보</div>
+          <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
+            <div class="menu-item">지원 현황</div>
           </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
             <div class="menu-item">우바 고도</div>
@@ -169,6 +169,10 @@ export default {
 </template>
 
 <style scoped>
+.full-screen-wrap {
+  overflow-y: auto;
+}
+
 .header {
   display: flex;
   justify-content: space-between; /* 양 끝에 배치 */
@@ -217,7 +221,6 @@ export default {
 .menu-content {
   background-color: #fff;
   padding: 20px;
-  width: 100%; /* 화면 사이즈에 따라 90%의 너비 사용 */
   height: 50%; /* 높이를 화면의 반으로 설정 */
   margin-bottom: 0; /* 아래쪽 여백 제거 */
   border-top: 1px solid rgba(65, 63, 66, 0.5); /* 상단 선 색상 연하게 설정 */

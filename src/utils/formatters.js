@@ -33,4 +33,20 @@ export const formatDate2 = (dateString) => {
     return `${year}.${month}.${day}`;
 };
 
+/**
+ * 휴대폰 번호를 포맷팅하는 함수
+ * @param {string} phoneNumber - 입력된 휴대폰 번호
+ * @returns {string} 포맷된 휴대폰 번호
+ */
+export function formatPhoneNumber(phoneNumber) {
+    const value = phoneNumber.replace(/[^0-9]/g, ''); // 숫자만 남김
+    if (value.length <= 3) {
+        return value; // 3자리 이하 그대로 출력
+    } else if (value.length <= 7) {
+        return `${value.slice(0, 3)}-${value.slice(3)}`; // 3-4 형태
+    } else {
+        return `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`; // 3-4-4 형태
+    }
+}
+
 

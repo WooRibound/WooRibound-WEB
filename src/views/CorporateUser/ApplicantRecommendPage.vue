@@ -1,7 +1,7 @@
 <script>
 import {useRoute, useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
-import { formatDate1 } from "@/utils/format"
+import { formatDate1 } from "@/utils/formatters"
 import {
   fetchMyPostingDetail,
   fetchRecommendList
