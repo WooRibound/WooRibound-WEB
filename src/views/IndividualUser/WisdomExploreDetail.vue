@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
 import { fetchWisdomDetail } from "@/api/services/individualUserService";
-import { formatDate2 } from "../../utils/format";
+import { formatDate2 } from "../../utils/formatters";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import handleApiCall from '@/api/apiService';

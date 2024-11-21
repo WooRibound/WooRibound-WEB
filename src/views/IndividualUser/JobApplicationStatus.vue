@@ -1,5 +1,5 @@
 <script>
-import {formatDate1} from "@/utils/format";
+import {formatDate1} from "@/utils/formatters";
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {ROUTES} from "@/router/routes";

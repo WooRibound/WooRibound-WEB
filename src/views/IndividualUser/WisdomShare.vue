@@ -4,7 +4,7 @@ import {ROUTES} from "@/router/routes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate1} from "@/utils/format";
+import {formatDate1} from "@/utils/formatters";
 import {fetchAllWisdomShare} from "@/api/services/individualUserService";
 
 export default {
