@@ -23,7 +23,7 @@ export default {
     const modalMessage = ref("");
     const photoPreview = ref(null);
     const jobs = computed(() => jobStore.getJobs);
-    console.log("jobs : " +jobs.value);
+    const errorMessage = ref("");
 
     const jobPosting = ref({
       postImg: null,
@@ -77,6 +77,8 @@ export default {
     };
 
     const onRegisterClick = async () => {
+      if (!validateForm()) return;
+
       try {
         const response = await insertJobPosting(jobPosting.value);
         modalMessage.value = response;
@@ -87,7 +89,34 @@ export default {
       }
     }
 
+    const validateForm = () => {
+      if (!jobPosting.value.postImg) {
+        errorMessage.value = "공고 이미지를 첨부해주세요.";
+        return false;
+      }
+      if (!jobPosting.value.postTitle) {
+        errorMessage.value = "공고 제목을 입력해주세요.";
+        return false;
+      }
+      if (!jobPosting.value.jobId) {
+        errorMessage.value = "공고 직종을 선택해주세요.";
+        return false;
+      }
+      if (!jobPosting.value.startDate) {
+        errorMessage.value = "공고 시작 날짜를 지정해주세요.";
+        return false;
+      }
+      if (!jobPosting.value.endDate) {
+        errorMessage.value = "공고 마감 날짜를 지정해주세요.";
+        return false;
+      }
+      return true;
+    };
+
+
     return {
+      errorMessage,
+      validateForm,
       startDateInput,
       endDateInput,
       activateDatePicker,
@@ -115,7 +144,7 @@ export default {
       <div class="input-section">
         <!-- 공고 이미지 등록 -->`
         <div class="photo-label">
-          <div v-if="!photoPreview" class="photo-placeholder">사진</div>
+          <div v-if="!photoPreview" class="photo-placeholder">사진 (권장사이즈 : 900px x 300px) </div>
           <img v-if="photoPreview" :src="photoPreview" class="photo-preview"  alt=""/>
           <button class="image-register-button" @click="onImageRegisterClick">사진등록</button>
           <input
@@ -166,7 +195,9 @@ export default {
               class="input-field date-picker-input"
           />
         </div>
-
+        <div v-if="errorMessage" class="error-message-container">
+          {{ errorMessage }}
+        </div>
         <div class="delete-button" @click="onRegisterClick">공고 등록</div>
       </div>
     </div>
@@ -393,6 +424,17 @@ input[type="date"]:valid::before {
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+}
+
+.error-message-container {
+  width: 90%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  color: #dc3545;
+  text-align: center;
 }
 
 </style>

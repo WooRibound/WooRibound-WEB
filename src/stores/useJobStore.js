@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import {fetchJobs} from "@/api/services/globalServiece";
+import {fetchJobs} from "@/api/services/globalService";
 
 export const useJobStore = defineStore('jobStore', {
     state: () => ({
