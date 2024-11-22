@@ -142,15 +142,15 @@ export default {
     const startX = ref(0);
     const scrollLeft = ref(0);
 
-    // 드래그 시작
+    // 드래그 시작 (웹에서 적용)
     const startDragging = (event) => {
-      if (!recommendedContent.value) return; // recommendedContent가 null인 경우 방어 코드 추가
+      if (!recommendedContent.value) return;
       isDragging.value = true;
       startX.value = event.pageX - recommendedContent.value.offsetLeft;
       scrollLeft.value = recommendedContent.value.scrollLeft;
     };
 
-    // 드래그 중
+    // 드래그 중 (웹에서 적용)
     const onDragging = (event) => {
       if (!isDragging.value || !recommendedContent.value) return;
       const x = event.pageX - recommendedContent.value.offsetLeft;
@@ -158,7 +158,7 @@ export default {
       recommendedContent.value.scrollLeft = scrollLeft.value - walk;
     };
 
-    // 드래그 종료
+    // 드래그 종료 (웹에서 적용)
     const stopDragging = () => {
       isDragging.value = false;
     };
@@ -180,13 +180,13 @@ export default {
       jobPostingCount,
       jobPostingList,
       jobPostingRecommendList,
+      recommendedContent,
       recruitmentPhase,
       recruitmentPhaseClass,
       searchJobPosting,
       onMoveDetailPageClick,
       onFilterClick,
       handleSelectFilter,
-      recommendedContent,
       startDragging,
       onDragging,
       stopDragging,
@@ -255,8 +255,12 @@ export default {
       </div>
     </div>
   </main>
-  <search-filter-modal v-if="modalPopupStatue" @close-modal="modalPopupStatue = false"
-                       @select-filter="handleSelectFilter" :filter-type="filterTypes" />
+  <search-filter-modal
+      v-if="modalPopupStatue"
+      @close-modal="modalPopupStatue = false"
+      @select-filter="handleSelectFilter"
+      :filter-type="filterTypes"
+  />
 </template>
 
 <style scoped>

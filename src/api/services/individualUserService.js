@@ -1,4 +1,6 @@
 import handleApiCall from '@/api/apiService';
+import {ROUTES} from "@/router/routes";
+import {useRouter} from "vue-router";
 
 export const fetchJoinInfo = async () => {
   try {
@@ -213,11 +215,16 @@ export const fetchJobApply = async () => {
 
 // 채용 공고 상세 조회
 export const fetchJobPostingDetail = async (postId) => {
+  const router = useRouter();
+
   try {
     const response = await handleApiCall('get', `/individualuser/jobposting/detail?postId=${postId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch:', error);
+    if (error?.status === 500) {
+      router.push({ name: ROUTES.NOT_FOUND_PAGE.name });
+    }
     throw error;
   }
 }

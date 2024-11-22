@@ -1,4 +1,8 @@
 export const ROUTES = {
+    NOT_FOUND_PAGE: {
+        path:"/:pathMatch(.*)*",
+        name: "NotFoundPageView",
+    },
     // [개인회원, 기업회원] 메인
     MAIN: {
         path: "/",
