@@ -233,11 +233,6 @@ export default {
   margin-right: auto; /* Ensures it stays on the left */
 }
 
-.course-title {
-  font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
-}
-
 .course-subtitle {
   margin-bottom: 12px;
   color: #6c757d;
