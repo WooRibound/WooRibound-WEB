@@ -76,6 +76,21 @@ export const fetchWisdomDetail = async (knowhowId) => {
   }
 }
 
+// 지혜 나눔 신고
+export const insertWisdomReport = async (wisdom) => {
+  const reqData = {
+    knowhowId: wisdom.knowhowId
+  };
+
+  try {
+    const response = await handleApiCall('post', `/individual/knowhow/report`, reqData, );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to insert:', error);
+    throw error;
+  }
+}
+
 // 알림 메시지 전체 목록 조회
 export const fetchAllNotification = async () => {
   try {
@@ -173,9 +188,6 @@ export const fetchJobPostingsCareer = async (payload = {}) => {
     throw error;
   }
 };
-
-
-
 
 // 지원 현황 조회
 export const fetchJobApply = async () => {
