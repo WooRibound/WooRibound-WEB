@@ -94,7 +94,7 @@ export default {
         const response = await setApplicantResult(payload);
         if (response.status === 200) {
           // 상태 업데이트
-          applicantsList.value[index].result = applyResult === "ACCEPTED" ? "ACCEPTED" : "FAILED";
+          applicantsList.value[index].result = applyResult === "ACCEPTED" ? "ACCEPTED" : "REJECTED";
           console.log(`지원자 상태 업데이트 완료: ${applyResult}`);
         } else {
           console.error("지원자 상태 업데이트 실패:", response.message);
@@ -273,18 +273,19 @@ export default {
 .disabled {
   opacity: 0.5;
   pointer-events: none;
+  background-color: #686D76;
 }
 
 .table-controls {
-  display: flex; /* 🔴 한 줄로 배치 */
-  justify-content: space-between; /* 🔴 좌우 정렬 */
-  align-items: center; /* 🔴 수직 정렬 */
-  margin-bottom: 15px; /* 테이블과의 간격 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .job-duration {
-  font-size: 14px; /* 🔴 날짜 폰트 크기 */
-  color: #555; /* 🔴 날짜 색상 */
+  font-size: 14px;
+  color: #555;
 }
 
 .recommend-button {

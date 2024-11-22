@@ -45,6 +45,7 @@ export default {
   components: { ModalPopup },
   setup() {
     const modalPopupStatue = ref(false);
+    const modalMessage = ref("");
     const idInput = ref("");
 
     const industries = ref([
@@ -97,6 +98,9 @@ export default {
         const response = await updateEnterpriseInfo(enterprise.value);
         originalInfo.value = { ...enterprise.value };
         console.log(response)
+
+        modalMessage.value = "수정이 완료 되었습니다.";
+        modalPopupStatue.value = true;
       } catch (error) {
         console.error("API 호출 중 오류 발생:", error);
       }
@@ -132,6 +136,7 @@ export default {
         originalInfo.value = { ...response };
         enterprise.value = { ...response };
         revenue.value = response.revenue?.toString() || "0";
+        console.info("enterprise.value: ",enterprise.value);
       } catch (error) {
         console.error("fetchEnterprise API 호출 오류:", error);
       }
@@ -143,6 +148,7 @@ export default {
 
     return {
       modalPopupStatue,
+      modalMessage,
       industries,
       formattedRevenue,
       revenue,
@@ -181,16 +187,19 @@ export default {
         <!-- 사업자번호 입력 -->
         <div class="input-label">
           <span class="input-title">사업자 번호</span>
-          <input class="input-field" placeholder="사업자 번호" v-model="enterprise.regNum">
+          <input class="input-field" placeholder="사업자 번호" v-model="enterprise.regNum" readonly>
         </div>
         <!-- 주소 입력 -->
         <div class="input-label">
           <span class="input-title">주소</span>
-          <input class="addr-field" placeholder="주소" v-model="enterprise.entAddr1" />
-          <button class="addr-search-button" @click="onAddressSearchClick">검색</button>
+          <div style="display: flex; width: 70%;">
+            <input class="addr-field" placeholder="주소" v-model="enterprise.entAddr1" />
+            <button class="addr-search-button" @click="onAddressSearchClick">검색</button>
+          </div>
         </div>
         <!-- 상세주소 입력 -->
         <div class="input-label">
+          <span class="input-title"></span>
           <input class="addr-detail-field" placeholder="상세 주소" v-model="enterprise.entAddr2">
         </div>
         <!-- 기업 규모 선택 -->
@@ -209,7 +218,7 @@ export default {
           <span class="input-title">산업</span>
           <select class="input-field" v-model="enterprise.entField">
             <option value="" disabled selected>산업</option>
-            <option v-for="industry in industries" :key="industry" :value="industry">{{ industry }}</option>
+            <option v-for="industry in industries" :key="industry" :value="industry"> {{ industry }} </option>
           </select>
         </div>
         <!-- 매출액 입력 -->
@@ -218,14 +227,22 @@ export default {
           <input class="input-field" placeholder="매출액" type="text" v-model="formattedRevenue" @input="formatRevenue" />
         </div>
         <!-- 수정하기 버튼 -->
-        <div class="modify-button" @click="onUpdateProfilerClick" :class="{ 'disabled-button': !isModified }"
-          :style="{ backgroundColor: isModified ? '#024CAA' : '#e0e0e0' }">
+        <div
+            class="modify-button"
+            @click="onUpdateProfilerClick"
+            :class="{ 'disabled-button': !isModified }"
+            :style="{
+    backgroundColor: isModified ? '#024CAA' : '#e0e0e0',
+    cursor: isModified ? 'pointer' : 'not-allowed',
+    pointerEvents: isModified ? 'auto' : 'none'
+  }"
+        >
           수정하기
         </div>
       </div>
     </div>
   </main>
-  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="'수정이 완료되었습니다.'" />
+  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="modalMessage" />
 </template>
 
 <style scoped>
@@ -291,26 +308,28 @@ export default {
 }
 
 .addr-field {
-  width: 60%;
-  /* 입력 필드 너비 고정으로 정렬 유지 */
+  flex: 1;
   padding: 10px;
   box-sizing: border-box;
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #e1e1e1;
   color: #413F42;
+  margin-right: 10px;
 }
 
 .addr-detail-field {
-  width: 80%;
-  margin-left: 180px;
+  width: 70%;
   padding: 10px;
   box-sizing: border-box;
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #e1e1e1;
   color: #413F42;
+  margin-left: 0;
+  align-self: flex-end;
 }
+
 
 .required {
   color: #F60F0F;
@@ -318,26 +337,25 @@ export default {
 }
 
 .addr-search-button {
+  flex-shrink: 0;
   padding: 0 15px;
   background-color: #024CAA;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin-left: 10px;
   font-size: 14px;
   height: 40px;
   white-space: nowrap;
 }
 
-addr-search-button:hover {
+.addr-search-button:hover {
   background-color: #023c7a;
 }
 
 .modify-button {
   width: 90%;
   padding: 10px;
-  /* 가운데 정렬을 위한 속성 추가 */
   margin: 20px auto 0 auto;
   background-color: #024CAA;
   color: white;

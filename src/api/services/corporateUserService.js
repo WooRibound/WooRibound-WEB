@@ -153,11 +153,6 @@ export const fetchRecommendList = async (jobId) => {
     }
 };
 
-
-
-
-
-
 // 공고 등록
 export const insertJobPosting= async (jobPosting) => {
   const formData = new FormData();
@@ -167,11 +162,32 @@ export const insertJobPosting= async (jobPosting) => {
   formData.append('startDate', jobPosting.startDate);
   formData.append('endDate', jobPosting.endDate);
 
+    console.log("FormData 데이터:");
+    for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
   try {
     const response = await handleApiCall('post', `corporate/jobposting/register`, formData);
     return response.data;
   } catch (error) {
-    console.error('Failed to regist:', error);
+    console.error('Failed to register:', error);
     throw error;
   }
-}
+};
+
+// 채용공고 삭제
+export const deleteJobPosting = async (postId) => {
+    try {
+        const response = await handleApiCall('post', '/corporate/jobposting/detail/delete', null, {
+            params: { postId: postId },
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        console.log("삭제 결과:", response);
+        return response;
+    } catch (error) {
+        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+        throw error;
+    }
+};

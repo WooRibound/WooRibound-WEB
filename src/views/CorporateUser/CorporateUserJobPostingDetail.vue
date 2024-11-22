@@ -5,8 +5,10 @@ import TwoButtonModal from "@/components/TwoButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
 import { formatDate1 } from "@/utils/formatters";
-import { deleteJobPosting, fetchJobPostingDetail } from "@/api/services/adminServiece";
+import { fetchJobPostingDetail } from "@/api/services/adminServiece";
+import { deleteJobPosting } from "@/api/services/corporateUserService";
 import { USER_TYPES } from "@/constants/userTypes";
+import handleApiCall from "@/api/apiService";
 
 export default {
   name: "CorporateUserJobPostingDetail",
@@ -71,9 +73,17 @@ export default {
         }
 
         if (userType === USER_TYPES.CORPORATE_MEMBER) {
-          // todo 기업회원 공고 삭제 API
+          modalMessage.value = "채용공고를 삭제하시겠습니까?";
+          showDeleteModal.value = true;
           console.log(postId)
         }
+        const response = await handleApiCall('update', '/corporate/jobposting/delete', null, {
+          params: { postId: postId},
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log("삭제 결과:", response);
 
       } catch (e) {
         console.log(e);
@@ -96,7 +106,7 @@ export default {
     const closeModal = (shouldRedirect = false) => {
       showDeleteModal.value = false;
       if (shouldRedirect) {
-        router.push(ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path);
+        router.push(ROUTES.JOB_POSTING_MANAGEMENT.path);
       }
     };
 
