@@ -4,7 +4,7 @@ import {ROUTES} from "@/router/routes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate1, formatDate2} from "@/utils/formatters";
+import {formatDate2} from "@/utils/formatters";
 import {fetchAllWisdomShare} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
@@ -16,7 +16,7 @@ export default {
     }
   },
   components: {SingleButtonModal, SearchFilterModal },
-  methods: {formatDate2, formatDate: formatDate1 },
+  methods: {formatDate2},
   setup() {
     const router = useRouter();
 
