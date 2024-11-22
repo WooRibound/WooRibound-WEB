@@ -2,15 +2,15 @@
 import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { fetchWisdomDetail } from "@/api/services/individualUserService";
+import {fetchWisdomDetail, insertWisdomReport} from "@/api/services/individualUserService";
 import { formatDate2 } from "../../utils/formatters";
-import ModalPopup from "@/components/SingleButtonModal.vue";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import handleApiCall from '@/api/apiService';
 
 export default {
   name: "WisdomExploreDetail",
-  components: { ModalPopup, TwoButtonModal },
+  components: { SingleButtonModal, TwoButtonModal },
   methods: { formatDate2 },
   computed: {
     ROUTES() {
@@ -26,14 +26,28 @@ export default {
 
     const modalPopupStatue = ref(false);
     const modalMessage = ref('');
+    const modalRouterPath = ref('');
 
     const reportedCnt = ref(0);
     const userFullId = ref('');
     const userFullName = ref('');
 
-    const onReportClick = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
-      console.log("신고하기");
+    const onReportClick = async (wisdom) => {
+      try {
+        const response = await insertWisdomReport(wisdom);
+        modalMessage.value = response;
+        modalPopupStatue.value  = true;
+        if (response === "본인이 작성한 글은 신고할 수 없습니다.") {
+          modalRouterPath.value = "";
+        } else {
+          modalRouterPath.value = ROUTES.WISDOM_EXPLORE.path;
+        }
+
+      } catch (e) {
+        console.log(e);
+        modalMessage.value = "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+        modalPopupStatue.value  = true;
+      }
     }
 
     const wisdom = ref({
@@ -116,8 +130,9 @@ export default {
 
     return {
       modalPopupStatue,
-      isDelete,
       modalMessage,
+      modalRouterPath,
+      isDelete,
       wisdom,
       reportedCnt,
       userFullId,
@@ -136,11 +151,11 @@ export default {
   <main class="body">
     <div class="header">
       <div class="header-title">지혜 탐색</div>
-      <div class="report-container" v-if="!isDelete" @click="onReportClick">
+      <div class="report-container" v-if="!isDelete" @click="onReportClick(wisdom)">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고하기
       </div>
-      <div class="report-container" v-if="isDelete" @click="onReportClick">
+      <div class="report-container" v-if="isDelete" @click="onReportClick(wisdom)">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고 {{ reportedCnt }}회
       </div>
@@ -172,12 +187,21 @@ export default {
       </div>
     </div>
     <div class="delete-button" v-if="isDelete" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
-
-    <TwoButtonModal v-if="showDeleteModal" :modal-message="modalMessage" leftButtonText="확인" rightButtonText="취소"
-      @close-modal="closeModal" @confirm="confirmDelete" />
   </main>
-  <modal-popup v-if="modalPopupStatue" @close-modal="closeModal" :modal-message="modalMessage"
-    :router-path="ROUTES.WISDOM_MANAGEMENT.path" />
+    <TwoButtonModal
+        v-if="showDeleteModal"
+        :modal-message="modalMessage"
+        leftButtonText="확인"
+        rightButtonText="취소"
+        @close-modal="closeModal"
+        @confirm="confirmDelete"
+    />
+  <single-button-modal
+      v-if="modalPopupStatue"
+      :modal-message="modalMessage"
+      @close-modal="modalPopupStatue = false"
+      :router-path="modalRouterPath"
+  />
 </template>
 
 <style scoped>

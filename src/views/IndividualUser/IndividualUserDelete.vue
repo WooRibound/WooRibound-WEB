@@ -4,9 +4,12 @@ import { ROUTES } from "@/router/routes";
 import { withdrawIndividual } from '@/api/services/authenticationService';
 import {useUserStore} from "@/stores/userStore";
 import router from "@/router";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
+import TwoButtonModal from "@/components/TwoButtonModal.vue";
 
 export default {
   name: "IndividualUserDelete",
+  components: {TwoButtonModal, SingleButtonModal},
   computed: {
     ROUTES() {
       return ROUTES
@@ -15,6 +18,7 @@ export default {
   setup() {
     const confirmText = ref('');
     const errorModalStatus = ref(false);
+    const twoButtonModalStatus = ref(false);
     const REQUIRED_TEXT = '탈퇴하기';
     const isButtonEnabled = ref(false);
 
@@ -31,13 +35,16 @@ export default {
       isButtonEnabled.value = confirmText.value === REQUIRED_TEXT;
     };
 
+    const handleConfirm = () => {
+      onWithdraw();
+    };
+
     const onWithdraw = async () => {
       if (confirmText.value !== REQUIRED_TEXT) {
         return;
       }
 
       try {
-        console.log("탈퇴 요청 시작");
         const response = await withdrawIndividual();
         await useUserStore().logout();
         console.log("탈퇴 API 응답:", response);
@@ -56,10 +63,11 @@ export default {
     return {
       confirmText,
       errorModalStatus,
+      twoButtonModalStatus,
       REQUIRED_TEXT,
       isButtonEnabled,
       validateConfirmText,
-      onWithdraw,
+      handleConfirm,
     };
   }
 }
@@ -71,7 +79,7 @@ export default {
     <div class="subtitle">회원 탈퇴</div>
     <div class="content">
       <div class="warning-section">
-        <div class="warning-title">⚠️ 탈퇴 전 꼭 확인해주세요!</div>
+        <div class="warning-title">회원 탈퇴를 신청하기 전,<br> 다음 내용을 꼭 확인해주세요.</div>
         <div class="warning-text">
           • 탈퇴 시 회원님의 모든 정보가 삭제됩니다.<br>
           • 탈퇴 후에는 현재 네이버 계정으로 다시 가입할 수 없습니다.<br>
@@ -79,19 +87,21 @@ export default {
         </div>
       </div>
       <div class="confirm-section">
-        <div class="confirm-text">계속 진행하시려면 아래에 '{{ REQUIRED_TEXT }}'를 입력하세요.</div>
-        <input
-            type="text"
-            v-model="confirmText"
-            @input="validateConfirmText"
-            class="confirm-input"
-            placeholder="탈퇴하기"
-        />
+        <div class="confirm-text">계속 진행하시려면 아래에 <br> '{{ REQUIRED_TEXT }}'를 입력하세요.</div>
+        <div class="input-wrap">
+          <input
+              type="text"
+              v-model="confirmText"
+              @input="validateConfirmText"
+              class="confirm-input"
+              placeholder="탈퇴하기"
+          />
+        </div>
       </div>
       <div class="button-section">
         <button
             class="delete-button"
-            @click="onWithdraw"
+            @click="twoButtonModalStatus = true"
             :disabled="!isButtonEnabled"
             :class="{ 'button-disabled': !isButtonEnabled }"
         >
@@ -100,16 +110,19 @@ export default {
       </div>
     </div>
   </div>
-
-  <!-- 에러 모달 -->
-  <div v-if="errorModalStatus" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-content">
-        <p class="modal-message">탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>
-        <button class="modal-button" @click="errorModalStatus = false">확인</button>
-      </div>
-    </div>
-  </div>
+  <single-button-modal
+      v-if="errorModalStatus"
+      @close-modal="errorModalStatus = false"
+      :modal-message="'탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'"
+  />
+  <two-button-modal
+      v-if="twoButtonModalStatus"
+      modal-message="정말로 탈퇴하시겠습니까?"
+      :leftButtonText="'확인'"
+      :rightButtonText="'취소'"
+      @confirm="handleConfirm"
+      @close-modal="twoButtonModalStatus = false"
+  />
 </template>
 
 <style scoped>
@@ -138,32 +151,40 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 20px;
   flex: 1;
-  height: 100%;
+  border: 1px solid #E5E1DA;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center; /* 기본 텍스트 중앙 정렬 */
+  background-color: #fff;
 }
 
 .warning-section {
   width: 100%;
   max-width: 400px;
-  background-color: #fff;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 .warning-title {
   font-size: 18px;
   font-weight: bold;
-  color: #e74c3c;
+  color: #024CAA;
   margin-bottom: 15px;
+  line-height: 1.5; /* 줄 간격 조정 */
+  white-space: pre-line; /* 줄바꿈을 HTML에서 적용 가능하도록 설정 */
+  text-align: center;
 }
 
 .warning-text {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
   color: #555;
+  text-align: left;
+  margin-left: 20px;
 }
 
 .confirm-section {
@@ -179,9 +200,17 @@ export default {
   margin-bottom: 15px;
 }
 
-.confirm-input {
+.input-wrap {
   width: 100%;
-  max-width: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.confirm-input {
+  display: block; /* 가운데 정렬을 위해 block 설정 */
+  margin: 0 auto; /* 자동 여백으로 가로 중앙 정렬 */
+  width: 100%; /* 부모 컨테이너에 맞게 크기 조정 */
+  max-width: 300px; /* 최대 폭 제한 */
   padding: 12px;
   font-size: 16px;
   border: 2px solid #ddd;
@@ -221,44 +250,5 @@ export default {
 .button-disabled {
   background-color: #cccccc;
   cursor: not-allowed;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  width: 300px;
-  text-align: center;
-}
-
-.modal-message {
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.modal-button {
-  padding: 10px 20px;
-  background-color: #024CAA;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.modal-button:hover {
-  background-color: #023c85;
 }
 </style>

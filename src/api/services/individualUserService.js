@@ -35,7 +35,7 @@ export const fetchAllWisdomShare = async (knowhowTitle, knowhowJob) => {
 export const deleteWisdomDetail = async (knowhowId) => {
   try {
     const response = await handleApiCall('delete', `/individual/knowhow/share/delete?knowhowId=${knowhowId}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error('Failed to delete wisdom detail:', error);
     throw error;
@@ -72,6 +72,21 @@ export const fetchWisdomDetail = async (knowhowId) => {
     return response.data;
   } catch (error) {
     console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 지혜 나눔 신고
+export const insertWisdomReport = async (wisdom) => {
+  const reqData = {
+    knowhowId: wisdom.knowhowId
+  };
+
+  try {
+    const response = await handleApiCall('post', `/individual/knowhow/report`, reqData, );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to insert:', error);
     throw error;
   }
 }
@@ -173,9 +188,6 @@ export const fetchJobPostingsCareer = async (payload = {}) => {
     throw error;
   }
 };
-
-
-
 
 // 지원 현황 조회
 export const fetchJobApply = async () => {
