@@ -21,10 +21,7 @@ export default {
     const aiModalPopupStatue = ref(false);
     const modalMessage = ref('');
     const errorMessage = ref('');
-    const jobs = computed(() => {
-      const originalJobs = jobStore.getJobs;
-      return [...originalJobs.map((job) => job.jobName)];
-    });
+    const jobs = computed(() => jobStore.getJobs);
 
     const knowhowJob = ref('');
     const knowhowTitle = ref('');
@@ -70,6 +67,8 @@ export default {
           modalPopupStatue.value = true;
       } catch (error) {
           console.error('Error data:', error);
+          modalMessage.value = "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+          modalPopupStatue.value = true;
           throw error;
       }
 
@@ -112,7 +111,7 @@ export default {
       <div class="input-label">
         <select class="input-field" aria-label="직종" v-model="knowhowJob" ref="knowhowJobSelect">
           <option value="" disabled selected>직무</option>
-          <option v-for="(job, index) in jobs" :key="index" :value="job">{{ job }}</option>
+          <option v-for="job in jobs" :key="job.jobId" :value="job.jobName">{{ job.jobName }}</option>
         </select>
       </div>
       <!-- 제목 입력 -->

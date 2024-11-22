@@ -4,8 +4,9 @@ import {ROUTES} from "@/router/routes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate1} from "@/utils/formatters";
+import {formatDate2} from "@/utils/formatters";
 import {fetchAllWisdomShare} from "@/api/services/individualUserService";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "WisdomShare",
@@ -14,33 +15,36 @@ export default {
       return SEARCH_FILTER_TYPES
     }
   },
-  components: { SearchFilterModal },
-  methods: { formatDate: formatDate1 },
+  components: {SingleButtonModal, SearchFilterModal },
+  methods: {formatDate2},
   setup() {
     const router = useRouter();
 
-    const modalPopupStatue = ref(false);
+    const searchFilterModalStatue = ref(false);
+    const singleButtonModalStatus = ref(false);
+    const modalMessage = ref('');
     const searchInput = ref("");
     const filterTypes = ref("");
     const selectedJob = ref("전체 직무");
 
-    const postCount = ref(0);
-    const postList = ref();
+    const wisdomCount = ref(0);
+    const wisdomList = ref();
 
     const searchPosts = () => {
-      console.log("검색어:", searchInput.value);
-      console.log("필터:", filterTypes.value);
       fetchPosts();
     }
 
     const fetchPosts = async () => {
       try {
-        const promise = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
-        postList.value = promise;
-        postCount.value = postList.value.length;
+        const response = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
+
+        wisdomList.value = response;
+        wisdomCount.value = wisdomList.value.length;
+
       } catch (error) {
         console.error('Error data:', error);
-        throw error;
+        modalMessage.value = '오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+        singleButtonModalStatus.value = true;
       }
     }
 
@@ -59,7 +63,7 @@ export default {
 
     const onFilterClick = (filterType) => {
       filterTypes.value = filterType;
-      modalPopupStatue.value = true;
+      searchFilterModalStatue.value = true;
     }
 
     const handleSelectFilter = (selected) => {
@@ -74,12 +78,14 @@ export default {
     }
 
     return {
-      modalPopupStatue,
+      searchFilterModalStatue,
+      singleButtonModalStatus,
+      modalMessage,
       searchInput,
       filterTypes,
       selectedJob,
-      postCount,
-      postList,
+      wisdomCount,
+      wisdomList,
       handleSelectFilter,
       searchPosts,
       onMoveDetailPageClick,
@@ -112,22 +118,36 @@ export default {
         </div>
       </div>
     </div>
-    <div class="job-posting-wrap">
-      <div class="job-posting-info">{{ postCount }}건</div>
-      <div class="job-posting-list" v-for="post in postList" :key="post">
-        <div class="course-title">{{ post.knowhowTitle }}</div>
+    <div class="job-wisdom-wrap">
+      <div class="job-wisdom-info">{{ wisdomCount }}건</div>
+      <div class="job-wisdom-list" v-for="wisdom in wisdomList" :key="wisdom">
+        <div class="course-title">{{ wisdom.knowhowTitle }}</div>
+        <div class="course-subtitle">{{ wisdom.knowhowJob }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ post.knowhowJob }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(post.knowhowId)">
+          <div class="schedule-info">
+            <div class="info-item">{{ wisdom.userName }}</div>
+            <div class="info-item">{{ formatDate2(wisdom.uploadDate) }}</div>
+          </div>
+          <img
+              src="@/assets/images/icons/rightarrows.png"
+              class="right-arrow-icon"
+              alt="Right Arrow Icon"
+              @click="onMoveDetailPageClick(wisdom.knowhowId)"
+          >
         </div>
       </div>
     </div>
   </main>
   <search-filter-modal
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
+      v-if="searchFilterModalStatue"
+      @close-modal="searchFilterModalStatue = false"
       @select-filter="handleSelectFilter"
       :filter-type="filterTypes"
+  />
+  <single-button-modal
+      v-if="singleButtonModalStatus"
+      @close-modal="singleButtonModalStatus = false"
+      :modal-message="modalMessage"
   />
 </template>
 
@@ -203,24 +223,29 @@ export default {
   margin-right: 0;
 }
 
-.job-posting-wrap {
+.job-wisdom-wrap {
   margin-top: 10px;
 }
 
-.job-posting-info {
+.job-wisdom-info {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 10px;
 }
 
-.job-posting-list {
-  background-color: #D9D9D9;
+.job-wisdom-list {
+  background-color: #ffffff;
   border-radius: 15px;
-  padding: 15px;
+  padding: 20px;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .course-title {
@@ -229,7 +254,8 @@ export default {
 }
 
 .course-subtitle {
-  margin-bottom: 5px;
+  margin-bottom: 12px;
+  color: #6c757d;
 }
 
 .course-schedule {
@@ -239,12 +265,23 @@ export default {
 }
 
 .schedule-info {
-  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.info-item {
+  margin-right: 20px;
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: normal;
 }
 
 .right-arrow-icon {
   width: 20px;
   height: auto;
   cursor: pointer;
+  margin-left: 15px;
 }
 </style>
