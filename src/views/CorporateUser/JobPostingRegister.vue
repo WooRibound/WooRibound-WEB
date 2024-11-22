@@ -51,6 +51,7 @@ export default {
         const response = await insertJobPosting(jobPosting.value);
         modalMessage.value = response;
         modalPopupStatue.value = true;
+        console.log("공고등록 API 호출 시작 : " + response);
       } catch (e) {
         console.log(e);
       }
@@ -76,7 +77,7 @@ export default {
     <div class="subtitle">공고 등록</div>
     <div class="content">
       <div class="input-section">
-        <!-- 공고 이미지 등록 -->
+        <!-- 공고 이미지 등록 -->`
         <div class="photo-label">
           <div v-if="!photoPreview" class="photo-placeholder">사진</div>
           <img v-if="photoPreview" :src="photoPreview" class="photo-preview" />
@@ -98,7 +99,7 @@ export default {
         <!-- 직종 선택  -->
         <div class="input-label">
           <span class="required">*</span>
-          <select  class="input-field" aria-label="직종 선택" v-model="jobPosting.jobId">
+          <select  class="input-field" aria-label="직종 선택"  v-model="jobPosting.jobId">
             <option value="" disabled selected>직종 선택</option>
             <option v-for="job in jobs" :key="job.jobName" :value="job.jobId">{{ job.jobName }}</option>
           </select>

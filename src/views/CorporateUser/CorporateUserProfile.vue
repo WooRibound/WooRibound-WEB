@@ -45,6 +45,7 @@ export default {
   components: { ModalPopup },
   setup() {
     const modalPopupStatue = ref(false);
+    const modalMessage = ref("");
     const idInput = ref("");
 
     const industries = ref([
@@ -97,6 +98,9 @@ export default {
         const response = await updateEnterpriseInfo(enterprise.value);
         originalInfo.value = { ...enterprise.value };
         console.log(response)
+
+        modalMessage.value = "수정이 완료 되었습니다.";
+        modalPopupStatue.value = true;
       } catch (error) {
         console.error("API 호출 중 오류 발생:", error);
       }
@@ -144,6 +148,7 @@ export default {
 
     return {
       modalPopupStatue,
+      modalMessage,
       industries,
       formattedRevenue,
       revenue,
@@ -237,7 +242,7 @@ export default {
       </div>
     </div>
   </main>
-  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="'수정이 완료되었습니다.'" />
+  <modal-popup v-if="modalPopupStatue" @close-modal="modalPopupStatue = false" :modal-message="modalMessage" />
 </template>
 
 <style scoped>

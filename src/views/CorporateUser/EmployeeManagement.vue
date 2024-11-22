@@ -7,11 +7,11 @@ import {
   fetchEmployeeList,
   setEmployeeRating
 } from "@/api/services/corporateUserService";
-import {formatDate1} from "../../utils/formatters";
+import {formatDate2} from "../../utils/formatters";
 
 export default {
   name: "EmployeeManagement",
-  methods: {formatDate1},
+  methods: {formatDate2},
   computed: {
     RECOMMEND_TYPES() {
       return RECOMMEND_TYPES
@@ -110,7 +110,7 @@ export default {
         <tbody>
         <tr v-for="employment in employmentList" :key="employment.empId">
           <td>
-            {{ formatDate1(new Date(employment.hireDate)) }}
+            {{ formatDate2(new Date(employment.hireDate)) }}
           </td>
           <td class="name" @click="onMoveResumePageClick(employment.empId)">
             {{ employment.userName }}
@@ -125,9 +125,6 @@ export default {
             <!-- 추천 버튼 -->
             <div v-else-if="!employment.isActionDisabled" class="status-accepted" @click="onRecommendClick(employment.index, 'recommend')">
               추천 </div>
-            <!-- 비추천 버튼 -->
-            <div v-else class="status-rejected" @click="onRecommendClick(employment.index, 'notRecommend')">
-              비추천 </div>
           </td>
         </tr>
         </tbody>
@@ -214,17 +211,6 @@ export default {
   white-space: nowrap;
   font-size: 8pt;
   width: 80px;
-}
-
-.status-rejected {
-  display: inline-block; /* 블록 레벨 요소로 변환 */
-  padding: 6px 12px; /* 내부 여백 */
-  background-color: #7AB2D3; /* 배경색 */
-  color: white; /* 글자 색상 */
-  border-radius: 5px; /* 둥근 모서리 */
-  text-align: center; /* 텍스트 중앙 정렬 */
-  white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
-  font-size: 8pt;
 }
 
 .text-gray {

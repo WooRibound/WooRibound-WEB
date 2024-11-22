@@ -167,11 +167,15 @@ export const insertJobPosting= async (jobPosting) => {
   formData.append('startDate', jobPosting.startDate);
   formData.append('endDate', jobPosting.endDate);
 
+    console.log("FormData 데이터:");
+    for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
   try {
     const response = await handleApiCall('post', `corporate/jobposting/register`, formData);
     return response.data;
   } catch (error) {
-    console.error('Failed to regist:', error);
+    console.error('Failed to register:', error);
     throw error;
   }
 }
