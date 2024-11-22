@@ -46,12 +46,22 @@ export default {
       }
     }
 
+    const navigateToJobPostings = (viewType) => {
+      router.push({
+        name: ROUTES.JOB_POSTINGS_PAGE.name,
+        params:{
+          viewType: viewType
+        },
+      })
+    };
+
     return {
       isVisible,
       loginText,
       onMoveToMainClick,
       onCloseFullScreenMenuClick,
       onClickMoveLogin,
+      navigateToJobPostings,
       userStore,
       USER_TYPES,
     };
@@ -74,6 +84,22 @@ export default {
         <router-link :to="ROUTES.JOB_MENU.path">
           <div class="menu_title" @click="onCloseFullScreenMenuClick">채용 공고</div>
         </router-link>
+        <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <div class="menu-item" @click="navigateToJobPostings('career')">경력 살리기</div>
+          <div class="menu-item" @click="navigateToJobPostings('new')">새로운 일 찾기</div>
+          <div class="menu-item" @click="navigateToJobPostings('all')">전체 조회</div>
+        </div>
+      </div>
+      <div class="menu-content">
+        <div class="menu_title">지혜 마당</div>
+        <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <router-link :to="ROUTES.WISDOM_SHARE.path">
+            <div class="menu-item">지혜 나누기</div>
+          </router-link>
+          <router-link :to="ROUTES.WISDOM_EXPLORE.path">
+            <div class="menu-item">지혜 탐색</div>
+          </router-link>
+        </div>
       </div>
       <div class="menu-content">
         <div class="menu_title">내 정보 보기</div>
@@ -81,25 +107,14 @@ export default {
           <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
             <div class="menu-item">개인 정보</div>
           </router-link>
-          <router-link :to="ROUTES.RESUME_PAGE.path">
-            <div class="menu-item">이력서</div>
-          </router-link>
           <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
             <div class="menu-item">지원 현황</div>
           </router-link>
+          <router-link :to="ROUTES.RESUME_PAGE.path">
+            <div class="menu-item">이력서</div>
+          </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
             <div class="menu-item">우바 고도</div>
-          </router-link>
-        </div>
-      </div>
-      <div class="menu-content">
-        <div class="menu_title">지혜 마당</div>
-        <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <router-link :to="ROUTES.WISDOM_SHARE.path">
-            <div class="menu-item">지혜 나눔</div>
-          </router-link>
-          <router-link :to="ROUTES.WISDOM_EXPLORE.path">
-            <div class="menu-item">지혜 탐색</div>
           </router-link>
         </div>
       </div>
