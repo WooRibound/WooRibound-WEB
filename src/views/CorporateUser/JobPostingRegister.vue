@@ -16,18 +16,48 @@ export default {
   setup() {
     const jobStore = useJobStore();
 
+    const startDateInput = ref(null);
+    const endDateInput = ref(null);
+
     const modalPopupStatue = ref(false);
     const modalMessage = ref("");
     const photoPreview = ref(null);
     const jobs = computed(() => jobStore.getJobs);
+    console.log("jobs : " +jobs.value);
 
     const jobPosting = ref({
       postImg: null,
       postTitle: '',
-      jobId: null,
-      startDate: null,
-      endDate: null,
+      jobId: '',
+      startDate: '',
+      endDate: '',
     });
+
+    const activateDatePicker = () => {
+      if (startDateInput.value) {
+        startDateInput.value.type = 'date';
+        startDateInput.value.showPicker();  // 달력 직접 호출
+      }
+    };
+
+    const deactivateDatePicker = () => {
+      if (startDateInput.value && !startDateInput.value.value) {
+        startDateInput.value.type = 'text';
+      }
+    };
+
+    const activateEndDatePicker = () => {
+      if (endDateInput.value) {
+        endDateInput.value.type = 'date';
+        endDateInput.value.showPicker();  // 달력 직접 호출
+      }
+    };
+
+    const deactivateEndDatePicker = () => {
+      if (endDateInput.value && !endDateInput.value.value) {
+        endDateInput.value.type = 'text';
+      }
+    };
 
     const onPhotoChange = (event) => {
       const file = event.target.files[0];
@@ -58,6 +88,12 @@ export default {
     }
 
     return {
+      startDateInput,
+      endDateInput,
+      activateDatePicker,
+      deactivateDatePicker,
+      activateEndDatePicker,
+      deactivateEndDatePicker,
       jobs,
       modalPopupStatue,
       photoPreview,
@@ -80,7 +116,7 @@ export default {
         <!-- 공고 이미지 등록 -->`
         <div class="photo-label">
           <div v-if="!photoPreview" class="photo-placeholder">사진</div>
-          <img v-if="photoPreview" :src="photoPreview" class="photo-preview" />
+          <img v-if="photoPreview" :src="photoPreview" class="photo-preview"  alt=""/>
           <button class="image-register-button" @click="onImageRegisterClick">사진등록</button>
           <input
               type="file"
@@ -99,21 +135,38 @@ export default {
         <!-- 직종 선택  -->
         <div class="input-label">
           <span class="required">*</span>
-          <select  class="input-field" aria-label="직종 선택"  v-model="jobPosting.jobId">
-            <option value="" disabled selected>직종 선택</option>
+          <select v-model="jobPosting.jobId" class="input-field" aria-label="직종 선택">
+            <option value="" disabled>직종 선택</option>
             <option v-for="job in jobs" :key="job.jobName" :value="job.jobId">{{ job.jobName }}</option>
           </select>
         </div>
         <!-- 공고 시작 일자 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" type="date" data-placeholder="공고 시작 일자" required v-model="jobPosting.startDate" />
+          <input
+              ref="startDateInput"
+              type="text"
+              placeholder="공고 시작 일자"
+              @focus="activateDatePicker"
+              @blur="deactivateDatePicker"
+              v-model="jobPosting.startDate"
+              class="input-field date-picker-input"
+          />
         </div>
         <!-- 공고 시작 마감 입력 -->
         <div class="input-label">
           <span class="required">*</span>
-          <input class="input-field" type="date" data-placeholder="공고 마감 일자" required v-model="jobPosting.endDate"/>
+          <input
+              ref="endDateInput"
+              type="text"
+              placeholder="공고 마감 일자"
+              @focus="activateEndDatePicker"
+              @blur="deactivateEndDatePicker"
+              v-model="jobPosting.endDate"
+              class="input-field date-picker-input"
+          />
         </div>
+
         <div class="delete-button" @click="onRegisterClick">공고 등록</div>
       </div>
     </div>
@@ -170,16 +223,82 @@ export default {
   width: 100%;
 }
 
+/* 모든 input 필드의 스타일 */
 .input-field {
-  width: 100%; /* 너비를 100%로 설정하여 부모 요소의 전체 너비를 차지 */
+  width: 100%;
   padding: 10px;
-  margin: 10px 10px;
-  box-sizing: border-box;
+  margin: 10px 0; /* 위아래 간격 */
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #e1e1e1;
-  color: #413F42;
+  box-sizing: border-box;
 }
+
+/* 날짜 필드를 감싸는 래퍼 */
+.custom-date-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* 날짜 필드 스타일 */
+.custom-date-input {
+  width: 100%;
+  padding: 10px; /* 다른 필드와 동일한 패딩 */
+  border-radius: 8px; /* 다른 필드와 동일한 테두리 둥근 정도 */
+  border: 1px solid #e1e1e1;
+  font-size: 16px;
+  color: transparent; /* 기본 텍스트 숨기기 */
+  background-color: transparent;
+  appearance: none; /* 기본 브라우저 UI 제거 */
+  -webkit-appearance: none; /* WebKit 기반 브라우저 */
+  -moz-appearance: none; /* Mozilla 기반 브라우저 */
+  position: relative;
+  z-index: 1;
+}
+
+/* 날짜 입력 시 텍스트 표시 */
+.custom-date-input:focus,
+.custom-date-input:not(:placeholder-shown) {
+  color: black;
+}
+
+/* 커스텀 플레이스홀더 스타일 */
+.custom-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none; /* 클릭되지 않도록 설정 */
+}
+
+.custom-date-input:not(:placeholder-shown) + .custom-placeholder,
+.custom-date-input:focus + .custom-placeholder {
+  display: none; /* 값 입력 시 플레이스홀더 숨김 */
+}
+
+/* 날짜 입력 필드 스타일 */
+.date-input {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  padding-right: 40px; /* 아이콘과 텍스트 간격 확보 */
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+  background: url("@/assets/images/icons/calender.png") no-repeat right 10px center / 25px auto, #fff;
+  box-sizing: border-box;
+  appearance: none; /* 기본 브라우저 UI 제거 */
+  -webkit-appearance: none; /* WebKit 기반 브라우저 */
+  -moz-appearance: none; /* Mozilla 기반 브라우저 */
+}
+
+/* 필수 표기 스타일 */
+.required {
+  color: #F60F0F; /* 빨간색 필수 표기 */
+  margin-right: 5px; /* 입력 필드와 간격 */
+}
+
 
 .required {
   color: #F60F0F; /* 필수 입력 사항 색상 */
@@ -203,15 +322,25 @@ export default {
   height: 24px;
 }
 
+.date-picker-input {
+  padding-right: 40px !important; /* 아이콘을 위한 여백 */
+  background: url("@/assets/images/icons/calender.png") no-repeat right 10px center / 25px auto, #fff !important;
+}
+
 input[type="date"] {
   position: relative;
-  padding-right: 10px;
-  background: url("@/assets/images/icons/calender.png") no-repeat right 10px center / 25px auto, #fff;
+  padding-right: 40px; /* 아이콘과 텍스트 간격 */
+  background: url("@/assets/images/icons/calender.png") no-repeat right 10px center / 25px auto, #fff !important;
   border: 1px solid #e1e1e1;
   border-radius: 8px;
+  font-size: 16px;
+  appearance: none;
+  -webkit-appearance: none; /* WebKit 브라우저 기본 스타일 제거 */
+  -moz-appearance: none; /* Firefox 기본 스타일 제거 */
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
   position: absolute;
   left: 0;
   top: 0;
@@ -265,4 +394,5 @@ input[type="date"]:valid::before {
   cursor: pointer;
   font-size: 14px;
 }
+
 </style>
