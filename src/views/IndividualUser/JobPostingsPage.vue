@@ -134,6 +134,7 @@ export default {
       if (selected.filterType === SEARCH_FILTER_TYPES.REGIONS) {
         selectedProvince.value = selected.filterValue;
       }
+      fetchJobPosting();
     }
 
     const recommendedContent = ref(null);
