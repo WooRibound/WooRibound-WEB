@@ -6,6 +6,7 @@ import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
 import {formatDate2} from "@/utils/formatters";
 import {fetchAllWisdomExplore} from "@/api/services/individualUserService";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "WisdomExplore",
@@ -14,12 +15,14 @@ export default {
       return SEARCH_FILTER_TYPES
     }
   },
-  components: { SearchFilterModal },
+  components: {SingleButtonModal, SearchFilterModal },
   methods: {formatDate2},
   setup() {
     const router = useRouter();
 
-    const modalPopupStatue = ref(false);
+    const searchFilterModalStatue = ref(false);
+    const singleButtonModalStatus = ref(false);
+    const modalMessage = ref('');
     const searchInput = ref("");
     const filterTypes = ref("");
     const selectedJob = ref("전체 직무");
@@ -39,7 +42,8 @@ export default {
         wisdomCount.value = wisdomList.value.length;
       } catch (error) {
         console.error('Error data:', error);
-        throw error;
+        modalMessage.value = '오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+        singleButtonModalStatus.value = true;
       }
 
     }
@@ -59,7 +63,7 @@ export default {
 
     const onFilterClick = (filterType) => {
       filterTypes.value = filterType;
-      modalPopupStatue.value = true;
+      searchFilterModalStatue.value = true;
     }
 
     const handleSelectFilter = (selected) => {
@@ -70,7 +74,9 @@ export default {
     }
 
     return {
-      modalPopupStatue,
+      searchFilterModalStatue,
+      singleButtonModalStatus,
+      modalMessage,
       searchInput,
       filterTypes,
       selectedJob,
@@ -127,10 +133,15 @@ export default {
     </div>
   </main>
   <search-filter-modal
-      v-if="modalPopupStatue"
-      @close-modal="modalPopupStatue = false"
+      v-if="searchFilterModalStatue"
+      @close-modal="searchFilterModalStatue = false"
       @select-filter="handleSelectFilter"
       :filter-type="filterTypes"
+  />
+  <single-button-modal
+      v-if="singleButtonModalStatus"
+      @close-modal="singleButtonModalStatus = false"
+      :modal-message="modalMessage"
   />
 </template>
 
