@@ -189,6 +189,17 @@ export const fetchJobPostingsCareer = async (payload = {}) => {
   }
 };
 
+// 추천 공고 조회
+export const fetchJobPostingsRecommend = async () => {
+  try {
+    const response = await handleApiCall('get', '/individualuser/jobposting/recommend');
+    return response.data;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+};
+
 // 지원 현황 조회
 export const fetchJobApply = async () => {
   try {
