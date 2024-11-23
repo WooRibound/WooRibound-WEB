@@ -5,7 +5,12 @@ import { ROUTES } from "@/router/routes";
 import { formatDate1 } from "@/utils/formatters";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import { SEARCH_FILTER_TYPES } from "@/constants/searchFilterTypes";
-import { fetchJobPostingsCareer, fetchJobPostingsNew, fetchJobPostings } from "@/api/services/individualUserService";
+import {
+  fetchJobPostingsCareer,
+  fetchJobPostingsNew,
+  fetchJobPostings,
+  fetchJobPostingsRecommend
+} from "@/api/services/individualUserService";
 
 export default {
   name: "JobPostingsPage",
@@ -28,6 +33,7 @@ export default {
 
     const jobPostingCount = ref(0);
     const jobPostingList = ref();
+    const jobPostingRecommendList = ref();
 
     const getFormattedValue = (value, defaultValue) => {
       return value === defaultValue ? null : value;
@@ -39,7 +45,6 @@ export default {
     }
 
     const fetchJobPosting = async (viewType) => {
-      console.log("viewType:", viewType, typeof viewType);
       let payload = {
         entName: searchInput.value,
         jobName: getFormattedValue(selectedJob.value, "전체 직무"),
@@ -57,6 +62,8 @@ export default {
           console.log("새로운 일 찾기");
           // 2. 새로운 일 찾기 - 관심직종 불러오기
           response = await fetchJobPostingsNew();
+          const recommendResponse = await fetchJobPostingsRecommend();
+          jobPostingRecommendList.value = recommendResponse
         } else {
           // 3. 전체 공고 조회
           console.log("전체")
@@ -127,7 +134,41 @@ export default {
       if (selected.filterType === SEARCH_FILTER_TYPES.REGIONS) {
         selectedProvince.value = selected.filterValue;
       }
+      fetchJobPosting();
     }
+
+    const recommendedContent = ref(null);
+    const isDragging = ref(false);
+    const startX = ref(0);
+    const scrollLeft = ref(0);
+
+    // 드래그 시작 (웹에서 적용)
+    const startDragging = (event) => {
+      if (!recommendedContent.value) return;
+      isDragging.value = true;
+      startX.value = event.pageX - recommendedContent.value.offsetLeft;
+      scrollLeft.value = recommendedContent.value.scrollLeft;
+    };
+
+    // 드래그 중 (웹에서 적용)
+    const onDragging = (event) => {
+      if (!isDragging.value || !recommendedContent.value) return;
+      const x = event.pageX - recommendedContent.value.offsetLeft;
+      const walk = x - startX.value;
+      recommendedContent.value.scrollLeft = scrollLeft.value - walk;
+    };
+
+    // 드래그 종료 (웹에서 적용)
+    const stopDragging = () => {
+      isDragging.value = false;
+    };
+
+    // Lifecycle Hook: 추가적인 DOM 확인은 필요 없지만 안전하게 작성
+    onMounted(() => {
+      if (!recommendedContent.value) {
+        console.warn("recommendedContent is not initialized properly.");
+      }
+    });
 
     return {
       modalPopupStatue,
@@ -138,12 +179,17 @@ export default {
       selectedProvince,
       jobPostingCount,
       jobPostingList,
+      jobPostingRecommendList,
+      recommendedContent,
       recruitmentPhase,
       recruitmentPhaseClass,
       searchJobPosting,
       onMoveDetailPageClick,
       onFilterClick,
       handleSelectFilter,
+      startDragging,
+      onDragging,
+      stopDragging,
     };
   }
 }
@@ -168,7 +214,28 @@ export default {
     </div>
     <div class="recommended-section" v-if="viewType === 'new'">
       <div class="recommended-title">추천 공고</div>
-      <div class="recommended-content"></div>
+      <div
+          ref="recommendedContent"
+          class="recommended-content"
+          @mousedown="startDragging"
+          @mousemove="onDragging"
+          @mouseup="stopDragging"
+          @mouseleave="stopDragging"
+      >
+        <div
+            class="recommended-item"
+            v-for="(jobPostingRecommend, index) in jobPostingRecommendList"
+            :key="index"
+        >
+          <div class="item-image">
+            <img :src="jobPostingRecommend.postImg" alt="Job image" />
+          </div>
+          <div class="item-text">
+            <div class="item-company">{{ jobPostingRecommend.entName }}</div>
+            <div class="item-title">{{ jobPostingRecommend.postTitle }}</div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="job-posting-wrap">
       <div class="job-posting-info">{{ jobPostingCount }}건</div>
@@ -181,17 +248,19 @@ export default {
         </div>
         <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ formatDate1(jobPosting.startDate) }} ~
-            {{ formatDate1(jobPosting.endDate) }}
-          </div>
+          <div class="schedule-info">{{ jobPosting.jobName }}</div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
                @click="onMoveDetailPageClick(jobPosting.jobPostingId)">
         </div>
       </div>
     </div>
   </main>
-  <search-filter-modal v-if="modalPopupStatue" @close-modal="modalPopupStatue = false"
-                       @select-filter="handleSelectFilter" :filter-type="filterTypes" />
+  <search-filter-modal
+      v-if="modalPopupStatue"
+      @close-modal="modalPopupStatue = false"
+      @select-filter="handleSelectFilter"
+      :filter-type="filterTypes"
+  />
 </template>
 
 <style scoped>
@@ -251,17 +320,22 @@ export default {
 .job-posting-info {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 10px;
 }
 
 .job-posting-list {
-  background-color: #D9D9D9;
+  background-color: #ffffff;
   border-radius: 15px;
   padding: 15px;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .job-posting-list-top {
@@ -273,9 +347,8 @@ export default {
 }
 
 .course-title {
-  font-size: 18px;
-  margin-right: auto;
-  /* Ensures it stays on the left */
+  margin-bottom: 12px;
+  color: #6c757d;
 }
 
 .recruitment-phase {
@@ -309,6 +382,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
+  color: #6c757d;
+  font-size: 11pt;
 }
 
 .schedule-info {
@@ -329,13 +405,59 @@ export default {
   font-size: 20px;
   font-weight: bold;
   margin-left: 10px;
-  margin-bottom: 10px;
+  margin-top: 30px;
 }
 
 .recommended-content {
-  background-color: #D9D9D9;
+  display: flex;
+  overflow-x: auto; /* 수평 스크롤 활성화 */
+  scrollbar-width: none;
+}
+
+.recommended-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.recommended-item {
+  flex: 0 0 calc(33.33% - 30px); /* 화면 너비의 약 1/3 사용, 간격 고려 */
+  max-width: 300px; /* 최대 너비 제한 */
+  min-width: 200px; /* 최소 너비 제한 */
   border-radius: 15px;
-  padding: 15px;
-  height: 150px;
+  padding: 10px;
+  text-align: center;
+}
+
+.recommended-section .item-image {
+  width: 100%;
+  height: 120px;
+  border-radius: 10px; /* 둥근 모서리 */
+  background-color: #f0f0f0; /* 이미지가 없을 때를 대비한 배경색 */
+  display: flex; /* 이미지와 텍스트를 별도로 정렬 가능하게 */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* 둥근 모서리 안에 이미지를 잘라내기 */
+}
+
+.recommended-section .item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+}
+
+.recommended-section .item-text {
+  margin-top: 10px; /* 이미지 아래에 여백 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+}
+
+.recommended-section .item-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.recommended-section .item-company {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
 }
 </style>

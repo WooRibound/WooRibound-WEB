@@ -7,8 +7,8 @@ const router = createRouter({
     history: createWebHistory(""),
     routes: [
         {
-            path: "/:pathMatch(.*)*",
-            name: "NotFound",
+            path: ROUTES.NOT_FOUND_PAGE.path,
+            name: ROUTES.NOT_FOUND_PAGE.name,
             component: () => import("@/views/Error/NotFindPageView.vue"),
         },
         {
