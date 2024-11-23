@@ -11,6 +11,7 @@ import {
   fetchJobPostings,
   fetchJobPostingsRecommend
 } from "@/api/services/individualUserService";
+import JobPostingInfoModal from "@/components/JobPostingInfoModal.vue";
 
 export default {
   name: "JobPostingsPage",
@@ -19,13 +20,14 @@ export default {
       return SEARCH_FILTER_TYPES
     }
   },
-  components: { SearchFilterModal },
+  components: {JobPostingInfoModal, SearchFilterModal },
   methods: { formatDate1 },
   setup() {
     const router = useRouter();
     const route = useRoute();
     const viewType = ref(route.params.viewType || 'all');
     const modalPopupStatue = ref(false);
+    const jobPostingInfoOverlayStatus = ref(true);
     const searchInput = ref("");
     const filterTypes = ref("");
     const selectedProvince = ref("전체 지역");
@@ -80,10 +82,6 @@ export default {
         jobPostingCount.value = 0;
       }
     };
-
-    onMounted(() => {
-      fetchJobPosting(viewType.value);
-    })
 
     const recruitmentPhase = (postState) => {
       switch (postState) {
@@ -163,15 +161,28 @@ export default {
       isDragging.value = false;
     };
 
+    const showJobPostingInfoOverlay = () => {
+      if (viewType.value === 'career' || viewType.value === 'new') {
+        jobPostingInfoOverlayStatus.value = true;
+      } else {
+        jobPostingInfoOverlayStatus.value = false;
+      }
+    }
+
     // Lifecycle Hook: 추가적인 DOM 확인은 필요 없지만 안전하게 작성
     onMounted(() => {
+      showJobPostingInfoOverlay();
+
       if (!recommendedContent.value) {
         console.warn("recommendedContent is not initialized properly.");
       }
+
+      fetchJobPosting(viewType.value);
     });
 
     return {
       modalPopupStatue,
+      jobPostingInfoOverlayStatus,
       filterTypes,
       viewType,
       searchInput,
@@ -260,6 +271,10 @@ export default {
       @close-modal="modalPopupStatue = false"
       @select-filter="handleSelectFilter"
       :filter-type="filterTypes"
+  />
+  <job-posting-info-modal
+      v-if="jobPostingInfoOverlayStatus"
+      @close-modal="jobPostingInfoOverlayStatus = false"
   />
 </template>
 

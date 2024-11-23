@@ -114,57 +114,38 @@ export default {
 
 .button-wrap {
   display: flex;
-  /* 버튼을 수평으로 정렬 */
   gap: 10px;
-  /* 버튼 간 간격 */
   justify-content: center;
-  /* 버튼을 중앙 정렬 */
 }
 
 
 .left-modal-button {
   padding: 10px 20px;
-  /* 버튼 내부 여백 */
   border: none;
-  /* 기본 테두리 제거 */
   border-radius: 5px;
-  /* 모서리 둥글게 */
   background-color: #024CAA;
-  /* 버튼 배경색 */
   color: white;
-  /* 버튼 텍스트 색상 */
   cursor: pointer;
-  /* 포인터 커서로 변경 */
   transition: background-color 0.3s;
-  /* 배경색 변화 애니메이션 */
   width: 130px;
 }
 
 .left-modal-button:hover {
   background-color: #003a7a;
-  /* 호버 시 배경색 변화 */
 }
 
 .right-modal-button {
   padding: 10px 20px;
-  /* 버튼 내부 여백 */
   border: none;
-  /* 기본 테두리 제거 */
   border-radius: 5px;
-  /* 모서리 둥글게 */
   background-color: #E4E0E1;
-  /* 버튼 배경색 */
   color: white;
-  /* 버튼 텍스트 색상 */
   cursor: pointer;
-  /* 포인터 커서로 변경 */
   transition: background-color 0.3s;
-  /* 배경색 변화 애니메이션 */
   width: 130px;
 }
 
 .right-modal-button:hover {
   background-color: #003a7a;
-  /* 호버 시 배경색 변화 */
 }
 </style>
