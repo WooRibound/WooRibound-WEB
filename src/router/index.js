@@ -152,6 +152,11 @@ const router = createRouter({
             component: () => import("@/views/CorporateUser/EmployeeManagement.vue"),
         },
         {
+            path: ROUTES.WISDOM_MENU.path,
+            name: ROUTES.WISDOM_MENU.name,
+            component: () => import("@/views/IndividualUser/WisdomMenu.vue"),
+        },
+        {
             path: ROUTES.WISDOM_SHARE.path,
             name: ROUTES.WISDOM_SHARE.name,
             component: () => import("@/views/IndividualUser/WisdomShare.vue"),

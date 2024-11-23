@@ -90,7 +90,7 @@ export default {
         </router-link>
       </li>
       <li class="bottom-nav-item">
-        <router-link :to="ROUTES.WISDOM_EXPLORE.path"
+        <router-link :to="ROUTES.WISDOM_MENU.path"
                      @mouseenter="mouseEnter('wisdom')"
                      @mouseleave="mouseLeave('wisdom')"
         >
