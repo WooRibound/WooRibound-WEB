@@ -142,6 +142,11 @@ export const ROUTES = {
         path: "/employee-management",
         name: "EmployeeManagement"
     },
+    // [개인회원] 지혜 메뉴
+    WISDOM_MENU: {
+        path: "/wisdom",
+        name: "WisdomMenu"
+    },
     // [개인회원] 지혜 나눔
     WISDOM_SHARE: {
         path: "/wisdom/share",
