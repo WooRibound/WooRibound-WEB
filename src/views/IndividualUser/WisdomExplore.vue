@@ -31,8 +31,7 @@ export default {
     const wisdomCount = ref(0);
 
     const searchPosts = () => {
-      // todo API 구현 시 아래에 로직 구현 하기
-      console.log("검색어:", searchInput.value);
+      fetchPosts();
     }
 
     const fetchPosts = async () => {
