@@ -192,9 +192,20 @@ export const fetchJobPostingsCareer = async (payload = {}) => {
 };
 
 // 추천 공고 조회
-export const fetchJobPostingsRecommend = async () => {
+export const fetchRecommendJobPostings = async () => {
   try {
     const response = await handleApiCall('get', '/individualuser/jobposting/recommend');
+    return response.data;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+};
+
+// 최신 공고 조회
+export const fetchRecentJobPostings = async () => {
+  try {
+    const response = await handleApiCall('get', '/individualuser/jobposting/recent');
     return response.data;
   } catch (error) {
     console.error('Error posting data:', error);
