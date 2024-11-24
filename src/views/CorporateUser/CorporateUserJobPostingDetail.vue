@@ -133,13 +133,26 @@ export default {
         <img :src="jobPosting.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
+        <div class="job-posting-title">{{ jobPosting.postTitle }}</div>
         <div class="company-name">{{ jobPosting.entName }}</div>
-        <div class="job-title">{{ jobPosting.postTitle }}</div>
-        <div class="job-name">{{ jobPosting.jobName }}</div>
-        <div class="application-period">공고 게시 및 서류 접수</div>
-        <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
-        <div class="company-address-label">기업 주소</div>
-        <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/job.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            직무 </span>
+          <span class="aligned-label"> : {{ jobPosting.jobName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/clock.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            모집기간 </span>
+          <span class="aligned-label"> : {{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/address.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            기업주소 </span>
+          <span class="aligned-label"> : {{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</span>
+        </div>
       </div>
     </div>
     <div class="delete-button" @click="onDeleteClick(userType, postId)">삭제하기</div>
@@ -196,13 +209,45 @@ export default {
   margin-bottom: 10px;
 }
 
+.delete-button {
+  width: 90%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 20px auto 0 auto;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.label {
+  display: inline-block;
+  width: 90px; /* 라벨 넓이 설정으로 직무, 모집기간, 기업주소 일치 */
+  font-weight: bold;
+}
+
 .company-name {
-  font-size: 25px;
+  font-size: 17px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
+.job-posting-title {
+  font-size: 25px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
 .job-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.job-name {
   font-size: 20px;
   font-weight: bold;
   color: #333;
@@ -231,25 +276,5 @@ export default {
 .company-address {
   font-size: 18px;
   color: #333;
-}
-
-.delete-button {
-  width: 90%;
-  max-width: 400px;
-  padding: 10px;
-  margin: 20px auto 0 auto;
-  background-color: #024CAA;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-.job-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
 }
 </style>
