@@ -21,6 +21,7 @@ export default {
     const userStore = useUserStore();
     const applyId = route.params.applyId;
     const postId = route.params.postId;
+    const state = route.params.state;
 
     const singleModalPopupStatue = ref(false);
     const twoButtonModalPopupStatue = ref(false);
@@ -28,7 +29,8 @@ export default {
     const twoButtonModalMessage = ref('');
     const singleButtonModalRoute = ref('');
     const twoButtonModalRoute = ref('');
-    const isApplicationDate = ref(false);
+    const isApplicationOpened = ref(false);
+    const isApplicationClosed = ref(false);
 
     const jobPosting = ref({
       entName: '',
@@ -59,7 +61,8 @@ export default {
         const startDate = new Date(response.startDate);
         const endDate = new Date(response.endDate);
 
-        isApplicationDate.value = today >= startDate && today <= endDate;
+        isApplicationOpened.value = today >= startDate && today <= endDate;
+        isApplicationClosed.value = today > endDate;
 
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
@@ -90,20 +93,26 @@ export default {
       }
     };
 
-    const onApplyCancelClick = async (applyId) => {
-      const isConfirm = confirm("정말로 삭제하시겠습니까?");
-      if (isConfirm) {
-        try {
-          const response = await deleteUserApply(applyId);
-          singleButtonModalMessage.value = response;
-          singleModalPopupStatue.value = true;
-          console.log(response);
-        } catch (e) {
-          console.log(e);
-        }
-      }
+    const onApplyCancelClick = () => {
+      twoButtonModalMessage.value = '정말로 지원을 취소하시겠습니까?';
+      twoButtonModalRoute.value = '';
+      twoButtonModalPopupStatue.value = true;
     }
 
+    const deleteJobPostingApplyCancel = async (applyId) => {
+      try {
+        const response = await deleteUserApply(applyId);
+        singleButtonModalMessage.value = response;
+        singleButtonModalRoute.value = ROUTES.JOB_APPLICATION_STATUS.path;
+        singleModalPopupStatue.value = true;
+      } catch (e) {
+        console.log(e);
+        singleButtonModalMessage.value = '오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+        singleButtonModalRoute.value = '';
+        singleModalPopupStatue.value = true;
+
+      }
+    }
 
     return {
       singleModalPopupStatue,
@@ -112,12 +121,15 @@ export default {
       twoButtonModalMessage,
       singleButtonModalRoute,
       twoButtonModalRoute,
-      applyId,
       postId,
+      applyId,
+      state,
       jobPosting,
-      isApplicationDate,
+      isApplicationOpened,
+      isApplicationClosed,
       onApplyClick,
       onApplyCancelClick,
+      deleteJobPostingApplyCancel,
     };
   }
 };
@@ -140,9 +152,11 @@ export default {
         <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
       </div>
     </div>
-    <div class="delete-button" v-if="postId && isApplicationDate" @click="onApplyClick(postId)">지원 접수</div>
-    <div class="not-application-date-button" v-if="postId && !isApplicationDate">접수 예정</div>
-    <div class="delete-button" v-if="applyId" @click="onApplyCancelClick(applyId)">지원취소</div>
+    <div v-if="isApplicationClosed" class="not-application-date-button">접수 마감</div>
+    <div v-else-if="postId && isApplicationOpened" class="apply-button" @click="onApplyClick(postId)">지원 접수</div>
+    <div v-else-if="postId && !isApplicationOpened" class="not-application-date-button">접수 예정</div>
+    <div v-else-if="applyId && !state" class="apply-cancel-button" @click="onApplyCancelClick(applyId)">지원 취소</div>
+    <div v-else-if="applyId && state" class="not-application-date-button">지원 취소된 공고</div>
   </main>
   <single-button-modal
       v-if="singleModalPopupStatue"
@@ -152,11 +166,12 @@ export default {
   />
   <TwoButtonModal
       v-if="twoButtonModalPopupStatue"
+      @confirm="deleteJobPostingApplyCancel(applyId)"
       @close-modal="twoButtonModalPopupStatue = false"
       :modal-message="twoButtonModalMessage"
       leftButtonText="확인"
       rightButtonText="취소"
-      :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
+      :router-path="twoButtonModalRoute"
   />
 </template>
 
@@ -249,12 +264,12 @@ export default {
   color: #333;
 }
 
-.delete-button {
+.apply-cancel-button,
+.apply-button{
   width: 90%;
   max-width: 400px;
   padding: 10px;
   margin: 20px auto 0 auto;
-  /* 가운데 정렬을 위한 속성 추가 */
   background-color: #024CAA;
   color: white;
   text-align: center;

@@ -37,11 +37,14 @@ export default {
     })
 
     const onMoveDetailPageClick = (applyId) => {
-      console.log(applyId);
+      const jobApplication = jobApplicationList.value.find(item => item.applyId === applyId);
+      const resultValue = jobApplication && jobApplication.result === APPLY_TYPES.CANCELED ? 'canceled' : null;
+
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
         params:{
-          applyId: applyId
+          applyId: applyId,
+          state: resultValue,
         },
       })
     }
