@@ -22,6 +22,7 @@ export default {
     const singleModalPopupStatue = ref(false);
     const twoButtonModalPopupStatue = ref(false);
     const modalMessage = ref('');
+    const isApplicationDate = ref(false);
 
     const jobPosting = ref({
       entName: '',
@@ -47,6 +48,13 @@ export default {
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
         };
+
+        const today = new Date();
+        const startDate = new Date(response.startDate);
+        const endDate = new Date(response.endDate);
+
+        isApplicationDate.value = today >= startDate && today <= endDate;
+
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
@@ -90,6 +98,7 @@ export default {
       applyId,
       postId,
       jobPosting,
+      isApplicationDate,
       onApplyClick,
       onApplyCancelClick,
     };
@@ -114,7 +123,8 @@ export default {
         <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
       </div>
     </div>
-    <div class="delete-button" v-if="postId" @click="onApplyClick(postId)">지원하기</div>
+    <div class="delete-button" v-if="postId && isApplicationDate" @click="onApplyClick(postId)">지원 접수</div>
+    <div class="not-application-date-button" v-if="postId && !isApplicationDate">접수 예정</div>
     <div class="delete-button" v-if="applyId" @click="onApplyCancelClick(applyId)">지원취소</div>
   </main>
   <single-button-modal
@@ -234,5 +244,18 @@ export default {
   cursor: pointer;
   font-weight: bold;
   border-radius: 8px;
+}
+
+.not-application-date-button {
+  width: 90%;
+  max-width: 400px;
+  padding: 10px;
+  border: 1px solid #d3d3d3;
+  background-color: #ffffff;
+  color: #808080;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  margin: 20px auto 0 auto;
 }
 </style>
