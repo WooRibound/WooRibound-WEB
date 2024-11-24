@@ -23,7 +23,7 @@ export default {
     const isLoggedIn = computed(() => userStore.isLoggedIn);
     const userType = computed(() => userStore.getCurrentUserType);
 
-    const onShowNotificationClick = () => {
+    const onMoveNotificationClick = () => {
       router.push(ROUTES.NOTIFICATION_PAGE);
     }
 
@@ -34,14 +34,14 @@ export default {
 
     onMounted(() => {
       notificationStore.fetchAllNotification();
-    })
+    });
 
     return {
       isLoggedIn,
       userType,
       showFullMenuState,
       notificationCount,
-      onShowNotificationClick,
+      onMoveNotificationClick,
       onShowFullMenuClick,
     };
   }
@@ -56,9 +56,9 @@ export default {
       </router-link>
     </div>
     <div class="header-right">
-      <div class="notification-wrapper" @click="onShowNotificationClick" v-if="isLoggedIn & userType === USER_TYPES.INDIVIDUAL_USER">
-        <img src="@/assets/images/icons/notification.png" class="notification-icon">
-        <div class="message-count" v-if="notificationCount > 0">{{ notificationCount }}</div>
+      <div class="notification-wrapper" @click="onMoveNotificationClick" v-if="isLoggedIn & userType === USER_TYPES.INDIVIDUAL_USER">
+        <img v-if="notificationCount > 0" src="@/assets/images/icons/notification.png" class="notification-icon">
+        <img v-else src="@/assets/images/icons/not_notification.png" class="notification-icon">
       </div>
       <img src="@/assets/images/icons/hamburger_button_menu.png" class="menu-icon" @click="onShowFullMenuClick">
     </div>

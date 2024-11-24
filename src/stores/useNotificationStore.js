@@ -1,14 +1,18 @@
-import {defineStore} from "pinia";
-import {fetchAllNotification} from "@/api/services/individualUserService";
-import {useUserStore} from "@/stores/userStore";
+import { defineStore } from "pinia";
+import { fetchAllNotification } from "@/api/services/individualUserService";
+import { useUserStore } from "@/stores/userStore";
 
 export const useNotificationStore = defineStore('notification', {
     state: () => ({
         count: 0,
+        notifications: [],
     }),
     getters: {
         getCount(state) {
             return state.count;
+        },
+        getNotifications(state) {
+            return state.notifications;
         },
     },
     actions: {
@@ -21,13 +25,13 @@ export const useNotificationStore = defineStore('notification', {
 
             try {
                 const notifications = await fetchAllNotification();
-                const confirmedCount = notifications.filter(notification => notification.isConfirmed === "N").length;
+                this.notifications = notifications;
 
+                const confirmedCount = notifications.filter(notification => notification.isConfirmed === "N").length;
                 this.count = confirmedCount;
             } catch (error) {
                 console.error("Failed to fetch notifications:", error);
             }
-
         },
     },
 });
