@@ -52,7 +52,7 @@ export default {
           return '합격';
         case APPLY_TYPES.PENDING:
           return '결과 대기중';
-        case APPLY_TYPES.FAILED:
+        case APPLY_TYPES.REJECTED:
           return '불합격';
         case APPLY_TYPES.CANCELED:
           return '지원 취소';
