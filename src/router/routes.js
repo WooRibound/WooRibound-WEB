@@ -75,7 +75,7 @@ export const ROUTES = {
     },
     // [개인회원] 채용공고 상세페이지
     JOB_POSTING_DETAIL: {
-        path: "/job-posting/:postId",
+        path: "/job-posting/:postId?/:applyId?",
         name: "JobPostingDetail",
     },
     // [개인회원] 탈퇴하기

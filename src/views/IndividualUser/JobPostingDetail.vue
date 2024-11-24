@@ -43,7 +43,7 @@ export default {
 
     const fetchJobPosting = async () => {
       try {
-        const response = await fetchJobPostingDetail(postId);
+        const response = await fetchJobPostingDetail(postId || applyId);
         jobPosting.value = {
           entName: response.entName,
           postTitle: response.postTitle,
