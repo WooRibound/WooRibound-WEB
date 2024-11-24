@@ -5,10 +5,12 @@ import { ROUTES } from "@/router/routes";
 import {useRoute} from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import {deleteUserApply, fetchJobPostingDetail, insertUserApply} from "@/api/services/individualUserService";
+import {useUserStore} from "@/stores/userStore";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "JobPostingDetail",
-  components: { TwoButtonModal },
+  components: {SingleButtonModal, TwoButtonModal },
   computed: {
     ROUTES() {
       return ROUTES;
@@ -16,12 +18,16 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const userStore = useUserStore();
     const applyId = route.params.applyId;
     const postId = route.params.postId;
 
     const singleModalPopupStatue = ref(false);
     const twoButtonModalPopupStatue = ref(false);
-    const modalMessage = ref('');
+    const singleButtonModalMessage = ref('');
+    const twoButtonModalMessage = ref('');
+    const singleButtonModalRoute = ref('');
+    const twoButtonModalRoute = ref('');
     const isApplicationDate = ref(false);
 
     const jobPosting = ref({
@@ -67,9 +73,17 @@ export default {
     });
 
     const onApplyClick = async (postId) => {
+      if (!userStore.isLoggedIn) {
+        singleButtonModalMessage.value = '로그인 후 이용해주세요.';
+        singleButtonModalRoute.value = '';
+        singleModalPopupStatue.value = true;
+        return;
+      }
+
       try {
         const response = await insertUserApply(postId);
-        modalMessage.value = response;
+        singleButtonModalMessage.value = response;
+        singleButtonModalRoute.value = ROUTES.JOB_APPLICATION_STATUS.path;
         singleModalPopupStatue.value = true;
       } catch (e) {
         console.log(e);
@@ -81,7 +95,7 @@ export default {
       if (isConfirm) {
         try {
           const response = await deleteUserApply(applyId);
-          modalMessage.value = response;
+          singleButtonModalMessage.value = response;
           singleModalPopupStatue.value = true;
           console.log(response);
         } catch (e) {
@@ -94,7 +108,10 @@ export default {
     return {
       singleModalPopupStatue,
       twoButtonModalPopupStatue,
-      modalMessage,
+      singleButtonModalMessage,
+      twoButtonModalMessage,
+      singleButtonModalRoute,
+      twoButtonModalRoute,
       applyId,
       postId,
       jobPosting,
@@ -130,13 +147,13 @@ export default {
   <single-button-modal
       v-if="singleModalPopupStatue"
       @close-modal="singleModalPopupStatue = false"
-      :modal-message="modalMessage"
-      :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
+      :modal-message="singleButtonModalMessage"
+      :router-path="singleButtonModalRoute"
   />
   <TwoButtonModal
       v-if="twoButtonModalPopupStatue"
       @close-modal="twoButtonModalPopupStatue = false"
-      :modal-message="modalMessage"
+      :modal-message="twoButtonModalMessage"
       leftButtonText="확인"
       rightButtonText="취소"
       :router-path="ROUTES.JOB_APPLICATION_STATUS.path"
