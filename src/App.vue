@@ -7,6 +7,7 @@
         @icon-state-changed="handleIconStateChanged"
     />
     <loading-overlay />
+    <login-modal />
   </div>
 
   <div class="app-container" v-if="fullScreenMenuState">
@@ -18,18 +19,20 @@
 </template>
 
 <script>
-import {ref, computed, onMounted} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import BottomNavigation from "@/components/BottomNavigation.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import FullScreenMenu from "@/views/Common/FullScreenMenu.vue";
-import { useUserStore } from "@/stores/userStore";
-import { USER_TYPES } from "@/constants/userTypes";
+import {useUserStore} from "@/stores/userStore";
+import {USER_TYPES} from "@/constants/userTypes";
 import {useJobStore} from "@/stores/useJobStore";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
+import LoginModal from "@/components/LoginModal.vue";
 
 export default {
   name: 'App',
   components: {
+    LoginModal,
     LoadingOverlay,
     FullScreenMenu,
     HeaderComponent,
@@ -37,6 +40,7 @@ export default {
   },
   setup() {
     const jobStore = useJobStore();
+    const userStore = useUserStore();
 
     const iconState = ref({});
     const fullScreenMenuState = ref(false);
@@ -49,20 +53,13 @@ export default {
       fullScreenMenuState.value = newState;
     };
 
-    // todo 로그인 기능 구현 시 삭제 해야될 코드
-    const userStore = useUserStore();
-    // userStore.isLoggedIn = false;
-    // userStore.userType = USER_TYPES.INDIVIDUAL_USER;
-    // userStore.userType = USER_TYPES.CORPORATE_MEMBER;
-    // userStore.userType = USER_TYPES.SERVICE_ADMIN;
-    // userStore.userType = USER_TYPES.INFRA_ADMIN;
-    //
     const isAdmin = computed(() => {
-      return userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN;
+      return userStore.getCurrentUserType === USER_TYPES.INFRA_ADMIN || userStore.getCurrentUserType === USER_TYPES.SERVICE_ADMIN;
     });
 
     onMounted(() => {
       jobStore.fetchJobs();
+      userStore.initialize();
     });
 
     return {
