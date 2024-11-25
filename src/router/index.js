@@ -142,6 +142,11 @@ const router = createRouter({
             component: () => import("@/views/CorporateUser/ApplicantRecommendPage.vue"),
         },
         {
+            path: ROUTES.RECOMMEND_PREMIUM_PAGE.path,
+            name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
+            component: () => import("@/views/CorporateUser/RecommendPremium.vue"),
+        },
+        {
             path: ROUTES.READONLY_RESUME_PAGE.path,
             name: ROUTES.READONLY_RESUME_PAGE.name,
             component: () => import("@/views/CorporateUser/ReadonlyResumePage.vue"),

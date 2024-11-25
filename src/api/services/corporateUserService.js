@@ -153,6 +153,18 @@ export const fetchRecommendList = async (jobId) => {
     }
 };
 
+// 추천 기능 프리미엄
+export const fetchRecommendPremium = async (userId) => {
+    try {
+        console.debug("Making API call to fetch recommend premium ");
+        const data = await handleApiCall("get", `/applicant-recommend/history?userId=${userId}`);
+        return data;
+    } catch (error) {
+        console.error("[fetchRecommendList] Error:", error);
+        throw error;
+    }
+};
+
 // 공고 등록
 export const insertJobPosting= async (jobPosting) => {
   const formData = new FormData();

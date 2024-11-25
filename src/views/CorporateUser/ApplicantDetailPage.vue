@@ -1,7 +1,7 @@
 <script>
 import {useRoute, useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
-import { formatDate1 } from "@/utils/formatters"
+import { formatDate3 } from "@/utils/formatters"
 import {fetchApplicantList, fetchMyPostingDetail, setApplicantResult} from "@/api/services/corporateUserService";
 import {computed, onMounted, ref} from "vue";
 
@@ -25,10 +25,10 @@ export default {
 
     // 시작일과 종료일 포맷팅
     const formattedStartDate = computed(() =>
-        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
+        startDate.value ? formatDate3(new Date(startDate.value)) : "-"
     );
     const formattedEndDate = computed(() =>
-        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
+        endDate.value ? formatDate3(new Date(endDate.value)) : "-"
     );
 
     const fetchJobPostingInfo = async (postId) => {
@@ -120,15 +120,12 @@ export default {
     const onMovePremiumFunctionPageClick = (userId) => {
       console.log("프리미업 가입 API 호출 "+ userId);
       router.push({
-        name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
+        name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
         params: {
           userId: userId
         }
       })
     };
-
-
-
 
     return {
       applyStatus,
@@ -221,6 +218,8 @@ export default {
 
 .job-application-info > div {
   margin: 5px 0;                /* 위아래 간격 설정 */
+  color: #535456;
+  font-size: 15px;
 }
 
 .applicant-table {
