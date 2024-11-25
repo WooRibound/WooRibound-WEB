@@ -19,6 +19,7 @@ export default {
   setup() {
     const userStore = useUserStore();
     const userType = computed(() => userStore.getCurrentUserType);
+    console.log("userType:", userType);
 
     const menuGuidePopupStatue = ref(false);
 
@@ -102,7 +103,7 @@ export default {
                      @mouseenter="mouseEnter('company')"
                      @mouseleave="mouseLeave('company')"
         >
-          <img :src="currentIcon.job ? icons.job : hoverIcons.job" alt="채용공고" class="nav-icon" />
+          <img :src="currentIcon.company ? icons.company : hoverIcons.company" alt="채용공고" class="nav-icon" />
           채용 공고
         </router-link>
       </li>

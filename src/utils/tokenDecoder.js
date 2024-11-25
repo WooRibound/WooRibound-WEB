@@ -1,4 +1,5 @@
 import { useUserStore } from '@/stores/userStore';
+import {USER_TYPES} from "@/constants/userTypes";
 
 export const getAccessToken = () => {
   const accessToken = localStorage.getItem('accessToken');
@@ -15,7 +16,7 @@ export const getAccessTokenWithBearer = () => {
 
 export const decodeToken = () => {
   try {
-    const store = useUserStore();
+    const userStore = useUserStore();
     const accessToken = getAccessToken();
 
     if (!accessToken) {
@@ -39,22 +40,22 @@ export const decodeToken = () => {
 
     switch(role) {
       case 'ROLE_SERVICE_ADMIN':
-        userType = '서비스관리자';
+        userType = USER_TYPES.SERVICE_ADMIN;
         break;
       case 'ROLE_INFRA_ADMIN':
-        userType = '인프라관리자';
+        userType = USER_TYPES.INDIVIDUAL_USER;
         break;
       case 'ROLE_ENTERPRISE_USER':
-        userType = '기업회원';
+        userType = USER_TYPES.CORPORATE_MEMBER;
         break;
       case 'ROLE_WbUser':
-        userType = '개인회원';
+        userType = USER_TYPES.INDIVIDUAL_USER;
         break;
       default:
-        userType = 'UNKNOWN';
+        userType = USER_TYPES.UNKNOWN;
     }
 
-    store.setUserInfo({
+    userStore.login({
       userName: payload.userName,
       userType: userType
     });
