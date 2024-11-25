@@ -37,11 +37,14 @@ export default {
     })
 
     const onMoveDetailPageClick = (applyId) => {
-      console.log(applyId);
+      const jobApplication = jobApplicationList.value.find(item => item.applyId === applyId);
+      const resultValue = jobApplication && jobApplication.result === APPLY_TYPES.CANCELED ? 'canceled' : null;
+
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
         params:{
-          applyId: applyId
+          applyId: applyId,
+          state: resultValue,
         },
       })
     }
@@ -52,7 +55,7 @@ export default {
           return '합격';
         case APPLY_TYPES.PENDING:
           return '결과 대기중';
-        case APPLY_TYPES.FAILED:
+        case APPLY_TYPES.REJECTED:
           return '불합격';
         case APPLY_TYPES.CANCELED:
           return '지원 취소';
