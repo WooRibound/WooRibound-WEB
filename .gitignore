@@ -7,11 +7,11 @@ build/
 
 # Environment variables
 .env.local
-.env.local
 .env.*.local
 .env.development
 .env.production
 
+root-ca.crt
 
 # Log files
 npm-debug.log*
