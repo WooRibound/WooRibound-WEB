@@ -1,13 +1,13 @@
 <script>
 import {useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
-import {formatDate1} from "@/utils/formatters";
+import {formatDate3} from "@/utils/formatters";
 import {onMounted, ref} from "vue";
 import {fetchMyPostingList} from "@/api/services/corporateUserService";
 
 export default {
   name: "JobPostingManagement",
-  methods: {formatDate: formatDate1},
+  methods: {formatDate: formatDate3},
   setup() {
     const router = useRouter();
 
@@ -105,13 +105,13 @@ export default {
       <div class="job-posting-info">{{ jobpostingCount }}건</div>
       <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting">
         <div class="job-posting-list-top">
-          <div class="course-title">{{ jobPosting.entName }}</div>
+          <div class="course-title">{{ jobPosting.postTitle }}</div>
           <div :class="['recruitment-phase', recruitmentPhaseClass(jobPosting.postState)]">
             {{ recruitmentPhase(jobPosting.postState) }}
           </div>
         </div>
         <div class="job-posting-list-middle">
-          <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
+          <div class="course-subtitle">[모집직무] {{ jobPosting.jobName }}</div>
           <div class="applicants-info" @click="onMoveApplicantDetailPageClick(jobPosting.postId)">{{
               jobPosting.applicantCount
             }}명
@@ -189,7 +189,7 @@ export default {
 }
 
 .course-title {
-  font-size: 18px;
+  font-size: 20px;
   margin-right: auto; /* Ensures it stays on the left */
 }
 
@@ -224,6 +224,7 @@ export default {
 
 .course-subtitle {
   margin-bottom: 5px;
+  font-size: 13pt;
   flex: 1;
 }
 
@@ -241,6 +242,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
+  color: #52585d;
+  font-size: 12pt;
 }
 
 .schedule-info {

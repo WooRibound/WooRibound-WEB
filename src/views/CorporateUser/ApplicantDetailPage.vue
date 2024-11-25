@@ -19,6 +19,7 @@ export default {
     const userId = ref([]);
     const applyStatus = ref([]);
     const index = ref([]);
+    const recommendCount = ref([]);
     const applyId = ref([]);
     const jobId = ref();
 
@@ -59,6 +60,7 @@ export default {
         userId.value = applicantsList.value.map((applicant) => applicant.userId);
         applyId.value = applicantsList.value.map((applicant) => applicant.applyId);
         index.value = applicantsList.value.map((applicant) => applicant.index);
+        recommendCount.value = applicantsList.value.map((applicant) => applicant.recommendCount);
 
       } catch (error) {
         console.error("[fetchApplicantsList] Error:", error);
@@ -115,6 +117,17 @@ export default {
       })
     };
 
+    const onMovePremiumFunctionPageClick = (userId) => {
+      console.log("프리미업 가입 API 호출 "+ userId);
+      router.push({
+        name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
+        params: {
+          userId: userId
+        }
+      })
+    };
+
+
 
 
     return {
@@ -126,6 +139,7 @@ export default {
       onMoveResumePageClick,
       onApplicantStateClick,
       onRecommendButtonClick,
+      onMovePremiumFunctionPageClick,
       postId
     };
   }
@@ -150,15 +164,17 @@ export default {
         <tr>
           <th>이름</th>
           <th>성별/나이</th>
-          <th>이력서</th>
+          <th>추천횟수</th>
           <th>합격 여부</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="applicant in applicantsList" :key="applicant.userId">
-          <td>{{ applicant.applicantName }}</td>
+          <td class="name" @click="onMoveResumePageClick(applicant.userId)">
+            {{ applicant.applicantName }}
+          </td>
           <td>{{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
-          <td><div class="resume-link" @click="onMoveResumePageClick(applicant.userId)">보기</div></td>
+          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId)">{{ applicant.recommendCount }}</div></td>
           <td>
             <div class="status-container">
               <div v-if="applicant.result === 'PENDING'">
@@ -225,6 +241,10 @@ export default {
 .applicant-table td {
   padding: 10px; /* 내부 여백 */
   text-align: center;
+}
+
+.name, .recommend-count {
+  text-decoration: underline;
 }
 
 .resume-link {

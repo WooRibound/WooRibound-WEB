@@ -34,6 +34,24 @@ export const formatDate2 = (dateString) => {
 };
 
 /**
+ * 날짜 포맷팅 YYYY.MM.DD (요일)
+ * @param {Date} value - 입력값
+ * @returns {String}
+ */
+export const formatDate3 = (dateString) => {
+    const date = new Date(dateString);
+
+    const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+    const day = String(date.getDate()).padStart(2, '0'); // 일
+    const dayOfWeek = daysOfWeek[date.getDay()]; // 요일
+
+    return `${year}.${month}.${day} (${dayOfWeek})`;
+};
+
+/**
  * 휴대폰 번호를 포맷팅하는 함수
  * @param {string} phoneNumber - 입력된 휴대폰 번호
  * @returns {string} 포맷된 휴대폰 번호

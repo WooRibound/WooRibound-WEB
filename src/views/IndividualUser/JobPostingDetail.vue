@@ -1,6 +1,6 @@
 <script>
 import {ref, onMounted} from "vue";
-import { formatDate1 } from "@/utils/formatters";
+import { formatDate3 } from "@/utils/formatters";
 import { ROUTES } from "@/router/routes";
 import {useRoute} from "vue-router";
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
@@ -50,8 +50,8 @@ export default {
           entName: response.entName,
           postTitle: response.postTitle,
           postImg: response.postImg,
-          startDate: formatDate1(response.startDate),
-          endDate: formatDate1(response.endDate),
+          startDate: formatDate3(response.startDate),
+          endDate: formatDate3(response.endDate),
           jobName: response.jobName,
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
@@ -143,13 +143,26 @@ export default {
         <img :src="jobPosting.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
+        <div class="job-posting-title">{{ jobPosting.postTitle }}</div>
         <div class="company-name">{{ jobPosting.entName }}</div>
-        <div class="job-title">{{ jobPosting.postTitle }}</div>
-        <div class="job-title">{{ jobPosting.jobName }}</div>
-        <div class="application-period">공고 게시 및 서류 접수</div>
-        <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
-        <div class="company-address-label">기업 주소</div>
-        <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/job.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            직무 </span>
+          <span class="aligned-label"> : {{ jobPosting.jobName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/clock.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            모집기간 </span>
+          <span class="aligned-label"> : {{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/address.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            기업주소 </span>
+          <span class="aligned-label"> : {{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</span>
+        </div>
       </div>
     </div>
     <div v-if="isApplicationClosed" class="not-application-date-button">접수 마감</div>
@@ -221,14 +234,20 @@ export default {
 }
 
 .company-name {
-  font-size: 25px;
+  font-size: 17px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.job-title {
-  font-size: 20px;
+.job-posting-title {
+  font-size: 25px;
   font-weight: bold;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.job-title {
+  font-size: 18px;
   color: #333;
   margin-bottom: 5px;
 }
@@ -276,6 +295,12 @@ export default {
   cursor: pointer;
   font-weight: bold;
   border-radius: 8px;
+}
+
+.label {
+  display: inline-block;
+  width: 90px; /* 라벨 넓이 설정으로 직무, 모집기간, 기업주소 일치 */
+  font-weight: bold;
 }
 
 .not-application-date-button {
