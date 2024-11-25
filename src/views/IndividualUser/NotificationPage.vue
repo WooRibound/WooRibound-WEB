@@ -1,25 +1,24 @@
 <script>
-import {computed, onMounted, ref} from "vue";
-import {fetchAllNotification, updateNotification} from "@/api/services/individualUserService";
-import {useNotificationStore} from "@/stores/useNotificationStore";
+import {onMounted, ref} from "vue";
+import {updateNotification} from "@/api/services/individualUserService";
 import {useUserStore} from "@/stores/userStore";
+import {useNotificationStore} from "@/stores/useNotificationStore";
 
 export default {
   name: "NotificationPage",
   setup() {
-    const notificationStore = useNotificationStore();
     const userStore = useUserStore();
+    const notificationStore = useNotificationStore();
 
     const isVisible = ref(false);
     const notificationList = ref([]);
     const notificationMessage = ref("");
-    const notificationCount = computed(() => notificationStore.getCount)
 
-    const fetchNotification = async () => {
+    const fetchNotification = () => {
       if (!userStore.isLoggedIn) {
         return;
       }
-      const response =  await fetchAllNotification();
+      const response =  notificationStore.getNotifications;
 
       notificationList.value = response.map(item => ({
         notiId: item.notiId,
@@ -30,7 +29,8 @@ export default {
 
     }
 
-    onMounted(() => {
+    onMounted(async () => {
+      await notificationStore.fetchAllNotification();
       fetchNotification();
     })
 
@@ -62,7 +62,6 @@ export default {
       isVisible,
       notificationList,
       notificationMessage,
-      notificationCount,
       onViewMassageClick,
       onModalButtonClick,
     };
@@ -73,7 +72,7 @@ export default {
 <template>
   <main class="body">
     <div class="header">알림 메시지</div>
-    <div class="notification-wrap" v-if="notificationCount > 0">
+    <div class="notification-wrap" v-if="notificationList">
       <div v-for="notification in notificationList"
            :key="notification.notiId"
            class="notification-item"
@@ -171,7 +170,6 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
   padding: 20px; /* 내부 여백 */
   width: 300px; /* 모달 너비 */
-  height: 200px;
   display: flex; /* 플렉스 박스 사용 */
   flex-direction: column; /* 세로 방향 정렬 */
   justify-content: center; /* 세로 중앙 정렬 */
@@ -196,7 +194,7 @@ export default {
   color: white; /* 버튼 텍스트 색상 */
   cursor: pointer; /* 포인터 커서로 변경 */
   transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
-  width: 250px;
+  width: 140px;
 }
 
 .modal-button:hover {

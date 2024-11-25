@@ -9,7 +9,7 @@ import {
   fetchJobPostingsCareer,
   fetchJobPostingsNew,
   fetchJobPostings,
-  fetchJobPostingsRecommend
+  fetchRecommendJobPostings
 } from "@/api/services/individualUserService";
 import JobPostingInfoModal from "@/components/JobPostingInfoModal.vue";
 
@@ -43,7 +43,6 @@ export default {
 
     const searchJobPosting = () => {
       fetchJobPosting('all');
-      console.log("검색어:", searchInput.value);
     }
 
     const fetchJobPosting = async (viewType) => {
@@ -58,17 +57,14 @@ export default {
       try {
         if (viewType === 'career') {
           // 1. 경력 살려 일 찾기 - 경력직종 불러오기
-          console.log("경력 살리기");
           response = await fetchJobPostingsCareer();
         } else if (viewType === 'new') {
-          console.log("새로운 일 찾기");
           // 2. 새로운 일 찾기 - 관심직종 불러오기
           response = await fetchJobPostingsNew();
-          const recommendResponse = await fetchJobPostingsRecommend();
+          const recommendResponse = await fetchRecommendJobPostings();
           jobPostingRecommendList.value = recommendResponse
         } else {
           // 3. 전체 공고 조회
-          console.log("전체")
           response = await fetchJobPostings(payload);
         }
 
