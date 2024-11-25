@@ -24,7 +24,7 @@ export default {
     const router = useRouter();
 
     const isVisible = computed(() => props.fullScreenMenuState);
-    const loginText = computed(() => (userStore.isLoggedIn ? "로그아웃" : "로그인"));
+    const loginText = computed(() => (userStore.isAuthenticated ? "로그아웃" : "로그인"));
 
     const onMoveToMainClick = () => {
       router.push(ROUTES.MAIN);
@@ -79,7 +79,9 @@ export default {
       <div class="login-text" @click="onClickMoveLogin">{{ loginText }}</div>
       <img src="../../assets/images/logo/wooribound_logo.png" class="logo-image">
     </div>
-    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INDIVIDUAL_USER">
+
+    <!-- 개인회원 메뉴 -->
+    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INDIVIDUAL_USER || userStore.userType === null">
       <div class="menu-content">
         <router-link :to="ROUTES.JOB_MENU.path">
           <div class="menu_title" @click="onCloseFullScreenMenuClick">채용 공고</div>
@@ -119,6 +121,8 @@ export default {
         </div>
       </div>
     </div>
+
+    <!-- 기업회원 메뉴 -->
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.CORPORATE_MEMBER">
       <div class="menu-content">
         <div class="menu_title">기업 정보</div>
@@ -161,49 +165,53 @@ export default {
           </router-link>
         </div>
       </div>
-      <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.SERVICE_ADMIN">
-        <div class="menu-content">
-          <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
+    </div>
+
+    <!-- 서비스관리자 메뉴 -->
+    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.SERVICE_ADMIN">
+      <div class="menu-content">
+        <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
+        </router-link>
+      </div>
+      <div class="menu-content">
+        <div class="menu_title">기업 회원 관리</div>
+        <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <router-link :to="ROUTES.CORPORATE_USER_SIGNUP.path">
+            <div class="menu-item">기업 가입</div>
           </router-link>
-        </div>
-        <div class="menu-content">
-          <div class="menu_title">기업 회원 관리</div>
-          <div class="menu-items" @click="onCloseFullScreenMenuClick">
-            <router-link :to="ROUTES.CORPORATE_USER_SIGNUP.path">
-              <div class="menu-item">기업 가입</div>
-            </router-link>
-            <router-link :to="ROUTES.CORPORATE_USER_WITHDRAWAL.path">
-              <div class="menu-item">기업 탈퇴</div>
-            </router-link>
-            <router-link :to="ROUTES.CORPORATE_USERS.path">
-              <div class="menu-item">기업 회원 조회</div>
-            </router-link>
-            <router-link :to="ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path">
-              <div class="menu-item">공고 관리</div>
-            </router-link>
-          </div>
-        </div>
-        <div class="menu-content">
-          <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">지혜 마당 관리</div>
+          <router-link :to="ROUTES.CORPORATE_USER_WITHDRAWAL.path">
+            <div class="menu-item">기업 탈퇴</div>
           </router-link>
-        </div>
-        <div class="menu-content">
-          <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+          <router-link :to="ROUTES.CORPORATE_USERS.path">
+            <div class="menu-item">기업 회원 조회</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path">
+            <div class="menu-item">공고 관리</div>
           </router-link>
         </div>
       </div>
-    </div>
-      <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INFRA_ADMIN">
-        <div class="menu-content">
-          <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
-          </router-link>
-        </div>
+      <div class="menu-content">
+        <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">지혜 마당 관리</div>
+        </router-link>
+      </div>
+      <div class="menu-content">
+        <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+        </router-link>
       </div>
     </div>
+
+    <!-- 인프라관리자 메뉴 -->
+    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INFRA_ADMIN">
+      <div class="menu-content">
+        <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
+        </router-link>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
