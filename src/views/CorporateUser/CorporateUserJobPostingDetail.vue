@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { formatDate1 } from "@/utils/formatters";
+import { formatDate3 } from "@/utils/formatters";
 import { fetchJobPostingDetail } from "@/api/services/adminServiece";
 import { deleteJobPosting } from "@/api/services/corporateUserService";
 import { USER_TYPES } from "@/constants/userTypes";
@@ -47,8 +47,8 @@ export default {
           entName: response.entName,
           postTitle: response.postTitle,
           postImg: response.postImg,
-          startDate: formatDate1(response.startDate),
-          endDate: formatDate1(response.endDate),
+          startDate: formatDate3(response.startDate),
+          endDate: formatDate3(response.endDate),
           jobName: response.jobName,
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
