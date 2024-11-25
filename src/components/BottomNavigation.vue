@@ -1,45 +1,62 @@
 <script>
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import MenuGuidePopup from "@/components/MenuGuidePopup.vue";
 import {ROUTES} from "@/router/routes";
+import {useUserStore} from "@/stores/userStore";
+import {USER_TYPES} from "@/constants/userTypes";
 
 export default {
   name: "BottomNavigation",
   computed: {
+    USER_TYPES() {
+      return USER_TYPES
+    },
     ROUTES() {
       return ROUTES
     }
   },
   components: { MenuGuidePopup },
   setup() {
+    const userStore = useUserStore();
+    const userType = computed(() => userStore.getCurrentUserType);
+    console.log("userType:", userType);
+
     const menuGuidePopupStatue = ref(false);
 
     const icons = {
       home: require('@/assets/images/icons/home.png'),
       company: require('@/assets/images/icons/company.png'),
       wisdom: require('@/assets/images/icons/wisdom.png'),
-      user: require('@/assets/images/icons/user.png')
+      user: require('@/assets/images/icons/user.png'),
+      job: require('@/assets/images/icons/job_posting.png'),
+      employee: require('@/assets/images/icons/employee.png'),
     };
 
     const hoverIcons = {
       home: require('@/assets/images/icons/home_hover.png'),
       company: require('@/assets/images/icons/company_hover.png'),
       wisdom: require('@/assets/images/icons/wisdom_hover.png'),
-      user: require('@/assets/images/icons/user_hover.png')
+      user: require('@/assets/images/icons/user_hover.png'),
+      job: require('@/assets/images/icons/job_posting_hover.png'),
+      employee: require('@/assets/images/icons/employee_hover.png'),
     };
 
     const currentIcon = ref({
       home: true,
-      education: true,
       company: true,
-      user: true
+      wisdom: true,
+      user: true,
+      job: true,
+      employee: true,
     });
 
     const showMenuGuide = ref({
       home: false,
-      education: false,
       company: false,
-      user: false
+      wisdom: false,
+      user: false,
+      job: false,
+      employee: false,
     });
 
     const mouseEnter = (icon) => {
@@ -55,6 +72,7 @@ export default {
     };
 
     return {
+      userType,
       menuGuidePopupStatue,
       icons,
       hoverIcons,
@@ -69,7 +87,7 @@ export default {
 </script>
 
 <template>
-  <nav class="bottom-navigation">
+  <nav class="bottom-navigation" v-if="userType !== USER_TYPES.CORPORATE_MEMBER">
     <ul class="bottom-nav-list">
       <li class="bottom-nav-item">
         <router-link :to="ROUTES.MAIN.path"
@@ -106,6 +124,46 @@ export default {
           <img :src="currentIcon.user ? icons.user : hoverIcons.user" alt="마이" class="nav-icon" />
           마이
         </a>
+      </li>
+    </ul>
+  </nav>
+  <nav class="bottom-navigation" v-else>
+    <ul class="bottom-nav-list">
+      <li class="bottom-nav-item">
+        <router-link :to="ROUTES.MAIN.path"
+                     @mouseenter="mouseEnter('home')"
+                     @mouseleave="mouseLeave('home')"
+        >
+          <img :src="currentIcon.home ? icons.home : hoverIcons.home" alt="홈" class="nav-icon" />
+          홈
+        </router-link>
+      </li>
+      <li class="bottom-nav-item">
+        <router-link :to="ROUTES.JOB_POSTING_MANAGEMENT.path"
+                     @mouseenter="mouseEnter('job')"
+                     @mouseleave="mouseLeave('job')"
+        >
+          <img :src="currentIcon.job ? icons.job : hoverIcons.job" alt="지혜" class="nav-icon" />
+          공고 관리
+        </router-link>
+      </li>
+      <li class="bottom-nav-item">
+        <router-link :to="ROUTES.EMPLOYEE_MANAGEMENT.path"
+                     @mouseenter="mouseEnter('employee')"
+                     @mouseleave="mouseLeave('employee')"
+        >
+          <img :src="currentIcon.employee ? icons.employee : hoverIcons.employee" alt="지혜" class="nav-icon" />
+          직원 관리
+        </router-link>
+      </li>
+      <li class="bottom-nav-item">
+        <router-link :to="ROUTES.CORPORATE_USER_ACCOUNT_MENU.path"
+           @mouseenter="mouseEnter('company')"
+           @mouseleave="mouseLeave('company')"
+        >
+          <img :src="currentIcon.company ? icons.company : hoverIcons.company" alt="마이" class="nav-icon" />
+          기업 정보
+        </router-link>
       </li>
     </ul>
   </nav>

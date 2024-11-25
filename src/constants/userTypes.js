@@ -3,4 +3,5 @@ export const USER_TYPES = {
     CORPORATE_MEMBER: "기업회원",
     SERVICE_ADMIN: "서비스관리자",
     INFRA_ADMIN: "인프라관리자",
+    UNKNOWN: "UNKNOWN",
 };

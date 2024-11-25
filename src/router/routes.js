@@ -142,6 +142,16 @@ export const ROUTES = {
         path: "/employee-management",
         name: "EmployeeManagement"
     },
+    // [기업회원] 프리미엄 패키지
+    PREMIUM_PACKAGE: {
+        path: "/premium-package",
+        name: "PremiumPackageView"
+    },
+    // [기업회원] 결제 관리
+    PAYMENT_MANAGEMENT: {
+        path: "/payment-management",
+        name: "PaymentManagementView"
+    },
     // [개인회원] 지혜 메뉴
     WISDOM_MENU: {
         path: "/wisdom",
