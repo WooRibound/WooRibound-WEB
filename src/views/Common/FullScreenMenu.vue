@@ -153,10 +153,10 @@ export default {
       <div class="menu-content">
         <div class="menu_title">기업 멤버십</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <router-link :to="ROUTES. EMPLOYEE_MANAGEMENT.path">
+          <router-link :to="ROUTES. PREMIUM_PACKAGE.path">
             <div class="menu-item">프리미엄 패키지</div>
           </router-link>
-          <router-link :to="ROUTES. EMPLOYEE_MANAGEMENT.path">
+          <router-link :to="ROUTES. PAYMENT_MANAGEMENT.path">
             <div class="menu-item">결제 관리</div>
           </router-link>
         </div>

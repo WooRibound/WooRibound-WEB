@@ -236,6 +236,16 @@ const router = createRouter({
             name: ROUTES.CORPORATE_USER_PROFILE_READONLY.name,
             component: () => import("@/views/Admin/CorporateUserProfileReadonly.vue"),
         },
+        {
+            path: ROUTES.PREMIUM_PACKAGE.path,
+            name: ROUTES.PREMIUM_PACKAGE.name,
+            component: () => import("@/views/CorporateUser/PremiumPackageView.vue"),
+        },
+        {
+            path: ROUTES.PAYMENT_MANAGEMENT.path,
+            name: ROUTES.PAYMENT_MANAGEMENT.name,
+            component: () => import("@/views/CorporateUser/PaymentManagementView.vue"),
+        },
     ],
 });
 
