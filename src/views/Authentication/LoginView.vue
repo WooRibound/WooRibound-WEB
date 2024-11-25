@@ -23,10 +23,12 @@ export default {
 
     const onIndividualUserLoginClick = () => {
       console.log("개인회원 로그인 하기");
-      // 네이버 OAuth 경로로 리다이렉트
-      window.location.href = "http://localhost:8081/oauth2/authorization/naver"; // 네이버 로그인 요청 url
-    }
 
+      const baseURL = process.env.VUE_APP_OAUTH_URL; // 환경변수에서 baseURL을 가져옵니다.
+
+      // 네이버 OAuth 경로로 리다이렉트
+      window.location.href = baseURL + "/oauth2/authorization/naver"; // 네이버 로그인 요청 URL
+    }
     const onCorporateUserLoginClick = async () => {
       // 입력값 검증
       if (!username.value || !password.value) {
@@ -84,10 +86,11 @@ export default {
       </div>
       <img src="@/assets/images/logo/wooribound_logo.png" class="wooribound-logo" v-if="false">
       <div class="input-section" v-if="activeUserType === USER_TYPES.INDIVIDUAL_USER">
+        <p class="login-guide">네이버 아이디로 간편하게 시작하기</p>
         <div class="login-type" @click="onIndividualUserLoginClick">
-          <img src="@/assets/images/icons/naver.png" class="naver-logo">
-          네이버 계정으로 로그인하기
+          <img src="@/assets/images/icons/naver_login.png" class="naver-logo" alt="네이버 로그인">
         </div>
+        <p class="login-benefit">• 네이버 로그인으로 간편하게 우리바운드를 이용해보세요</p>
       </div>
       <div class="input-section" v-if="activeUserType === USER_TYPES.CORPORATE_MEMBER">
         <input
@@ -227,17 +230,39 @@ export default {
   width: 100%; /* 너비 100% */
 }
 
+.login-guide {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 .login-type {
   display: flex;
-  align-items: center; /* 이미지와 텍스트를 수직으로 정렬 */
-  margin-top: 20px; /* 상단 여백 추가 */
-  border: 1px solid #413F42; /* 선색 설정 */
-  border-radius: 30px; /* 꼭지점 둥글게 설정 */
-  padding: 10px; /* 여백 추가 */
-  width: 95%; /* 너비 100% */
-  justify-content: center; /* 중앙 정렬 */
-  font-weight: bold;
-  height: 30px;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 250px; /* 컨테이너 크기 조절 */
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.naver-logo {
+  width: 300px; /* 이미지 크기 줄임 */
+  height: 45px; /* 높이 명시적 지정으로 두께 조절 */
+  object-fit: contain; /* 이미지 비율 유지 */
+}
+
+.login-type:hover {
+  transform: scale(1.02);  /* 호버시 살짝 커지는 효과 */
+}
+
+.login-benefit {
+  margin-top: 20px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.5;
 }
 
 .error-message {
@@ -246,11 +271,5 @@ export default {
   margin: 8px 0;
   text-align: center;
   width: 100%;
-}
-
-.naver-logo {
-  width: 35px; /* 이미지 너비 조정 */
-  height: auto; /* 비율 유지 */
-  margin-right: 10px; /* 텍스트와의 간격 설정 */
 }
 </style>
