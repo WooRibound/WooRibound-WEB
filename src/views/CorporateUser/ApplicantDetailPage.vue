@@ -285,6 +285,7 @@ export default {
   white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
   font-size: 8pt;
   cursor: pointer;
+  margin-left: 5px;
 }
 .disabled {
   opacity: 0.5;
