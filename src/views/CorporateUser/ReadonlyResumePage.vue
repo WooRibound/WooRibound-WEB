@@ -30,12 +30,9 @@ export default {
     const photoPreview = ref(null); // 이미지 미리보기 URL 저장
 
     const fetchResume = async (userId) => {
-      console.log("fetchResume called with userId:", userId);
       try {
         const response = await fetchApplicantResume(userId);
         resume.value = response.data || {};
-
-        console.log(response.data)
 
         if (response.data.userImg) {
           photoPreview.value = response.data.userImg;

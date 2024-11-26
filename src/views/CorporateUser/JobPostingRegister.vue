@@ -83,7 +83,6 @@ export default {
         const response = await insertJobPosting(jobPosting.value);
         modalMessage.value = response;
         modalPopupStatue.value = true;
-        console.log("공고등록 API 호출 시작 : " + response);
       } catch (e) {
         console.log(e);
       }

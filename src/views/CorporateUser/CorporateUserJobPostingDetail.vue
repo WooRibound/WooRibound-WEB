@@ -42,7 +42,6 @@ export default {
     const fetchJobPosting = async () => {
       try {
         const response = await fetchJobPostingDetail(postId);
-        console.log(response.data)
         jobPosting.value = {
           entName: response.entName,
           postTitle: response.postTitle,
@@ -65,7 +64,6 @@ export default {
     });
 
     const onDeleteClick = async (userType, postId) => {
-      console.log("userType:", userType);
       try {
         if (userType === USER_TYPES.SERVICE_ADMIN) {
           modalMessage.value = "채용공고를 삭제하시겠습니까?";
@@ -75,15 +73,13 @@ export default {
         if (userType === USER_TYPES.CORPORATE_MEMBER) {
           modalMessage.value = "채용공고를 삭제하시겠습니까?";
           showDeleteModal.value = true;
-          console.log(postId)
         }
-        const response = await handleApiCall('update', '/corporate/jobposting/delete', null, {
+          await handleApiCall('update', '/corporate/jobposting/delete', null, {
           params: { postId: postId},
           headers: {
             'Content-Type': 'application/json',
           }
         });
-        console.log("삭제 결과:", response);
 
       } catch (e) {
         console.log(e);
@@ -94,8 +90,7 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        const response = await deleteJobPosting(postId);
-        console.log("삭제 결과:", response);
+        await deleteJobPosting(postId);
         closeModal(true);
 
       } catch (error) {

@@ -21,9 +21,7 @@ export default {
 
     const fetchJobPosting = async () => {
       try {
-        console.log("Fetching job postings");
         const response = await fetchMyPostingList();
-        console.log("API Response:", response);
         jobPostingList.value = response.data || [];
         jobpostingCount.value = jobPostingList.value.length;
       } catch (error) {

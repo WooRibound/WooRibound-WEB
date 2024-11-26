@@ -22,8 +22,6 @@ export default {
     };
 
     const onIndividualUserLoginClick = () => {
-      console.log("개인회원 로그인 하기");
-
       const baseURL = process.env.VUE_APP_OAUTH_URL; // 환경변수에서 baseURL을 가져옵니다.
 
       // 네이버 OAuth 경로로 리다이렉트

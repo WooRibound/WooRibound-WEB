@@ -22,7 +22,6 @@ export default {
     const router = useRouter();
 
     const id = route.params.id
-    console.log(id);
     const employmentList = ref([]);
     // const empRecomm = ref([]);
     // 추천여부 설정
@@ -39,7 +38,6 @@ export default {
         if (response.status === 200) {
           employmentList.value[index].empRecomm = status === "recommend" ? "Y" : "N";
           employmentList.value[index].isActionDisabled = true; // 상태 업데이트 후 버튼 비활성화
-          console.log(`추천 상태 업데이트 완료: ${status}`);
         } else {
           console.error("추천 상태 업데이트 실패:", response.message);
         }

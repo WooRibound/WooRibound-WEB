@@ -18,7 +18,6 @@ export const registerUser = async (userData) => {
 
 const processLoginResponse = async (response) => {
   try {
-    console.log('Response headers:', response.headers);
     const accessToken = response.headers['access'];
 
     if (!accessToken) {
@@ -27,7 +26,6 @@ const processLoginResponse = async (response) => {
     }
 
     localStorage.setItem('accessToken',accessToken);
-    console.log('Access Token saved:', accessToken);
 
     // access token 설정될 때까지 대기 (최대 1초)
     const token = await waitForAccessToken();
@@ -182,7 +180,6 @@ export const isDuplicateCheck = async (id) => {
 export const withdrawIndividual = async () => {
   try {
     const response = await handleApiCall('post', '/individualuser/auth/withdraw');
-    console.log("Withdraw API Response:", response);
     if (response && response.status === 200) {
       return response;
     }

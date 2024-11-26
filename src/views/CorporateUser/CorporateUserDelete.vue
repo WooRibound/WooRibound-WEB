@@ -39,13 +39,11 @@ export default {
       }
 
       try {
-        console.log("탈퇴 요청 시작");
         // password.value를 직접 전달
         const response = await withdrawCorporate(password.value);
 
         if (response && response.status === 200) {
           await userStore.logout();
-          console.log("탈퇴 처리 완료");
           moveToSuccessPage();
         } else {
           throw new Error('탈퇴 처리 실패');

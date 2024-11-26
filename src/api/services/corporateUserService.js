@@ -1,8 +1,5 @@
 import handleApiCall from "@/api/apiService";
 
-// 사용 예시 (다른 파일에서 이 함수를 가져와 사용할 수 있음)
-// import { fetchData, postData, updateData, deleteData } from '@/api/CorporateUserService';
-
 // 기업 회원 정보 조회
 export const fetchEnterprise = async () => {
   try {
@@ -25,33 +22,6 @@ export const updateEnterpriseInfo = async (updatedInfo) => {
   }
 };
 
-// PUT 요청 함수
-export const updateData = async (id, payload) => {
-  try {
-    const response = await handleApiCall(
-      "put",
-      `/your/api/endpoint/${id}`,
-      payload
-    );
-    console.log(response);
-    return response; // 응답을 반환
-  } catch (error) {
-    console.error("Error updating data:", error);
-    throw error; // 오류를 다시 던져서 호출자가 처리할 수 있게 함
-  }
-};
-
-// DELETE 요청 함수
-export const deleteData = async (id) => {
-  try {
-    const response = await handleApiCall("delete", `/your/api/endpoint/${id}`);
-    console.log(response);
-    return response; // 응답을 반환
-  } catch (error) {
-    console.error("Error deleting data:", error);
-    throw error; // 오류를 다시 던져서 호출자가 처리할 수 있게 함
-  }
-};
 
 // 내 기업 공고 목록 조회
 export const fetchMyPostingList = async () => {
@@ -174,10 +144,6 @@ export const insertJobPosting= async (jobPosting) => {
   formData.append('startDate', jobPosting.startDate);
   formData.append('endDate', jobPosting.endDate);
 
-    console.log("FormData 데이터:");
-    for (const [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
   try {
     const response = await handleApiCall('post', `corporate/jobposting/register`, formData);
     return response.data;
@@ -196,7 +162,6 @@ export const deleteJobPosting = async (postId) => {
                 'Content-Type': 'application/json',
             }
         });
-        console.log("삭제 결과:", response);
         return response;
     } catch (error) {
         console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);

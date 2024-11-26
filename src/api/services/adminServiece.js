@@ -40,7 +40,6 @@ export const confirmDelete = async (postId) => {
                 'Content-Type': 'application/json',
             }
         });
-        console.log("삭제 결과:", response);
         return response;
     } catch (error) {
         console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);

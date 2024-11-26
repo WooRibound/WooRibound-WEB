@@ -4,7 +4,6 @@ export default {
   setup() {
     const onFindPasswordClick = () => {
       // todo 비밀번호 찾기 API 구현 시 아래에 로직 추가하기
-      console.log("비밀번호 찾기");
     }
     return {
       onFindPasswordClick

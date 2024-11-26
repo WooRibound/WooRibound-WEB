@@ -14,7 +14,6 @@ export default {
       isLoading.value = true; // 로딩 시작
       try {
         currentElevation.value = await fetchJobPoint(); // API 호출 및 점수 설정
-        console.log("Fetched job point:", currentElevation.value); // 점수 출력
       } catch (error) {
         console.error("Failed to fetch job point:", error);
         alert("신뢰도 점수 조회에 실패했습니다.");
