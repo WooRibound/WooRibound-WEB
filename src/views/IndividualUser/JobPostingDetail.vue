@@ -85,8 +85,13 @@ export default {
 
       try {
         const response = await insertUserApply(postId);
+
         singleButtonModalMessage.value = response;
-        singleButtonModalRoute.value = ROUTES.JOB_APPLICATION_STATUS.path;
+        if (singleButtonModalMessage.value === '이력서를 등록하고 지원해주세요.') {
+          singleButtonModalRoute.value = ROUTES.RESUME_PAGE.path;
+        } else {
+          singleButtonModalRoute.value = ROUTES.JOB_APPLICATION_STATUS.path;
+        }
         singleModalPopupStatue.value = true;
       } catch (e) {
         console.log(e);
