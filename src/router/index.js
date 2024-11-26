@@ -337,10 +337,13 @@ router.beforeEach((to, from, next) => {
             // 권한 타입이 존재하지 않는 경우 메인 페이지로 리다이렉트
             return loginModalStore.openModal(ROUTES.LOGIN.name);
         }
+    }
 
-        if (allowedUserTypes && allowedUserTypes.includes(USER_TYPES.INFRA_ADMIN) || allowedUserTypes.includes(USER_TYPES.SERVICE_ADMIN)) {
-            // 권한 타입이 관리자 경우 메인 페이지 리다이렉션
-            return loginModalStore.openModal(ROUTES.ADMIN_MAIN.name);
+    // 로그인한 관리자 사용자의 메인 페이지 리다이렉션
+    if (userStore.isLoggedIn &&
+        (userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN)) {
+        if (to.path === ROUTES.MAIN.path) {
+            return next({ path: ROUTES.ADMIN_MAIN.path });
         }
     }
 

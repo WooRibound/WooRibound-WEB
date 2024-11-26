@@ -90,7 +90,7 @@ export default {
         <div class="login-type" @click="onIndividualUserLoginClick">
           <img src="@/assets/images/icons/naver_login.png" class="naver-logo" alt="네이버 로그인">
         </div>
-        <p class="login-benefit">• 네이버 로그인으로 간편하게 우리바운드를 이용해보세요</p>
+        <p class="login-benefit">• 네이버 로그인으로 간편하게 우리바운드를 <br> 이용해보세요</p>
       </div>
       <div class="input-section" v-if="activeUserType === USER_TYPES.CORPORATE_MEMBER">
         <input
