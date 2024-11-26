@@ -254,7 +254,7 @@ export default {
         </div>
         <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ jobPosting.jobName }}</div>
+          <div class="schedule-info">[모집직무] {{ jobPosting.jobName }}</div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
                @click="onMoveDetailPageClick(jobPosting.jobPostingId)">
         </div>
