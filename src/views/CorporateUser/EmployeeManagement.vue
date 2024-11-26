@@ -1,12 +1,9 @@
 <script>
-import {useRoute, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {RECOMMEND_TYPES} from "@/constants/recommendTypes";
 import {ROUTES} from "@/router/routes";
-import {
-  fetchEmployeeList,
-  setEmployeeRating
-} from "@/api/services/corporateUserService";
+import {fetchEmployeeList, setEmployeeRating} from "@/api/services/corporateUserService";
 import {formatDate2} from "../../utils/formatters";
 
 export default {
@@ -18,10 +15,8 @@ export default {
     }
   },
   setup() {
-    const route = useRoute();
     const router = useRouter();
 
-    const id = route.params.id
     const employmentList = ref([]);
     // const empRecomm = ref([]);
     // 추천여부 설정
