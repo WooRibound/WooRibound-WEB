@@ -99,7 +99,7 @@ export default {
       <div class="header-title">공고 관리</div>
       <div class="header-register-job" @click="onRegisterJobPostingClick">공고 등록</div>
     </div>
-    <div class="job-posting-wrap">
+    <div class="job-posting-wrap" v-if="jobpostingCount > 0">
       <div class="job-posting-info">{{ jobpostingCount }}건</div>
       <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting">
         <div class="job-posting-list-top">
@@ -123,6 +123,9 @@ export default {
                @click="onMoveDetailPageClick(jobPosting.postId)">
         </div>
       </div>
+    </div>
+    <div class="job-posting-wrap" v-else>
+      등록된 공고가 없습니다.
     </div>
   </main>
 </template>
