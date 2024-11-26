@@ -12,6 +12,7 @@ import {
   fetchRecommendJobPostings
 } from "@/api/services/individualUserService";
 import JobPostingInfoModal from "@/components/JobPostingInfoModal.vue";
+import {useUserStore} from "@/stores/userStore";
 
 export default {
   name: "JobPostingsPage",
@@ -25,9 +26,12 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const userStore = useUserStore();
+
+
     const viewType = ref(route.params.viewType || 'all');
     const modalPopupStatue = ref(false);
-    const jobPostingInfoOverlayStatus = ref(true);
+    const jobPostingInfoOverlayStatus = ref(false);
     const searchInput = ref("");
     const filterTypes = ref("");
     const selectedProvince = ref("전체 지역");
@@ -157,6 +161,10 @@ export default {
     };
 
     const showJobPostingInfoOverlay = () => {
+      if (userStore.isAuthenticated) {
+        return;
+      }
+      
       if (viewType.value === 'career' || viewType.value === 'new') {
         jobPostingInfoOverlayStatus.value = true;
       } else {
