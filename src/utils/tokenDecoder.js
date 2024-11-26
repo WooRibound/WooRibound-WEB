@@ -43,7 +43,7 @@ export const decodeToken = () => {
         userType = USER_TYPES.SERVICE_ADMIN;
         break;
       case 'ROLE_INFRA_ADMIN':
-        userType = USER_TYPES.INDIVIDUAL_USER;
+        userType = USER_TYPES.INFRA_ADMIN;
         break;
       case 'ROLE_ENTERPRISE_USER':
         userType = USER_TYPES.CORPORATE_MEMBER;
