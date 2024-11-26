@@ -340,7 +340,6 @@ router.beforeEach((to, from, next) => {
     }
 
     // 로그인한 관리자 사용자의 메인 페이지 리다이렉션
-    console.log("userStore.userType:", userStore.userType);
     if (userStore.isLoggedIn &&
         (userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN)) {
         if (to.path === ROUTES.MAIN.path) {
