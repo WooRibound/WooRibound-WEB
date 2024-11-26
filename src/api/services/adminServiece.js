@@ -63,7 +63,7 @@ export const fetchLogDashboard = async () => {
     try {
       const response = await handleApiCall('get', '/admin/auth/dashboard');
       const dashboardUrl = response.data;
-  
+
       // 페이지 이동
       window.location.href = dashboardUrl;
     } catch (error) {
@@ -71,4 +71,3 @@ export const fetchLogDashboard = async () => {
       throw error;
     }
   };
-  
