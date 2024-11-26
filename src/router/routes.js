@@ -132,6 +132,11 @@ export const ROUTES = {
         path: "/job-posting/applicants/recommend/:jobId/:postId",
         name: "ApplicantRecommendPage"
     },
+    // [기업회원] 추천 지원자 프리미엄
+    RECOMMEND_PREMIUM_PAGE: {
+        path: "/job-posting/applicants/recommend/premium/:userId",
+        name: "RecommendPremiumPage"
+    },
     // [기업회원] 이력서 보기
     READONLY_RESUME_PAGE: {
         path: "/corporate-user/resume/:id?",
