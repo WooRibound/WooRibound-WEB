@@ -132,17 +132,22 @@ export default {
 .job-posting-info {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 10px;
 }
 
 .job-posting-list {
-  background-color: #D9D9D9;
+  background-color: #ffffff;
   border-radius: 15px;
   padding: 15px;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .job-posting-list-top {
@@ -153,8 +158,8 @@ export default {
 }
 
 .course-title {
-  font-size: 18px;
-  margin-right: auto;
+  margin-bottom: 12px;
+  color: #6c757d;
 }
 
 .recruitment-phase {
@@ -192,6 +197,8 @@ export default {
 
 .schedule-info {
   flex: 1;
+  color: #6c757d;
+  font-size: 10pt;
 }
 
 

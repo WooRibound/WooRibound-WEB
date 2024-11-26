@@ -351,7 +351,6 @@ export default {
 .job-posting-list-top {
   display: flex;
   justify-content: space-between;
-  /* Aligns items on both ends */
   align-items: center;
   margin-bottom: 5px;
 }
