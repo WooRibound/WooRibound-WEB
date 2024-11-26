@@ -287,13 +287,13 @@ const router = createRouter({
             path: ROUTES.PREMIUM_PACKAGE.path,
             name: ROUTES.PREMIUM_PACKAGE.name,
             component: () => import("@/views/CorporateUser/PremiumPackageView.vue"),
-            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.CORPORATE_MEMBER },
         },
         {
             path: ROUTES.PAYMENT_MANAGEMENT.path,
             name: ROUTES.PAYMENT_MANAGEMENT.name,
             component: () => import("@/views/CorporateUser/PaymentManagementView.vue"),
-            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.CORPORATE_MEMBER },
         },
         {
             path: ROUTES.LOG_DASH_BOARD_MANAGEMENT.path,
