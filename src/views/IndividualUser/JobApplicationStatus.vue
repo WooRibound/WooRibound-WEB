@@ -22,6 +22,7 @@ export default {
         applyId: item.applyId,
         result: item.result,
         entName: item.entName,
+        postId: item.postId,
         postTitle: item.postTitle,
         startDate: formatDate1(item.startDate),
         endDate: formatDate1(item.endDate),
@@ -36,15 +37,12 @@ export default {
       fetchJopApplication();
     })
 
-    const onMoveDetailPageClick = (applyId) => {
-      const jobApplication = jobApplicationList.value.find(item => item.applyId === applyId);
-      const resultValue = jobApplication && jobApplication.result === APPLY_TYPES.CANCELED ? 'canceled' : null;
-
+    const onMoveDetailPageClick = (postId, applyId) => {
       router.push({
-        name: ROUTES.JOB_POSTING_DETAIL.name,
+        name: ROUTES.JOB_APPLICATION_STATUS_DETAIL.name,
         params:{
+          postId: postId,
           applyId: applyId,
-          state: resultValue,
         },
       })
     }
@@ -103,7 +101,12 @@ export default {
         <div class="course-subtitle">{{ jobApplication.postTitle }}</div>
         <div class="course-schedule">
           <div class="schedule-info">{{ jobApplication.startDate }} ~ {{ jobApplication.endDate }}</div>
-          <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon" @click="onMoveDetailPageClick(jobApplication.applyId)">
+          <img
+              src="@/assets/images/icons/rightarrows.png"
+              class="right-arrow-icon"
+              alt="Right Arrow Icon"
+              @click="onMoveDetailPageClick(jobApplication.postId, jobApplication.applyId)"
+          >
         </div>
       </div>
     </div>

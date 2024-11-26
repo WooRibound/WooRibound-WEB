@@ -3,50 +3,60 @@ import {onMounted, ref} from "vue";
 import {formatDate3} from "@/utils/formatters";
 import {ROUTES} from "@/router/routes";
 import {useRoute} from "vue-router";
-import {fetchJobPostingDetail, insertUserApply} from "@/api/services/individualUserService";
-import {useUserStore} from "@/stores/userStore";
+import TwoButtonModal from '@/components/TwoButtonModal.vue';
+import {deleteUserApply, fetchJobApplyDetail} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
+import {APPLY_TYPES} from "@/constants/applyTypes";
 
 export default {
-  name: "JobPostingDetail",
-  components: {SingleButtonModal },
+  name: "JobApplicationStatusDetail",
+  components: {SingleButtonModal, TwoButtonModal },
   computed: {
+    APPLY_TYPES() {
+      return APPLY_TYPES
+    },
     ROUTES() {
       return ROUTES;
     }
   },
   setup() {
     const route = useRoute();
-    const userStore = useUserStore();
-    const postId = route.params.postId;
+    const applyId = route.params.applyId;
 
     const singleModalPopupStatue = ref(false);
+    const twoButtonModalPopupStatue = ref(false);
     const singleButtonModalMessage = ref('');
+    const twoButtonModalMessage = ref('');
     const singleButtonModalRoute = ref('');
+    const twoButtonModalRoute = ref('');
     const isApplicationOpened = ref(false);
     const isApplicationClosed = ref(false);
 
-    const jobPosting = ref({
-      entName: '',
+    const userApplyDetail = ref({
+      result: '',
+      postId: null,
       postTitle: '',
       postImg: '',
+      jobName: '',
       startDate: '',
       endDate: '',
-      jobName: '',
+      entName: '',
       entAddr1: '',
-      entAddr2: ''
+      pentAddr2: '',
     });
 
     const fetchJobPosting = async () => {
       try {
-        const response = await fetchJobPostingDetail(postId);
-        jobPosting.value = {
-          entName: response.entName,
+        const response = await fetchJobApplyDetail(applyId);
+        userApplyDetail.value = {
+          result: response.result,
+          postId: response.postId,
           postTitle: response.postTitle,
           postImg: response.postImg,
+          jobName: response.jobName,
           startDate: formatDate3(response.startDate),
           endDate: formatDate3(response.endDate),
-          jobName: response.jobName,
+          entName: response.entName,
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
         };
@@ -65,42 +75,45 @@ export default {
     };
 
     onMounted(() => {
-      fetchJobPosting(postId);
+      fetchJobPosting();
 
     });
 
-    const onApplyClick = async (postId) => {
-      if (!userStore.isLoggedIn) {
-        singleButtonModalMessage.value = '로그인 후 이용해주세요.';
-        singleButtonModalRoute.value = '';
-        singleModalPopupStatue.value = true;
-        return;
-      }
 
+    const onApplyCancelClick = () => {
+      twoButtonModalMessage.value = '정말로 지원을 취소하시겠습니까?';
+      twoButtonModalRoute.value = '';
+      twoButtonModalPopupStatue.value = true;
+    }
+
+    const deleteJobPostingApplyCancel = async (applyId) => {
       try {
-        const response = await insertUserApply(postId);
-
+        const response = await deleteUserApply(applyId);
         singleButtonModalMessage.value = response;
-        if (singleButtonModalMessage.value === '이력서를 등록하고 지원해주세요.') {
-          singleButtonModalRoute.value = ROUTES.RESUME_PAGE.path;
-        } else {
-          singleButtonModalRoute.value = ROUTES.JOB_APPLICATION_STATUS.path;
-        }
+        singleButtonModalRoute.value = ROUTES.JOB_APPLICATION_STATUS.path;
         singleModalPopupStatue.value = true;
       } catch (e) {
         console.log(e);
+        singleButtonModalMessage.value = '오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+        singleButtonModalRoute.value = '';
+        singleModalPopupStatue.value = true;
+
       }
-    };
+    }
 
     return {
       singleModalPopupStatue,
+      twoButtonModalPopupStatue,
       singleButtonModalMessage,
+      twoButtonModalMessage,
       singleButtonModalRoute,
-      postId,
-      jobPosting,
+      twoButtonModalRoute,
+      applyId,
+      userApplyDetail,
       isApplicationOpened,
       isApplicationClosed,
-      onApplyClick,
+      onApplyCancelClick,
+      deleteJobPostingApplyCancel,
     };
   }
 };
@@ -108,43 +121,53 @@ export default {
 
 <template>
   <main class="job-posting-detail">
-    <div class="job-posting-header">채용공고 상세페이지</div>
+    <div class="job-posting-header">지원 현황</div>
+    <div class="job-posting-subtitle">채용공고 상세페이지</div>
     <div class="job-posting-content">
       <div class="company-logo">
-        <img :src="jobPosting.postImg" alt="Company Logo">
+        <img :src="userApplyDetail.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
-        <div class="job-posting-title">{{ jobPosting.postTitle }}</div>
-        <div class="company-name">{{ jobPosting.entName }}</div>
+        <div class="job-posting-title">{{ userApplyDetail.postTitle }}</div>
+        <div class="company-name">{{ userApplyDetail.entName }}</div>
         <div class="info-item">
           <span class="label">
             <img src="@/assets/images/icons/job.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
             직무 </span><br>
-          <span class="aligned-label"> {{ jobPosting.jobName }}</span>
+          <span class="aligned-label"> {{ userApplyDetail.jobName }}</span>
         </div>
         <div class="info-item">
           <span class="label">
             <img src="@/assets/images/icons/clock.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
             모집기간 </span><br>
-          <span class="aligned-label"> {{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</span>
+          <span class="aligned-label"> {{ userApplyDetail.startDate }} ~ {{ userApplyDetail.endDate }}</span>
         </div>
         <div class="info-item">
           <span class="label">
             <img src="@/assets/images/icons/address.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
             기업주소 </span><br>
-          <span class="aligned-label"> {{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</span>
+          <span class="aligned-label">  {{ userApplyDetail.entAddr1 }} {{ userApplyDetail.entAddr2 }}</span>
         </div>
       </div>
     </div>
     <div v-if="isApplicationClosed" class="not-application-date-button">접수 마감</div>
-    <div v-else-if="postId && isApplicationOpened" class="apply-button" @click="onApplyClick(postId)">지원 접수</div>
-    <div v-else-if="postId && !isApplicationOpened" class="not-application-date-button">접수 예정</div>
+    <div v-else-if="userApplyDetail.result === APPLY_TYPES.PENDING" class="apply-cancel-button" @click="onApplyCancelClick(applyId)">지원 취소</div>
+    <div v-else-if="userApplyDetail.result === APPLY_TYPES.CANCELED" class="not-application-date-button">지원 취소된 공고</div>
   </main>
   <single-button-modal
       v-if="singleModalPopupStatue"
       @close-modal="singleModalPopupStatue = false"
       :modal-message="singleButtonModalMessage"
       :router-path="singleButtonModalRoute"
+  />
+  <TwoButtonModal
+      v-if="twoButtonModalPopupStatue"
+      @confirm="deleteJobPostingApplyCancel(applyId)"
+      @close-modal="twoButtonModalPopupStatue = false"
+      :modal-message="twoButtonModalMessage"
+      leftButtonText="확인"
+      rightButtonText="취소"
+      :router-path="twoButtonModalRoute"
   />
 </template>
 
@@ -161,6 +184,13 @@ export default {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.job-posting-subtitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .job-posting-content {
@@ -204,6 +234,57 @@ export default {
   font-weight: bold;
   color: #000000;
   margin-bottom: 5px;
+}
+
+.job-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.job-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.application-period {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.application-dates {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.company-address-label {
+  font-size: 18px;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.company-address {
+  font-size: 18px;
+  color: #333;
+}
+
+.apply-cancel-button,
+.apply-button{
+  width: 90%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 20px auto 0 auto;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
 }
 
 .label {
