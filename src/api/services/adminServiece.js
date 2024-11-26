@@ -57,3 +57,17 @@ export const fetchJobPostingDetail = async (postId) => {
       throw error;
     }
   }
+
+// 로그 대시보드 페이지 요청
+export const fetchLogDashboard = async () => {
+    try {
+      const response = await handleApiCall('get', '/admin/auth/dashboard');
+      const dashboardUrl = response.data;
+
+      // 페이지 이동
+      window.location.href = dashboardUrl;
+    } catch (error) {
+      console.error('Failed to fetch:', error);
+      throw error;
+    }
+  };
