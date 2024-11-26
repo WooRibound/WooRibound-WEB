@@ -1,12 +1,11 @@
 <script>
-import { ref, computed, onMounted } from "vue";
+import {computed, onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import TermsPrivacyOfServicePopup from "@/components/TermsPrivacyOfServicePopup.vue";
-import { useRegionsStore } from "@/stores/useRegionsStore";
-import { ROUTES } from "@/router/routes";
-import { useUserStore } from "@/stores/userStore";
-import { decodeToken } from "@/utils/tokenDecoder";
-import { fetchJoinInfo, join } from "@/api/services/individualUserService";
+import {useRegionsStore} from "@/stores/useRegionsStore";
+import {ROUTES} from "@/router/routes";
+import {decodeToken} from "@/utils/tokenDecoder";
+import {fetchJoinInfo, join} from "@/api/services/individualUserService";
 import {isEmailValid, isOnlyLetters, isPhoneNumberValid} from "@/utils/validators";
 import {formatPhoneNumber} from "@/utils/formatters";
 import {useJobStore} from "@/stores/useJobStore";
@@ -259,8 +258,6 @@ export default {
       if (accessToken) {
         const tokenWithBearer = `Bearer ${accessToken}`;
         localStorage.setItem("accessToken", tokenWithBearer);
-
-        const store = useUserStore();
 
         const success = decodeToken();
 
