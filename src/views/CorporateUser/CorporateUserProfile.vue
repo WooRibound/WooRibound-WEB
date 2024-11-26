@@ -95,9 +95,8 @@ export default {
 
     const onUpdateProfilerClick = async () => {
       try {
-        const response = await updateEnterpriseInfo(enterprise.value);
+        await updateEnterpriseInfo(enterprise.value);
         originalInfo.value = { ...enterprise.value };
-        console.log(response)
 
         modalMessage.value = "수정이 완료 되었습니다.";
         modalPopupStatue.value = true;

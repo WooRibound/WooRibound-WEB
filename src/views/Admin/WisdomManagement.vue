@@ -65,8 +65,6 @@ export default {
 
         wisdomList.value = response.data;
         wisdomCount.value = wisdomList.value.length;
-
-        console.log(response.data)
       } catch (error) {
         console.error("fetchWisdoms API 호출 오류:", error);
       }

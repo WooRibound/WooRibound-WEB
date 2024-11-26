@@ -17,9 +17,6 @@ export default {
     const jobId = route.params.jobId;
     const postId = route.params.postId;
 
-    console.log("Job ID:", jobId);
-    console.log("Post Id:", postId);
-
     const applicantsList = ref([]);
     const jobposting = ref({});
     const startDate = ref("");
@@ -81,7 +78,6 @@ export default {
     }
 
     const onMovePremiumFunctionPageClick = (userId) => {
-      console.log("프리미업 가입 API 호출 "+ userId);
       router.push({
         name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
         params: {

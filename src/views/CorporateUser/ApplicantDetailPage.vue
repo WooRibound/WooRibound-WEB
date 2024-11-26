@@ -97,7 +97,6 @@ export default {
         if (response.status === 200) {
           // 상태 업데이트
           applicantsList.value[index].result = applyResult === "ACCEPTED" ? "ACCEPTED" : "REJECTED";
-          console.log(`지원자 상태 업데이트 완료: ${applyResult}`);
         } else {
           console.error("지원자 상태 업데이트 실패:", response.message);
         }
@@ -107,7 +106,6 @@ export default {
     };
 
     const onRecommendButtonClick = (postId, jobId) => {
-      console.log("추천지원자 API 호출 "+ postId +" " + jobId);
       router.push({
         name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
         params: {
@@ -118,7 +116,6 @@ export default {
     };
 
     const onMovePremiumFunctionPageClick = (userId) => {
-      console.log("프리미업 가입 API 호출 "+ userId);
       router.push({
         name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
         params: {

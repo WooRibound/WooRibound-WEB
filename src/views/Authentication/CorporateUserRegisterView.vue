@@ -56,7 +56,6 @@ export default {
     const validateRegNum = () => {
       const pattern = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/; // ***-**-*****
       isValidRegNum.value = pattern.test(formData.value.regNum);
-      console.log("사업자번호 검증 결과:", isValidRegNum.value);
     };
 
     // 사업자번호 포맷팅

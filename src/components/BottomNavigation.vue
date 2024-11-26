@@ -19,7 +19,6 @@ export default {
   setup() {
     const userStore = useUserStore();
     const userType = computed(() => userStore.getCurrentUserType);
-    console.log("userType:", userType);
 
     const menuGuidePopupStatue = ref(false);
 

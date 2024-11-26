@@ -47,9 +47,7 @@ export default {
       try {
         const response = await withdrawIndividual();
         await useUserStore().logout();
-        console.log("탈퇴 API 응답:", response);
         if (response && response.status === 200) {
-          console.log("탈퇴 처리 완료");
           moveToSuccessPage();
         } else {
           throw new Error('탈퇴 처리 실패');

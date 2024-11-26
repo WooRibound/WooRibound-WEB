@@ -77,7 +77,6 @@ export default {
 
     // 사용자 상세 페이지로 이동하는 함수
     const onMoveDetailPageClick = (userId) => {
-      console.log("userId ??: " +userId)
       router.push({
         name: ROUTES.READONLY_RESUME_PAGE.name,
         params: { id: userId },
