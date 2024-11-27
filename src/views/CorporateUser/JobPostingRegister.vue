@@ -143,7 +143,11 @@ export default {
       <div class="input-section">
         <!-- 공고 이미지 등록 -->`
         <div class="photo-label">
-          <div v-if="!photoPreview" class="photo-placeholder">사진 (권장사이즈 : 900px x 300px) </div>
+          <div v-if="!photoPreview" class="photo-placeholder">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            사진 <br> (권장사이즈 : 900px x 300px)
+          </div>
           <img v-if="photoPreview" :src="photoPreview" class="photo-preview"  alt=""/>
           <button class="image-register-button" @click="onImageRegisterClick">사진등록</button>
           <input
