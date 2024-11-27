@@ -209,13 +209,14 @@ export default {
 .label {
   display: inline-block;
   width: 90px; /* 라벨 넓이 설정으로 직무, 모집기간, 기업주소 일치 */
-  font-weight: 500;
+  font-weight: 800;
   margin-bottom: 5px;
   font-size: 11pt;
 }
 
 .aligned-label {
   font-size: 11pt;
+  margin-left: 25px;
 }
 
 .not-application-date-button {
