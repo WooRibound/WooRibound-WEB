@@ -93,11 +93,11 @@ export default {
           </div>
           <div class="menu-item" @click="navigateToJobPostings('new')">
             <img src="@/assets/images/menuIcons/job_new.png">
-            새로운 일 찾기
+            <span>새로운 일 찾기</span>
           </div>
           <div class="menu-item" @click="navigateToJobPostings('all')">
             <img src="@/assets/images/menuIcons/job_all.png">
-            전체 조회
+            <span>전체 조회</span>
           </div>
         </div>
       </div>
@@ -106,12 +106,15 @@ export default {
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.WISDOM_SHARE.path">
             <div class="menu-item">
-              <img src="@/assets/images/menuIcons/job_career.png">
+              <img src="@/assets/images/menuIcons/wisdom_share.png">
               <span>지혜 나누기</span>
             </div>
           </router-link>
           <router-link :to="ROUTES.WISDOM_EXPLORE.path">
-            <div class="menu-item">지혜 탐색</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/wisdom_explore.png">
+              <span>지혜 탐색</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -119,16 +122,28 @@ export default {
         <div class="menu_title">내 정보 보기</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
-            <div class="menu-item">개인 정보</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/my_page.png">
+              <span>개인 정보</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
-            <div class="menu-item">지원 현황</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/user_apply.png">
+              <span>지원 현황</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.RESUME_PAGE.path">
-            <div class="menu-item">이력서</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/resume.png">
+              <span>이력서</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
-            <div class="menu-item">우바 고도</div>
+            <div class="menu-item">
+              <img src="../../assets/images/menuIcons/wb_elevationInfo.png">
+              <span>우바 고도</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -321,8 +336,10 @@ export default {
 }
 
 .menu-item {
+  display: flex; /* Flexbox 적용 */
+  align-items: center; /* 수직 가운데 정렬 */
   padding: 10px 0; /* 항목의 상하 여백 */
-  cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
+  cursor: pointer;
 }
 .menu-item span {
 }
@@ -332,6 +349,12 @@ export default {
   height: 30px;
   margin-right: 5px;
 }
+
+.menu-item span {
+  margin-left: 15px;
+  line-height: normal; /* 기본 줄 간격 유지 */
+}
+
 
 .menu-item:last-child {
   border-bottom: none; /* 마지막 항목의 구분선 제거 */
