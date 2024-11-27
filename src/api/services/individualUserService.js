@@ -216,7 +216,18 @@ export const fetchRecentJobPostings = async () => {
 // 지원 현황 조회
 export const fetchJobApply = async () => {
   try {
-    const response = await handleApiCall('get', `/individualuser/info/jobposting/myapply?userId=USER001`);
+    const response = await handleApiCall('get', `/individualuser/info/jobposting/myapply`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
+// 지원 현황 상세조회
+export const fetchJobApplyDetail = async (applyId) => {
+  try {
+    const response = await handleApiCall('get', `/individualuser/info/jobposting/myapply/detail?applyId=${applyId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch:', error);

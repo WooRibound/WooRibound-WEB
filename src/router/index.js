@@ -44,6 +44,12 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {
+            path: ROUTES.JOB_APPLICATION_STATUS_DETAIL.path,
+            name:  ROUTES.JOB_APPLICATION_STATUS_DETAIL.name,
+            component: () => import("@/views/IndividualUser/JobApplicationStatusDetail.vue"),
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
+        },
+        {
             path: ROUTES.RESUME_PAGE.path,
             name: ROUTES.RESUME_PAGE.name,
             component: () => import("@/views/IndividualUser/ResumePage.vue"),
