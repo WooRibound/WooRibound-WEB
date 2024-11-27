@@ -105,7 +105,6 @@ export default {
     };
 
     const handleSlideTouch = (index) => {
-      console.log(index, userType.value);
       currentSlide.value = index;
 
       if (userType.value === USER_TYPES.CORPORATE_MEMBER) {
@@ -131,12 +130,23 @@ export default {
     };
 
     const onMoveDetailPageClick = (postId) => {
+      if (userType.value === USER_TYPES.CORPORATE_MEMBER) {
+        router.push({
+          name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
+          params: {
+            postId: postId
+          },
+        });
+        return;
+      }
+
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
         params: {
           postId: postId
         },
-      })
+      });
+
     };
 
     onMounted(() => {

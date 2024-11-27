@@ -92,9 +92,9 @@ export default {
 
     const onMoveDetailPageClick = (postId) => {
       router.push({
-        name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
+        name: ROUTES.ADMIN_CORPORATE_JOB_POSTING_DETAIL.name,
         params: {
-          id: postId
+          postId: postId
         },
       })
     }
