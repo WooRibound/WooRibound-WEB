@@ -320,6 +320,8 @@ export default {
   padding: 10px 0; /* 항목의 상하 여백 */
   cursor: pointer;
 }
+.menu-item span {
+}
 
 .menu-item img {
   width: 30px;
