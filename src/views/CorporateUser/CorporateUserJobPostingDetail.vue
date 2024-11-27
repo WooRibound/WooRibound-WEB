@@ -133,20 +133,20 @@ export default {
         <div class="info-item">
           <span class="label">
             <img src="@/assets/images/icons/job.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
-            직무 </span>
-          <span class="aligned-label"> : {{ jobPosting.jobName }}</span>
+            직무 </span><br>
+          <span class="aligned-label"> {{ jobPosting.jobName }}</span>
         </div>
         <div class="info-item">
           <span class="label">
             <img src="@/assets/images/icons/clock.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
-            모집기간 </span>
-          <span class="aligned-label"> : {{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</span>
+            모집기간 </span><br>
+          <span class="aligned-label"> {{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</span>
         </div>
         <div class="info-item">
           <span class="label">
             <img src="@/assets/images/icons/address.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
-            기업주소 </span>
-          <span class="aligned-label"> : {{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</span>
+            기업주소 </span><br>
+          <span class="aligned-label"> {{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</span>
         </div>
       </div>
     </div>
@@ -271,5 +271,10 @@ export default {
 .company-address {
   font-size: 18px;
   color: #333;
+}
+
+.aligned-label {
+  font-size: 11pt;
+  margin-left: 25px;
 }
 </style>

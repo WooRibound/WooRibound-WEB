@@ -140,10 +140,16 @@ export default {
         <div class="menu_title">기업 정보</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.CORPORATE_USER_ACCOUNT_MENU.path">
-            <div class="menu-item">기업 정보 수정</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_update.png">
+              <span>기업 정보 수정</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.CORPORATE_USER_DELETE.path">
-            <div class="menu-item">탈퇴하기</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_delete.png">
+              <span>탈퇴하기</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -151,10 +157,16 @@ export default {
         <div class="menu_title">공고 관리</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.JOB_POSTING_MANAGEMENT.path">
-            <div class="menu-item">공고 목록</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_posting.png">
+              <span>공고 목록</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.JOB_POSTING_REGISTER.path">
-            <div class="menu-item">공고 등록</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_upload.png">
+              <span>공고 등록</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -162,7 +174,10 @@ export default {
         <div class="menu_title">직원 관리</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES. EMPLOYEE_MANAGEMENT.path">
-            <div class="menu-item">직원 관리</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_employees.png">
+              <span>직원 관리</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -170,10 +185,16 @@ export default {
         <div class="menu_title">기업 멤버십</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES. PREMIUM_PACKAGE.path">
-            <div class="menu-item">프리미엄 패키지</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_premium.png">
+              <span> 프리미엄 패키지 </span>
+            </div>
           </router-link>
           <router-link :to="ROUTES. PAYMENT_MANAGEMENT.path">
-            <div class="menu-item">결제 관리</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_payment.png">
+              <span> 결제 관리</span>
+            </div>
           </router-link>
         </div>
       </div>
