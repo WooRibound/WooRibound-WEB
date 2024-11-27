@@ -45,6 +45,7 @@ export default {
 
     const fetchJobPosting = async () => {
       try {
+        console.log("fetchJobPosting API 호출 시작")
         const response = await fetchJobPostingDetail(postId || applyId);
         jobPosting.value = {
           entName: response.entName,
