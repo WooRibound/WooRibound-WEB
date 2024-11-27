@@ -201,7 +201,7 @@ export default {
 }
 
 .job-posting-info div {
-  margin-bottom: 10px;
+  margin-bottom: 17px;
 }
 
 .delete-button {
