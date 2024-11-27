@@ -1,16 +1,24 @@
 <script>
 
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {fetchRecentJobPostings, fetchRecommendJobPostings} from "@/api/services/individualUserService";
 import {ROUTES} from "@/router/routes";
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/userStore";
+import {USER_TYPES} from "@/constants/userTypes";
 
 export default {
   name: "MainView",
+  computed: {
+    USER_TYPES() {
+      return USER_TYPES
+    }
+  },
   data() {
     const router = useRouter();
+    const userStore = useUserStore();
 
-    const serviceGuideList = ref([
+    const individualServiceGuideList = ref([
       {
         title: "경력 살려서 채용공고 찾기",
         subtitle: "경력을 살려보는건 어때요?",
@@ -35,7 +43,36 @@ export default {
         viewType: '',
         backgroundColor: '#C9E6F0'
       },
-    ])
+    ]);
+
+    const corporateServiceGuideList = ref([
+      {
+        title: "프리미엄 패키지 가입하기",
+        subtitle: "프리미엄 가입하고 원하는 인재를 찾아볼까?",
+        img: require('@/assets/images/icons/findPeople.png'),
+        route: ROUTES.PREMIUM_PACKAGE.name,
+        viewType: '',
+        backgroundColor: '#F2EED7'
+      },
+      {
+        title: "공고 등록 손쉽게 하기",
+        subtitle: "공고 등록 하러가자!",
+        img: require('@/assets/images/icons/job_register.png'),
+        route: ROUTES.JOB_POSTING_MANAGEMENT.name,
+        viewType: '',
+        backgroundColor: '#F5EFFF'
+      },
+      {
+        title: "우바에서 채용한 직원 한눈에 보기",
+        subtitle: "우바에서 몇 명이나 채용 되었을까?",
+        img: require('@/assets/images/icons/wb_employee.png'),
+        route: ROUTES.EMPLOYEE_MANAGEMENT.name,
+        viewType: '',
+        backgroundColor: '#C9E6F0'
+      },
+    ]);
+
+    const userType = computed(() => userStore.getCurrentUserType);
     const recommendJobPostingList = ref();
     const recentJobPostingList = ref();
     const currentSlide = ref(0);
@@ -54,7 +91,7 @@ export default {
 
     // 슬라이드 변경 함수
     const changeSlide = () => {
-      currentSlide.value = (currentSlide.value + 1) % serviceGuideList.value.length;
+      currentSlide.value = (currentSlide.value + 1) % individualServiceGuideList.value.length;
     };
 
     // 자동 슬라이드 변경: 1초마다 슬라이드 변경
@@ -67,19 +104,26 @@ export default {
       clearInterval(slideInterval);
     };
 
-    // 슬라이드 터치 또는 클릭 이벤트
     const handleSlideTouch = (index) => {
+      console.log(index, userType.value);
       currentSlide.value = index;
 
-      if (serviceGuideList.value[index].route === ROUTES.WISDOM_EXPLORE.name) {
+      if (userType.value === USER_TYPES.CORPORATE_MEMBER) {
         router.push({
-          name: serviceGuideList.value[index].route,
+          name: corporateServiceGuideList.value[index].route,
+        });
+        return;
+      }
+
+      if (individualServiceGuideList.value[index].route === ROUTES.WISDOM_EXPLORE.name) {
+        router.push({
+          name: individualServiceGuideList.value[index].route,
         });
       } else {
         router.push({
-          name: serviceGuideList.value[index].route,
+          name: individualServiceGuideList.value[index].route,
           params: {
-            viewType: serviceGuideList.value[index].viewType,
+            viewType: individualServiceGuideList.value[index].viewType,
           }
         });
       }
@@ -93,7 +137,7 @@ export default {
           postId: postId
         },
       })
-    }
+    };
 
     onMounted(() => {
       fetchJobPosting();
@@ -107,7 +151,9 @@ export default {
     });
 
     return {
-      serviceGuideList,
+      individualServiceGuideList,
+      corporateServiceGuideList,
+      userType,
       recommendJobPostingList,
       recentJobPostingList,
       currentSlide,
@@ -121,14 +167,14 @@ export default {
 <template>
   <main class="body">
     <div class="content">
-      <!-- 서비스 안내 슬라이드 -->
-      <div class="service-guide-section">
+      <!-- 기업 유저 서비스 안내 슬라이드 -->
+      <div class="service-guide-section" v-if="userType === USER_TYPES.CORPORATE_MEMBER">
         <div
             class="service-guide-item"
             :style="{ transform: `translateX(-${currentSlide * 100}%)`,
                       backgroundColor: serviceGuide.backgroundColor
                     }"
-            v-for="(serviceGuide, index) in serviceGuideList"
+            v-for="(serviceGuide, index) in corporateServiceGuideList"
             :key="index"
             @click="handleSlideTouch(index)"
         >
@@ -141,8 +187,26 @@ export default {
           </div>
         </div>
       </div>
-      <div class="slider-indicator">
-        {{ currentSlide + 1 }} / {{ serviceGuideList.length }}
+
+      <!-- 개인 유저 서비스 안내 슬라이드 -->
+      <div class="service-guide-section" v-else>
+        <div
+            class="service-guide-item"
+            :style="{ transform: `translateX(-${currentSlide * 100}%)`,
+                      backgroundColor: serviceGuide.backgroundColor
+                    }"
+            v-for="(serviceGuide, index) in individualServiceGuideList"
+            :key="index"
+            @click="handleSlideTouch(index)"
+        >
+          <div class="service-guide-img">
+            <img :src="serviceGuide.img" alt="service image"/>
+          </div>
+          <div class="service-guide-text">
+            <div class="service-guide-subtitle">{{ serviceGuide.subtitle }}</div>
+            <div class="service-guide-title">{{ serviceGuide.title }}</div>
+          </div>
+        </div>
       </div>
 
       <!-- 최신 공고 슬라이드 -->
