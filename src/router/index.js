@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 import { ROUTES } from "@/router/routes";
 import { useUserStore } from "@/stores/userStore";
 import { USER_TYPES } from "@/constants/userTypes";
+<<<<<<< Updated upstream
+=======
+import {useLoginModalStore} from "@/stores/useLoginModalStore";
+import {decodeToken} from "@/utils/tokenDecoder";
+>>>>>>> Stashed changes
 
 const router = createRouter({
     history: createWebHistory(""),
@@ -244,7 +249,12 @@ router.beforeEach((to, from, next) => {
     if (window.location.hash.includes('accessToken=')) {
         const token = window.location.hash.split('accessToken=')[1];
         if (token) {
+<<<<<<< Updated upstream
             localStorage.setItem('accessToken', "bearer "+token);
+=======
+            localStorage.setItem('accessToken', "Bearer "+token);
+            decodeToken();
+>>>>>>> Stashed changes
             window.location.hash = '';
         }
     }
