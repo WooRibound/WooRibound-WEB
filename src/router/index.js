@@ -315,7 +315,7 @@ router.beforeEach((to, from, next) => {
     if (window.location.hash.includes('accessToken=')) {
         const token = window.location.hash.split('accessToken=')[1];
         if (token) {
-            localStorage.setItem('accessToken', "bearer "+token);
+            localStorage.setItem('accessToken', "Bearer "+token);
             window.location.hash = '';
         }
     }
