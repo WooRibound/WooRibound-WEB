@@ -113,7 +113,7 @@ export default {
             <!-- 평가전 -->
             <div v-if="employment.isOneMonthBefore" class="status-accepted-gray"> 평가전 </div>
             <!-- 평가종료 -->
-            <div v-else-if="employment.empRecomm === 'Y' || employment.empRecomm === 'N'" class="status-accepted-gray">
+            <div v-else-if="employment.empRecomm === 'Y'" class="status-accepted-gray">
               평가종료 </div>
             <!-- 추천 버튼 -->
             <div v-else-if="!employment.isActionDisabled" class="status-accepted" @click="onRecommendClick(employment.index, 'recommend')">

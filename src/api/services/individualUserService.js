@@ -238,7 +238,6 @@ export const fetchJobApplyDetail = async (applyId) => {
 // 채용 공고 상세 조회
 export const fetchJobPostingDetail = async (postId) => {
   const router = useRouter();
-
   try {
     const response = await handleApiCall('get', `/individualuser/jobposting/detail?postId=${postId}`);
     return response.data;
