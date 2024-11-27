@@ -89,7 +89,7 @@ export default {
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <div class="menu-item" @click="navigateToJobPostings('career')">
             <img src="@/assets/images/menuIcons/job_career.png">
-            경력 살리기
+            <span>경력 살리기</span>
           </div>
           <div class="menu-item" @click="navigateToJobPostings('new')">
             <img src="@/assets/images/menuIcons/job_new.png">
@@ -105,7 +105,10 @@ export default {
         <div class="menu_title">지혜 마당</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.WISDOM_SHARE.path">
-            <div class="menu-item">지혜 나누기</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/job_career.png">
+              <span>지혜 나누기</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.WISDOM_EXPLORE.path">
             <div class="menu-item">지혜 탐색</div>
@@ -278,7 +281,7 @@ export default {
   padding: 20px;
   height: 50%; /* 높이를 화면의 반으로 설정 */
   margin-bottom: 0; /* 아래쪽 여백 제거 */
-  border-top: 1px solid rgba(65, 63, 66, 0.5); /* 상단 선 색상 연하게 설정 */
+  //border-top: 1px solid rgba(65, 63, 66, 0.5);
   position: relative; /* 자식 요소의 위치를 상대적으로 설정 */
 }
 
@@ -300,11 +303,13 @@ export default {
   padding: 10px 0; /* 항목의 상하 여백 */
   cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
 }
+.menu-item span {
+}
 
 .menu-item img {
-  width: 20px;
+  width: 30px;
+  height: 30px;
   margin-right: 5px;
-  cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
 }
 
 .menu-item:last-child {
