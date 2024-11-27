@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { ROUTES } from "@/router/routes";
 import { useUserStore } from "@/stores/userStore";
 import { USER_TYPES } from "@/constants/userTypes";
+import {decodeToken} from "@/utils/tokenDecoder";
 import {useLoginModalStore} from "@/stores/useLoginModalStore";
 
 const router = createRouter({
@@ -316,6 +317,7 @@ router.beforeEach((to, from, next) => {
         const token = window.location.hash.split('accessToken=')[1];
         if (token) {
             localStorage.setItem('accessToken', "Bearer "+token);
+            decodeToken();
             window.location.hash = '';
         }
     }
