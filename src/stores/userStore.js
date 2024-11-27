@@ -6,7 +6,7 @@ export const useUserStore = defineStore('user', {
     state: () => ({
         isLoggedIn: false,
         userName: "방문자",
-        userType: USER_TYPES.INDIVIDUAL_USER,
+        userType: null,
     }),
 
     getters: {
@@ -33,17 +33,21 @@ export const useUserStore = defineStore('user', {
     },
 
     actions: {
-        setUserInfo({ userName, userType }) {
+        initialize() {
+            this.isLoggedIn = false;
+            this.userName = "방문자";
+            this.userType = null;
+        },
+        login({ userName, userType }) {
             this.isLoggedIn = true;
             this.userName = userName;
             this.userType = userType;
         },
-
         logout() {
             localStorage.removeItem('accessToken');
             this.isLoggedIn = false;
             this.userName = "방문자";
-            this.userType = USER_TYPES.INDIVIDUAL_USER;
+            this.userType = null;
         },
     },
 

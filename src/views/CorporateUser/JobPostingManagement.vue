@@ -1,13 +1,13 @@
 <script>
 import {useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
-import {formatDate1} from "@/utils/formatters";
+import {formatDate3} from "@/utils/formatters";
 import {onMounted, ref} from "vue";
 import {fetchMyPostingList} from "@/api/services/corporateUserService";
 
 export default {
   name: "JobPostingManagement",
-  methods: {formatDate: formatDate1},
+  methods: {formatDate: formatDate3},
   setup() {
     const router = useRouter();
 
@@ -21,9 +21,7 @@ export default {
 
     const fetchJobPosting = async () => {
       try {
-        console.log("Fetching job postings");
         const response = await fetchMyPostingList();
-        console.log("API Response:", response);
         jobPostingList.value = response.data || [];
         jobpostingCount.value = jobPostingList.value.length;
       } catch (error) {
@@ -101,17 +99,17 @@ export default {
       <div class="header-title">공고 관리</div>
       <div class="header-register-job" @click="onRegisterJobPostingClick">공고 등록</div>
     </div>
-    <div class="job-posting-wrap">
+    <div class="job-posting-wrap" v-if="jobpostingCount > 0">
       <div class="job-posting-info">{{ jobpostingCount }}건</div>
       <div class="job-posting-list" v-for="jobPosting in jobPostingList" :key="jobPosting">
         <div class="job-posting-list-top">
-          <div class="course-title">{{ jobPosting.entName }}</div>
+          <div class="course-title">{{ jobPosting.postTitle }}</div>
           <div :class="['recruitment-phase', recruitmentPhaseClass(jobPosting.postState)]">
             {{ recruitmentPhase(jobPosting.postState) }}
           </div>
         </div>
         <div class="job-posting-list-middle">
-          <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
+          <div class="course-subtitle">[모집직무] {{ jobPosting.jobName }}</div>
           <div class="applicants-info" @click="onMoveApplicantDetailPageClick(jobPosting.postId)">{{
               jobPosting.applicantCount
             }}명
@@ -125,6 +123,9 @@ export default {
                @click="onMoveDetailPageClick(jobPosting.postId)">
         </div>
       </div>
+    </div>
+    <div class="job-posting-wrap" v-else>
+      등록된 공고가 없습니다.
     </div>
   </main>
 </template>
@@ -168,17 +169,22 @@ export default {
 .job-posting-info {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 15px;
   margin-left: 10px;
   margin-bottom: 10px;
 }
 
 .job-posting-list {
-  background-color: #D9D9D9;
+  background-color: #ffffff;
   border-radius: 15px;
   padding: 15px;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .job-posting-list-top {
@@ -189,8 +195,8 @@ export default {
 }
 
 .course-title {
-  font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
+  margin-bottom: 5px;
+  font-size: 13pt;
 }
 
 .recruitment-phase {
@@ -223,8 +229,9 @@ export default {
 }
 
 .course-subtitle {
-  margin-bottom: 5px;
   flex: 1;
+  margin-bottom: 12px;
+  color: #6c757d;
 }
 
 .applicants-info {
@@ -241,6 +248,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
+  color: #52585d;
+  font-size: 12pt;
 }
 
 .schedule-info {

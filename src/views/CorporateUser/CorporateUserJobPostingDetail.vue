@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { formatDate1 } from "@/utils/formatters";
+import { formatDate3 } from "@/utils/formatters";
 import { fetchJobPostingDetail } from "@/api/services/adminServiece";
 import { deleteJobPosting } from "@/api/services/corporateUserService";
 import { USER_TYPES } from "@/constants/userTypes";
@@ -42,13 +42,12 @@ export default {
     const fetchJobPosting = async () => {
       try {
         const response = await fetchJobPostingDetail(postId);
-        console.log(response.data)
         jobPosting.value = {
           entName: response.entName,
           postTitle: response.postTitle,
           postImg: response.postImg,
-          startDate: formatDate1(response.startDate),
-          endDate: formatDate1(response.endDate),
+          startDate: formatDate3(response.startDate),
+          endDate: formatDate3(response.endDate),
           jobName: response.jobName,
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
@@ -65,7 +64,6 @@ export default {
     });
 
     const onDeleteClick = async (userType, postId) => {
-      console.log("userType:", userType);
       try {
         if (userType === USER_TYPES.SERVICE_ADMIN) {
           modalMessage.value = "채용공고를 삭제하시겠습니까?";
@@ -75,15 +73,13 @@ export default {
         if (userType === USER_TYPES.CORPORATE_MEMBER) {
           modalMessage.value = "채용공고를 삭제하시겠습니까?";
           showDeleteModal.value = true;
-          console.log(postId)
         }
-        const response = await handleApiCall('update', '/corporate/jobposting/delete', null, {
+          await handleApiCall('update', '/corporate/jobposting/delete', null, {
           params: { postId: postId},
           headers: {
             'Content-Type': 'application/json',
           }
         });
-        console.log("삭제 결과:", response);
 
       } catch (e) {
         console.log(e);
@@ -94,8 +90,7 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        const response = await deleteJobPosting(postId);
-        console.log("삭제 결과:", response);
+        await deleteJobPosting(postId);
         closeModal(true);
 
       } catch (error) {
@@ -133,13 +128,26 @@ export default {
         <img :src="jobPosting.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
+        <div class="job-posting-title">{{ jobPosting.postTitle }}</div>
         <div class="company-name">{{ jobPosting.entName }}</div>
-        <div class="job-title">{{ jobPosting.postTitle }}</div>
-        <div class="job-name">{{ jobPosting.jobName }}</div>
-        <div class="application-period">공고 게시 및 서류 접수</div>
-        <div class="application-dates">{{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</div>
-        <div class="company-address-label">기업 주소</div>
-        <div class="company-address">{{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/job.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            직무 </span><br>
+          <span class="aligned-label"> {{ jobPosting.jobName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/clock.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            모집기간 </span><br>
+          <span class="aligned-label"> {{ jobPosting.startDate }} ~ {{ jobPosting.endDate }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">
+            <img src="@/assets/images/icons/address.png" alt="Job Icon" class="icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;" />
+            기업주소 </span><br>
+          <span class="aligned-label"> {{ jobPosting.entAddr1 }} {{ jobPosting.entAddr2 }}</span>
+        </div>
       </div>
     </div>
     <div class="delete-button" @click="onDeleteClick(userType, postId)">삭제하기</div>
@@ -196,13 +204,45 @@ export default {
   margin-bottom: 10px;
 }
 
+.delete-button {
+  width: 90%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 20px auto 0 auto;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.label {
+  display: inline-block;
+  width: 90px; /* 라벨 넓이 설정으로 직무, 모집기간, 기업주소 일치 */
+  font-weight: bold;
+}
+
 .company-name {
-  font-size: 25px;
+  font-size: 17px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
+.job-posting-title {
+  font-size: 25px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
 .job-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.job-name {
   font-size: 20px;
   font-weight: bold;
   color: #333;
@@ -233,23 +273,8 @@ export default {
   color: #333;
 }
 
-.delete-button {
-  width: 90%;
-  max-width: 400px;
-  padding: 10px;
-  margin: 20px auto 0 auto;
-  background-color: #024CAA;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-.job-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
+.aligned-label {
+  font-size: 11pt;
+  margin-left: 25px;
 }
 </style>

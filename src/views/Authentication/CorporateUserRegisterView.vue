@@ -5,6 +5,7 @@ import { ROUTES } from "@/router/routes";
 import { isDuplicateCheck } from "@/api/services/authenticationService";
 import {corporateJoin} from "@/api/services/authenticationService";
 import {searchAddress} from "@/utils/addressFinder"
+import { useIndustriesStore } from "@/stores/useIndustriesStore";
 
 export default {
   name: "CorporateRegisterView",
@@ -21,6 +22,7 @@ export default {
     const isDuplicated = ref(true);
     const errorMessage = ref("");
     const isValidRegNum = ref(true);
+    const industryStore = useIndustriesStore();
 
     // 회원가입 폼 데이터
     const formData = ref({
@@ -37,10 +39,10 @@ export default {
       entAddr2: ""        // 상세주소
     });
 
-    const industries = ref([
-      "제조업", "정보통신", "금융업", "서비스업", "건설업",
-      "유통업", "에너지 및 환경", "농업 및 어업", "제약 및 생명과학"
-    ]);
+    const industries = computed(() => {
+      const originalIndustries = industryStore.getIndustries;
+      return ["전체 산업", ...originalIndustries];
+    });
 
     // 매출액 포맷팅
     const formattedRevenue = computed({
@@ -56,7 +58,6 @@ export default {
     const validateRegNum = () => {
       const pattern = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/; // ***-**-*****
       isValidRegNum.value = pattern.test(formData.value.regNum);
-      console.log("사업자번호 검증 결과:", isValidRegNum.value);
     };
 
     // 사업자번호 포맷팅

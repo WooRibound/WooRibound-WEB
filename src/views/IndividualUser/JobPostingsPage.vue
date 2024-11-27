@@ -12,6 +12,7 @@ import {
   fetchRecommendJobPostings
 } from "@/api/services/individualUserService";
 import JobPostingInfoModal from "@/components/JobPostingInfoModal.vue";
+import {useUserStore} from "@/stores/userStore";
 
 export default {
   name: "JobPostingsPage",
@@ -25,9 +26,12 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const userStore = useUserStore();
+
+
     const viewType = ref(route.params.viewType || 'all');
     const modalPopupStatue = ref(false);
-    const jobPostingInfoOverlayStatus = ref(true);
+    const jobPostingInfoOverlayStatus = ref(false);
     const searchInput = ref("");
     const filterTypes = ref("");
     const selectedProvince = ref("전체 지역");
@@ -106,7 +110,6 @@ export default {
     }
 
     const onMoveDetailPageClick = (postId) => {
-      console.log("postId:", postId);
       router.push({
         name: ROUTES.JOB_POSTING_DETAIL.name,
         params: {
@@ -158,6 +161,10 @@ export default {
     };
 
     const showJobPostingInfoOverlay = () => {
+      if (userStore.isAuthenticated) {
+        return;
+      }
+      
       if (viewType.value === 'career' || viewType.value === 'new') {
         jobPostingInfoOverlayStatus.value = true;
       } else {
@@ -255,7 +262,7 @@ export default {
         </div>
         <div class="course-subtitle">{{ jobPosting.postTitle }}</div>
         <div class="course-schedule">
-          <div class="schedule-info">{{ jobPosting.jobName }}</div>
+          <div class="schedule-info">[모집직무] {{ jobPosting.jobName }}</div>
           <img src="@/assets/images/icons/rightarrows.png" class="right-arrow-icon" alt="Right Arrow Icon"
                @click="onMoveDetailPageClick(jobPosting.jobPostingId)">
         </div>
@@ -352,7 +359,6 @@ export default {
 .job-posting-list-top {
   display: flex;
   justify-content: space-between;
-  /* Aligns items on both ends */
   align-items: center;
   margin-bottom: 5px;
 }

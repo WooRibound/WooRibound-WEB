@@ -32,14 +32,12 @@ export default {
     // 직무 리스트 설정
     const jobs = computed(() => {
       const originalJobs = jobStore.getJobs;
-      console.log("originalJobs:", originalJobs);
       return ["전체 직무", ...originalJobs.map((job) => job.jobName)];
     });
 
     // 산업 리스트 설정
     const industries = computed(() => {
       const originalIndustries = industryStore.getIndustries;
-      console.log("originalIndustries:", originalIndustries);
       return ["전체 산업", ...originalIndustries];
     });
 

@@ -4,6 +4,7 @@ import ModalPopup from "@/components/SingleButtonModal.vue";
 import { ROUTES } from "@/router/routes";
 import { searchAddress } from "@/utils/addressFinder";
 import { fetchEnterprise, updateEnterpriseInfo } from "@/api/services/corporateUserService";
+import { useIndustriesStore } from "@/stores/useIndustriesStore";
 
 export default {
   name: "CorporateUserProfile",
@@ -47,14 +48,12 @@ export default {
     const modalPopupStatue = ref(false);
     const modalMessage = ref("");
     const idInput = ref("");
+    const industryStore = useIndustriesStore();
 
-    const industries = ref([
-      "제조업", "요식업", "IT",
-      "금융업", "서비스업", "건설업",
-      "운수업", "농업/어업", "제약/생명과학",
-      "교육업", "의료업", "예술/문화",
-      "관광/레저", "의류", "기타",
-    ]);
+    const industries = computed(() => {
+      const originalIndustries = industryStore.getIndustries;
+      return ["전체 산업", ...originalIndustries];
+    });
 
     const revenue = ref("");
 
@@ -95,9 +94,8 @@ export default {
 
     const onUpdateProfilerClick = async () => {
       try {
-        const response = await updateEnterpriseInfo(enterprise.value);
+        await updateEnterpriseInfo(enterprise.value);
         originalInfo.value = { ...enterprise.value };
-        console.log(response)
 
         modalMessage.value = "수정이 완료 되었습니다.";
         modalPopupStatue.value = true;
@@ -217,7 +215,7 @@ export default {
         <div class="input-label">
           <span class="input-title">산업</span>
           <select class="input-field" v-model="enterprise.entField">
-            <option value="" disabled selected>산업</option>
+            <option value="" disabled>산업</option>
             <option v-for="industry in industries" :key="industry" :value="industry"> {{ industry }} </option>
           </select>
         </div>

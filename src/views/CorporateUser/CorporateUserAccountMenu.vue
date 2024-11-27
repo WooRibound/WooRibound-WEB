@@ -7,7 +7,6 @@ export default {
   setup() {
     const router = useRouter();
     const onNavigateToAccountClick = (viewType) => {
-      console.log("viewType:", viewType);
       let routePath = "";
       switch (viewType) {
         case "update":

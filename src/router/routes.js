@@ -8,25 +8,50 @@ export const ROUTES = {
         path: "/",
         name: "Main",
     },
+    // [개인회원, 기업회원] 로그인
+    LOGIN: {
+        path: "/login",
+        name: "Login",
+    },
+    // [개인회원] 회원가입
+    INDIVIDUAL_USER_REGISTER: {
+        path: "/individual-user/register",
+        name: "IndividualUserRegister",
+    },
     // [서비스관리자, 인프라관리자] 메인
     ADMIN_MAIN: {
         path: "/admin",
         name: "AdminMain",
     },
-    // [개인회원] 채용공고 메뉴 선택
-    JOB_MENU: {
-        path: "/jobs/menu",
-        name: "JobMenu",
+    // [관리자] 관리자 로그인
+    ADMIN_LOGIN: {
+        path: "/admin/login",
+        name: "AdminLogin"
+    },
+    // [기업회원] 회원가입
+    CORPORATE_USER_REGISTER: {
+        path: "/corporate-user/register",
+        name: "CorporateResister",
     },
     // [개인회원] 알림 메세지
     NOTIFICATION_PAGE: {
         path: "/individual-user/notification",
         name: "NotificationPage",
     },
+    // [개인회원] 채용공고 메뉴 선택
+    JOB_MENU: {
+        path: "/individual-user/jobs/menu",
+        name: "JobMenu",
+    },
     // [개인회원] 지원 현황
     JOB_APPLICATION_STATUS: {
-        path: "/jobs/application-status",
+        path: "/individual-user/jobs/application-status",
         name: "JobApplicationStatus",
+    },
+    // [개인회원] 지원 현황 상세
+    JOB_APPLICATION_STATUS_DETAIL: {
+        path: "/individual-user/jobs/application-status/detail/:postId/:applyId",
+        name: "JobApplicationStatusDetail",
     },
     // [개인회원] 이력서
     RESUME_PAGE: {
@@ -38,34 +63,14 @@ export const ROUTES = {
         path: "/individual-user/profile",
         name: "IndividualUserProfile",
     },
-    // [개인회원, 기업회원] 로그인
-    LOGIN: {
-        path: "/login",
-        name: "Login",
-    },
-    // [관리자] 관리자 로그인
-    ADMIN_LOGIN: {
-        path: "/admin/login",
-        name: "AdminLogin"
-    },
-    // [개인회원] 회원가입
-    INDIVIDUAL_USER_REGISTER: {
-        path: "/individual-user/register",
-        name: "IndividualUserRegister",
-    },
-    // [기업회원] 회원가입
-    CORPORATE_USER_REGISTER: {
-        path: "/corporate-user/register",
-        name: "CorporateResister",
-    },
     // [개인회원] 우바고도
     WOORIBOUND_ELEVATION_INFO: {
-        path: "/wooribound-elevation",
+        path: "/individual-user/wooribound-elevation",
         name: "WooriboundElevationInfo",
     },
     // [개인회원] 채용공고
     JOB_POSTINGS_PAGE: {
-        path: "/job-postings/:viewType",
+        path: "/individual-user/job-postings/:viewType",
         name: "JobPostingsPage",
     },
     // [기업회원] 비밀번호 찾기
@@ -75,7 +80,7 @@ export const ROUTES = {
     },
     // [개인회원] 채용공고 상세페이지
     JOB_POSTING_DETAIL: {
-        path: "/job-posting/:postId?/:applyId?/:state?",
+        path: "/individual-user/job-posting/:postId?",
         name: "JobPostingDetail",
     },
     // [개인회원] 탈퇴하기
@@ -132,6 +137,11 @@ export const ROUTES = {
         path: "/job-posting/applicants/recommend/:jobId/:postId",
         name: "ApplicantRecommendPage"
     },
+    // [기업회원] 추천 지원자 프리미엄
+    RECOMMEND_PREMIUM_PAGE: {
+        path: "/job-posting/applicants/recommend/premium/:userId",
+        name: "RecommendPremiumPage"
+    },
     // [기업회원] 이력서 보기
     READONLY_RESUME_PAGE: {
         path: "/corporate-user/resume/:id?",
@@ -141,6 +151,16 @@ export const ROUTES = {
     EMPLOYEE_MANAGEMENT: {
         path: "/employee-management",
         name: "EmployeeManagement"
+    },
+    // [기업회원] 프리미엄 패키지
+    PREMIUM_PACKAGE: {
+        path: "/premium-package",
+        name: "PremiumPackageView"
+    },
+    // [기업회원] 결제 관리
+    PAYMENT_MANAGEMENT: {
+        path: "/payment-management",
+        name: "PaymentManagementView"
     },
     // [개인회원] 지혜 메뉴
     WISDOM_MENU: {

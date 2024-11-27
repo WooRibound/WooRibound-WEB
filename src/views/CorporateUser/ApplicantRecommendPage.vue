@@ -1,7 +1,7 @@
 <script>
 import {useRoute, useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
-import { formatDate1 } from "@/utils/formatters"
+import { formatDate3 } from "@/utils/formatters"
 import {
   fetchMyPostingDetail,
   fetchRecommendList
@@ -17,22 +17,20 @@ export default {
     const jobId = route.params.jobId;
     const postId = route.params.postId;
 
-    console.log("Job ID:", jobId);
-    console.log("Post Id:", postId);
-
     const applicantsList = ref([]);
     const jobposting = ref({});
     const startDate = ref("");
     const endDate = ref("");
     const userId = ref([]);
     const applyStatus = ref([]);
+    const recommendCount = ref([]);
     const index = ref([]);
 
     const formattedStartDate = computed(() =>
-        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
+        startDate.value ? formatDate3(new Date(startDate.value)) : "-"
     );
     const formattedEndDate = computed(() =>
-        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
+        endDate.value ? formatDate3(new Date(endDate.value)) : "-"
     );
 
     const fetchJobPostingInfo = async (postId) => {
@@ -61,6 +59,7 @@ export default {
         }));
         userId.value = applicantsList.value.map((applicant) => applicant.userId);
         index.value = applicantsList.value.map((applicant) => applicant.index);
+        recommendCount.value = applicantsList.value.map((applicant) => applicant.recommendCount);
 
       } catch (error) {
         console.error("[fetchRecommendApplicantsList] Error:", error);
@@ -78,6 +77,15 @@ export default {
       })
     }
 
+    const onMovePremiumFunctionPageClick = (userId) => {
+      router.push({
+        name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
+        params: {
+          userId: userId
+        }
+      })
+    };
+
     onMounted(() => {
       fetchJobPostingInfo(postId);
       fetchRecommendApplicantsList(postId);
@@ -94,6 +102,7 @@ export default {
       applicantsList,
       fetchRecommendApplicantsList,
       onMoveResumePageClick,
+      onMovePremiumFunctionPageClick
     };
   }
 }
@@ -107,23 +116,22 @@ export default {
       <div class="job-application-info">
         <div class="job-title">{{ jobposting.postTitle }}</div>
         <div class="job-name">{{ jobposting.jobName }}</div>
+        <div class="job-duration">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
       </div>
-      <div class="job-duration">{{ formattedStartDate }} ~ {{ formattedEndDate }}</div>
       <table class="applicant-table">
         <thead>
         <tr>
           <th>이름</th>
           <th>성별/나이</th>
-          <th>이력서</th>
+          <th>추천횟수</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="applicant in applicantsList" :key="applicant.userId">
-          <td>{{ applicant.applicantName }}</td>
+          <td class="name" @click="onMoveResumePageClick(applicant.userId)">
+            {{ applicant.applicantName }}</td>
           <td>{{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
-          <td><div class="resume-link" @click="onMoveResumePageClick(applicant.userId)">보기</div></td>
-          <td>
-          </td>
+          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId)">{{ applicant.recommendCount }}</div></td>
         </tr>
         </tbody>
       </table>
@@ -156,6 +164,8 @@ export default {
 
 .job-application-info > div {
   margin: 5px 0;                /* 위아래 간격 설정 */
+  color: #535456;
+  font-size: 15px;
 }
 
 .applicant-table {
@@ -251,12 +261,17 @@ export default {
   cursor: pointer;
 }
 
+.name, .recommend-count {
+  text-decoration: underline;
+}
+
 .recommend-button:hover {
   background-color: #023a87;
 }
 
 .recommend-button:active {
   background-color: #022d66;
+
 }
 
 

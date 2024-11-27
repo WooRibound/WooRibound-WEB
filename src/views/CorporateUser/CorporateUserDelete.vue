@@ -39,13 +39,11 @@ export default {
       }
 
       try {
-        console.log("탈퇴 요청 시작");
         // password.value를 직접 전달
         const response = await withdrawCorporate(password.value);
 
         if (response && response.status === 200) {
           await userStore.logout();
-          console.log("탈퇴 처리 완료");
           moveToSuccessPage();
         } else {
           throw new Error('탈퇴 처리 실패');
@@ -75,7 +73,7 @@ export default {
     <div class="subtitle">회원 탈퇴</div>
     <div class="content">
       <div class="warning-section">
-        <div class="warning-title">⚠️ 탈퇴 전 꼭 확인해주세요!</div>
+        <div class="warning-title">회원 탈퇴를 신청하기 전,<br> 다음 내용을 꼭 확인해주세요.</div>
         <div class="warning-text">
           • 탈퇴 시 회원님의 계정은 탈퇴 승인 대기 상태가 됩니다.<br>
           • 탈퇴 승인 후에는 다시 가입 / 접속 할 수 없습니다.<br>
@@ -151,27 +149,34 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 20px;
   flex: 1;
-  height: 100%;
+  border: 1px solid #E5E1DA;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center; /* 기본 텍스트 중앙 정렬 */
+  background-color: #fff;
 }
 
 .warning-section {
   width: 100%;
   max-width: 400px;
-  background-color: #fff;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 .warning-title {
   font-size: 18px;
   font-weight: bold;
-  color: #e74c3c;
+  color: #024CAA;
   margin-bottom: 15px;
+  line-height: 1.5; /* 줄 간격 조정 */
+  white-space: pre-line; /* 줄바꿈을 HTML에서 적용 가능하도록 설정 */
+  text-align: center;
 }
+
 
 .warning-text {
   font-size: 15px;

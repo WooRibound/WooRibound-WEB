@@ -40,7 +40,6 @@ export const confirmDelete = async (postId) => {
                 'Content-Type': 'application/json',
             }
         });
-        console.log("삭제 결과:", response);
         return response;
     } catch (error) {
         console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
@@ -58,3 +57,17 @@ export const fetchJobPostingDetail = async (postId) => {
       throw error;
     }
   }
+
+// 로그 대시보드 페이지 요청
+export const fetchLogDashboard = async () => {
+    try {
+      const response = await handleApiCall('get', '/admin/auth/dashboard');
+      const dashboardUrl = response.data;
+
+      // 페이지 이동
+      window.location.href = dashboardUrl;
+    } catch (error) {
+      console.error('Failed to fetch:', error);
+      throw error;
+    }
+  };

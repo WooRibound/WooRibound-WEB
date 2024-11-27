@@ -1,7 +1,7 @@
 <script>
 import {useRoute, useRouter} from "vue-router";
 import {ROUTES} from "@/router/routes";
-import { formatDate1 } from "@/utils/formatters"
+import { formatDate3 } from "@/utils/formatters"
 import {fetchApplicantList, fetchMyPostingDetail, setApplicantResult} from "@/api/services/corporateUserService";
 import {computed, onMounted, ref} from "vue";
 
@@ -19,15 +19,16 @@ export default {
     const userId = ref([]);
     const applyStatus = ref([]);
     const index = ref([]);
+    const recommendCount = ref([]);
     const applyId = ref([]);
     const jobId = ref();
 
     // 시작일과 종료일 포맷팅
     const formattedStartDate = computed(() =>
-        startDate.value ? formatDate1(new Date(startDate.value)) : "-"
+        startDate.value ? formatDate3(new Date(startDate.value)) : "-"
     );
     const formattedEndDate = computed(() =>
-        endDate.value ? formatDate1(new Date(endDate.value)) : "-"
+        endDate.value ? formatDate3(new Date(endDate.value)) : "-"
     );
 
     const fetchJobPostingInfo = async (postId) => {
@@ -59,6 +60,7 @@ export default {
         userId.value = applicantsList.value.map((applicant) => applicant.userId);
         applyId.value = applicantsList.value.map((applicant) => applicant.applyId);
         index.value = applicantsList.value.map((applicant) => applicant.index);
+        recommendCount.value = applicantsList.value.map((applicant) => applicant.recommendCount);
 
       } catch (error) {
         console.error("[fetchApplicantsList] Error:", error);
@@ -95,7 +97,6 @@ export default {
         if (response.status === 200) {
           // 상태 업데이트
           applicantsList.value[index].result = applyResult === "ACCEPTED" ? "ACCEPTED" : "REJECTED";
-          console.log(`지원자 상태 업데이트 완료: ${applyResult}`);
         } else {
           console.error("지원자 상태 업데이트 실패:", response.message);
         }
@@ -105,7 +106,6 @@ export default {
     };
 
     const onRecommendButtonClick = (postId, jobId) => {
-      console.log("추천지원자 API 호출 "+ postId +" " + jobId);
       router.push({
         name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
         params: {
@@ -115,7 +115,14 @@ export default {
       })
     };
 
-
+    const onMovePremiumFunctionPageClick = (userId) => {
+      router.push({
+        name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
+        params: {
+          userId: userId
+        }
+      })
+    };
 
     return {
       applyStatus,
@@ -126,6 +133,7 @@ export default {
       onMoveResumePageClick,
       onApplicantStateClick,
       onRecommendButtonClick,
+      onMovePremiumFunctionPageClick,
       postId
     };
   }
@@ -150,15 +158,17 @@ export default {
         <tr>
           <th>이름</th>
           <th>성별/나이</th>
-          <th>이력서</th>
+          <th>추천횟수</th>
           <th>합격 여부</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="applicant in applicantsList" :key="applicant.userId">
-          <td>{{ applicant.applicantName }}</td>
+          <td class="name" @click="onMoveResumePageClick(applicant.userId)">
+            {{ applicant.applicantName }}
+          </td>
           <td>{{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
-          <td><div class="resume-link" @click="onMoveResumePageClick(applicant.userId)">보기</div></td>
+          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId)">{{ applicant.recommendCount }}</div></td>
           <td>
             <div class="status-container">
               <div v-if="applicant.result === 'PENDING'">
@@ -205,6 +215,8 @@ export default {
 
 .job-application-info > div {
   margin: 5px 0;                /* 위아래 간격 설정 */
+  color: #535456;
+  font-size: 15px;
 }
 
 .applicant-table {
@@ -225,6 +237,10 @@ export default {
 .applicant-table td {
   padding: 10px; /* 내부 여백 */
   text-align: center;
+}
+
+.name, .recommend-count {
+  text-decoration: underline;
 }
 
 .resume-link {
@@ -269,6 +285,7 @@ export default {
   white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
   font-size: 8pt;
   cursor: pointer;
+  margin-left: 5px;
 }
 .disabled {
   opacity: 0.5;

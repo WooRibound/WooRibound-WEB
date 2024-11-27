@@ -24,7 +24,7 @@ export default {
     const router = useRouter();
 
     const isVisible = computed(() => props.fullScreenMenuState);
-    const loginText = computed(() => (userStore.isLoggedIn ? "로그아웃" : "로그인"));
+    const loginText = computed(() => (userStore.isAuthenticated ? "로그아웃" : "로그인"));
 
     const onMoveToMainClick = () => {
       router.push(ROUTES.MAIN);
@@ -79,25 +79,42 @@ export default {
       <div class="login-text" @click="onClickMoveLogin">{{ loginText }}</div>
       <img src="../../assets/images/logo/wooribound_logo.png" class="logo-image">
     </div>
-    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INDIVIDUAL_USER">
+
+    <!-- 개인회원 메뉴 -->
+    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INDIVIDUAL_USER || userStore.userType === null">
       <div class="menu-content">
         <router-link :to="ROUTES.JOB_MENU.path">
           <div class="menu_title" @click="onCloseFullScreenMenuClick">채용 공고</div>
         </router-link>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <div class="menu-item" @click="navigateToJobPostings('career')">경력 살리기</div>
-          <div class="menu-item" @click="navigateToJobPostings('new')">새로운 일 찾기</div>
-          <div class="menu-item" @click="navigateToJobPostings('all')">전체 조회</div>
+          <div class="menu-item" @click="navigateToJobPostings('career')">
+            <img src="@/assets/images/menuIcons/job_career.png">
+            <span>경력 살리기</span>
+          </div>
+          <div class="menu-item" @click="navigateToJobPostings('new')">
+            <img src="@/assets/images/menuIcons/job_new.png">
+            <span>새로운 일 찾기</span>
+          </div>
+          <div class="menu-item" @click="navigateToJobPostings('all')">
+            <img src="@/assets/images/menuIcons/job_all.png">
+            <span>전체 조회</span>
+          </div>
         </div>
       </div>
       <div class="menu-content">
         <div class="menu_title">지혜 마당</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.WISDOM_SHARE.path">
-            <div class="menu-item">지혜 나누기</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/wisdom_share.png">
+              <span>지혜 나누기</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.WISDOM_EXPLORE.path">
-            <div class="menu-item">지혜 탐색</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/wisdom_explore.png">
+              <span>지혜 탐색</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -105,29 +122,49 @@ export default {
         <div class="menu_title">내 정보 보기</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.INDIVIDUAL_USER_PROFILE.path">
-            <div class="menu-item">개인 정보</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/my_page.png">
+              <span>개인 정보</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
-            <div class="menu-item">지원 현황</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/user_apply.png">
+              <span>지원 현황</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.RESUME_PAGE.path">
-            <div class="menu-item">이력서</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/resume.png">
+              <span>이력서</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
-            <div class="menu-item">우바 고도</div>
+            <div class="menu-item">
+              <img src="../../assets/images/menuIcons/wb_elevationInfo.png">
+              <span>우바 고도</span>
+            </div>
           </router-link>
         </div>
       </div>
     </div>
+
+    <!-- 기업회원 메뉴 -->
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.CORPORATE_MEMBER">
       <div class="menu-content">
         <div class="menu_title">기업 정보</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.CORPORATE_USER_ACCOUNT_MENU.path">
-            <div class="menu-item">기업 정보 수정</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_update.png">
+              <span>기업 정보 수정</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.CORPORATE_USER_DELETE.path">
-            <div class="menu-item">탈퇴하기</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_delete.png">
+              <span>탈퇴하기</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -135,10 +172,16 @@ export default {
         <div class="menu_title">공고 관리</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.JOB_POSTING_MANAGEMENT.path">
-            <div class="menu-item">공고 목록</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_posting.png">
+              <span>공고 목록</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.JOB_POSTING_REGISTER.path">
-            <div class="menu-item">공고 등록</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_upload.png">
+              <span>공고 등록</span>
+            </div>
           </router-link>
         </div>
       </div>
@@ -146,64 +189,77 @@ export default {
         <div class="menu_title">직원 관리</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES. EMPLOYEE_MANAGEMENT.path">
-            <div class="menu-item">직원 관리</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_employees.png">
+              <span>직원 관리</span>
+            </div>
           </router-link>
         </div>
       </div>
       <div class="menu-content">
         <div class="menu_title">기업 멤버십</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <router-link :to="ROUTES. EMPLOYEE_MANAGEMENT.path">
-            <div class="menu-item">프리미엄 패키지</div>
+          <router-link :to="ROUTES. PREMIUM_PACKAGE.path">
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_premium.png">
+              <span> 프리미엄 패키지 </span>
+            </div>
           </router-link>
-          <router-link :to="ROUTES. EMPLOYEE_MANAGEMENT.path">
-            <div class="menu-item">결제 관리</div>
-          </router-link>
-        </div>
-      </div>
-      <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.SERVICE_ADMIN">
-        <div class="menu-content">
-          <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
-          </router-link>
-        </div>
-        <div class="menu-content">
-          <div class="menu_title">기업 회원 관리</div>
-          <div class="menu-items" @click="onCloseFullScreenMenuClick">
-            <router-link :to="ROUTES.CORPORATE_USER_SIGNUP.path">
-              <div class="menu-item">기업 가입</div>
-            </router-link>
-            <router-link :to="ROUTES.CORPORATE_USER_WITHDRAWAL.path">
-              <div class="menu-item">기업 탈퇴</div>
-            </router-link>
-            <router-link :to="ROUTES.CORPORATE_USERS.path">
-              <div class="menu-item">기업 회원 조회</div>
-            </router-link>
-            <router-link :to="ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path">
-              <div class="menu-item">공고 관리</div>
-            </router-link>
-          </div>
-        </div>
-        <div class="menu-content">
-          <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">지혜 마당 관리</div>
-          </router-link>
-        </div>
-        <div class="menu-content">
-          <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+          <router-link :to="ROUTES. PAYMENT_MANAGEMENT.path">
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_payment.png">
+              <span> 결제 관리</span>
+            </div>
           </router-link>
         </div>
       </div>
     </div>
-      <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INFRA_ADMIN">
-        <div class="menu-content">
-          <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
-            <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
+
+    <!-- 서비스관리자 메뉴 -->
+    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.SERVICE_ADMIN">
+      <div class="menu-content">
+        <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
+        </router-link>
+      </div>
+      <div class="menu-content">
+        <div class="menu_title">기업 회원 관리</div>
+        <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <router-link :to="ROUTES.CORPORATE_USER_SIGNUP.path">
+            <div class="menu-item">기업 가입</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_USER_WITHDRAWAL.path">
+            <div class="menu-item">기업 탈퇴</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_USERS.path">
+            <div class="menu-item">기업 회원 조회</div>
+          </router-link>
+          <router-link :to="ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path">
+            <div class="menu-item">공고 관리</div>
           </router-link>
         </div>
       </div>
+      <div class="menu-content">
+        <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">지혜 마당 관리</div>
+        </router-link>
+      </div>
+      <div class="menu-content">
+        <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+        </router-link>
+      </div>
     </div>
+
+    <!-- 인프라관리자 메뉴 -->
+    <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INFRA_ADMIN">
+      <div class="menu-content">
+        <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
+        </router-link>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -261,7 +317,7 @@ export default {
   padding: 20px;
   height: 50%; /* 높이를 화면의 반으로 설정 */
   margin-bottom: 0; /* 아래쪽 여백 제거 */
-  border-top: 1px solid rgba(65, 63, 66, 0.5); /* 상단 선 색상 연하게 설정 */
+  //border-top: 1px solid rgba(65, 63, 66, 0.5);
   position: relative; /* 자식 요소의 위치를 상대적으로 설정 */
 }
 
@@ -280,9 +336,25 @@ export default {
 }
 
 .menu-item {
+  display: flex; /* Flexbox 적용 */
+  align-items: center; /* 수직 가운데 정렬 */
   padding: 10px 0; /* 항목의 상하 여백 */
-  cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
+  cursor: pointer;
 }
+.menu-item span {
+}
+
+.menu-item img {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
+
+.menu-item span {
+  margin-left: 15px;
+  line-height: normal; /* 기본 줄 간격 유지 */
+}
+
 
 .menu-item:last-child {
   border-bottom: none; /* 마지막 항목의 구분선 제거 */

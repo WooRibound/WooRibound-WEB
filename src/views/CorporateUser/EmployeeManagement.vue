@@ -1,12 +1,9 @@
 <script>
-import {useRoute, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {RECOMMEND_TYPES} from "@/constants/recommendTypes";
 import {ROUTES} from "@/router/routes";
-import {
-  fetchEmployeeList,
-  setEmployeeRating
-} from "@/api/services/corporateUserService";
+import {fetchEmployeeList, setEmployeeRating} from "@/api/services/corporateUserService";
 import {formatDate2} from "../../utils/formatters";
 
 export default {
@@ -18,11 +15,8 @@ export default {
     }
   },
   setup() {
-    const route = useRoute();
     const router = useRouter();
 
-    const id = route.params.id
-    console.log(id);
     const employmentList = ref([]);
     // const empRecomm = ref([]);
     // 추천여부 설정
@@ -39,7 +33,6 @@ export default {
         if (response.status === 200) {
           employmentList.value[index].empRecomm = status === "recommend" ? "Y" : "N";
           employmentList.value[index].isActionDisabled = true; // 상태 업데이트 후 버튼 비활성화
-          console.log(`추천 상태 업데이트 완료: ${status}`);
         } else {
           console.error("추천 상태 업데이트 실패:", response.message);
         }
@@ -120,7 +113,7 @@ export default {
             <!-- 평가전 -->
             <div v-if="employment.isOneMonthBefore" class="status-accepted-gray"> 평가전 </div>
             <!-- 평가종료 -->
-            <div v-else-if="employment.empRecomm === 'Y' || employment.empRecomm === 'N'" class="status-accepted-gray">
+            <div v-else-if="employment.empRecomm === 'Y'" class="status-accepted-gray">
               평가종료 </div>
             <!-- 추천 버튼 -->
             <div v-else-if="!employment.isActionDisabled" class="status-accepted" @click="onRecommendClick(employment.index, 'recommend')">

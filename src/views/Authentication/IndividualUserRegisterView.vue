@@ -1,12 +1,11 @@
 <script>
-import { ref, computed, onMounted } from "vue";
+import {computed, onMounted, ref} from "vue";
 import ModalPopup from "@/components/SingleButtonModal.vue";
 import TermsPrivacyOfServicePopup from "@/components/TermsPrivacyOfServicePopup.vue";
-import { useRegionsStore } from "@/stores/useRegionsStore";
-import { ROUTES } from "@/router/routes";
-import { useUserStore } from "@/stores/userStore";
-import { decodeToken } from "@/utils/tokenDecoder";
-import { fetchJoinInfo, join } from "@/api/services/individualUserService";
+import {useRegionsStore} from "@/stores/useRegionsStore";
+import {ROUTES} from "@/router/routes";
+import {decodeToken} from "@/utils/tokenDecoder";
+import {fetchJoinInfo, join} from "@/api/services/individualUserService";
 import {isEmailValid, isOnlyLetters, isPhoneNumberValid} from "@/utils/validators";
 import {formatPhoneNumber} from "@/utils/formatters";
 import {useJobStore} from "@/stores/useJobStore";
@@ -143,8 +142,6 @@ export default {
         dataSharingConsent: thirdPartyConsent.value ? 'Y' : 'N'  // 동의 여부를 Y/N으로 변환
       };
 
-      console.log(data)
-
       join(data)
       .then(() => {
         modalPopupStatue.value = true;
@@ -252,28 +249,19 @@ export default {
     };
   },
   mounted() {
-    console.log('IndividualUserRegisterView mounted');
     this.storeAccessToken();
   },
   methods: {
     storeAccessToken() {
       const accessToken = this.getAccessTokenFromHash();
-      console.log('Got access token from query:', accessToken);
 
       if (accessToken) {
         const tokenWithBearer = `Bearer ${accessToken}`;
         localStorage.setItem("accessToken", tokenWithBearer);
-        console.log('Stored token in localStorage:', tokenWithBearer);
-
-        const store = useUserStore();
-        console.log('Initial store state:', store.$state);
 
         const success = decodeToken();
-        console.log('Decode token result:', success);
 
         if (success) {
-          console.log('Updated store state:', store.$state);
-          console.log('Successfully decoded token and set user info');
           window.history.replaceState({}, document.title, window.location.pathname);
         } else {
           console.error('Failed to decode token and set user info');

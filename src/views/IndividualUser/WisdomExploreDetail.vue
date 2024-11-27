@@ -106,13 +106,12 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        const response = await handleApiCall('delete', '/admin/knowhow/delete', null, {
+          await handleApiCall('delete', '/admin/knowhow/delete', null, {
           params: { knowhowId: wisdom.value.knowhowId },
           headers: {
             'Content-Type': 'application/json',
           }
         });
-        console.log("삭제 결과:", response);
 
         closeModal(true);
 

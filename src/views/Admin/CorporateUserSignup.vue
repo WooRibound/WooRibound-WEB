@@ -55,14 +55,12 @@ export default {
 
     const confirmApproval = async () => {
       try {
-        const response = await handleApiCall('post', '/admin/auth/join-approval', {
+          await handleApiCall('post', '/admin/auth/join-approval', {
           approve: approvalStatus.value,
           entId: selectedEntId.value
         }, {
           'Content-Type': 'application/json'
         });
-
-        console.log("승인/반려 처리 결과:", response);
 
         await fetchCorporateUsers(); // 목록 갱신
 
