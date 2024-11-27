@@ -87,9 +87,18 @@ export default {
           <div class="menu_title" @click="onCloseFullScreenMenuClick">채용 공고</div>
         </router-link>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <div class="menu-item" @click="navigateToJobPostings('career')">경력 살리기</div>
-          <div class="menu-item" @click="navigateToJobPostings('new')">새로운 일 찾기</div>
-          <div class="menu-item" @click="navigateToJobPostings('all')">전체 조회</div>
+          <div class="menu-item" @click="navigateToJobPostings('career')">
+            <img src="@/assets/images/menuIcons/job_career.png">
+            경력 살리기
+          </div>
+          <div class="menu-item" @click="navigateToJobPostings('new')">
+            <img src="@/assets/images/menuIcons/job_new.png">
+            새로운 일 찾기
+          </div>
+          <div class="menu-item" @click="navigateToJobPostings('all')">
+            <img src="@/assets/images/menuIcons/job_all.png">
+            전체 조회
+          </div>
         </div>
       </div>
       <div class="menu-content">
@@ -289,6 +298,12 @@ export default {
 
 .menu-item {
   padding: 10px 0; /* 항목의 상하 여백 */
+  cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
+}
+
+.menu-item img {
+  width: 20px;
+  margin-right: 5px;
   cursor: pointer; /* 마우스 포인터가 아이템에 올 때 손가락 모양으로 변경 */
 }
 
