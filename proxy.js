@@ -12,4 +12,14 @@ app.use('/api', createProxyMiddleware({
     secure: false
 }));
 
+// OAuth 관련 요청도 Private ALB로 프록시
+app.use('/oauth2', createProxyMiddleware({
+    target: 'https://private-alb.wooribound.com',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/oauth2': '/oauth2'  // path 유지
+    },
+    secure: false
+}));
+
 app.listen(8080);
