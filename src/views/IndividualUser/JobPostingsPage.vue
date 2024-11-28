@@ -240,6 +240,7 @@ export default {
             class="recommended-item"
             v-for="(jobPostingRecommend, index) in jobPostingRecommendList"
             :key="index"
+            @click="onMoveDetailPageClick(jobPostingRecommend.jobPostingId)"
         >
           <div class="item-image">
             <img :src="jobPostingRecommend.postImg" alt="Job image" />
