@@ -62,10 +62,7 @@ export const fetchJobPostingDetail = async (postId) => {
 export const fetchLogDashboard = async () => {
     try {
       const response = await handleApiCall('get', '/admin/auth/dashboard');
-      const dashboardUrl = response.data;
-
-      // 페이지 이동
-      window.location.href = dashboardUrl;
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch:', error);
       throw error;
