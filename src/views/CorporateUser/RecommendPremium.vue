@@ -1,27 +1,37 @@
 <script>
-import {useRoute} from "vue-router";
-import { fetchRecommendPremium } from "@/api/services/corporateUserService";
-import { onMounted, ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {fetchRecommendPremium} from "@/api/services/corporateUserService";
+import {computed, onMounted, ref} from "vue";
+import {useSubscriptionStore} from "@/stores/useSubscriptionStore";
+import {ROUTES} from "@/router/routes";
 
 export default {
   name: "RecommendPremiumPage",
   setup() {
     const route = useRoute();
+    const router = useRouter();
+    const subscriptionStore = useSubscriptionStore();
+
     const userId = route.params.userId;
-    const entName = ref([]);
+    const isSubscription = computed(() => subscriptionStore.subscriptionStatus === '구독 중');
+    const recommendedCompanyList = ref([]);
 
     const fetchRecommendPremiumList = async (userId) => {
       try {
-        console.info("Fetching recommend premium");
         const response = await fetchRecommendPremium(userId);
-        console.info("API Response:", response);
-
-        entName.value = response.data;
-
+        recommendedCompanyList.value = response.map((item) => ({
+          entName: item.entName,
+        }));
       } catch (error) {
         console.error("[fetchApplicantsList] Error:", error);
       }
     };
+
+    const onPremiumPackageJoinClick = () => {
+      router.push({
+        name: ROUTES.PREMIUM_PACKAGE.name,
+      });
+    }
 
     onMounted(() => {
       fetchRecommendPremiumList(userId);
@@ -29,7 +39,9 @@ export default {
 
     return {
       userId,
-      fetchRecommendPremiumList
+      recommendedCompanyList,
+      isSubscription,
+      onPremiumPackageJoinClick,
     };
   }
 }
@@ -37,145 +49,104 @@ export default {
 
 <template>
   <main class="body">
-    <div class="header">공고 관리</div>
-
+    <div class="header">추천 지표</div>
+    <div class="content-wrapper">
+      <div v-if="isSubscription" class="company-list">
+        <div
+            class="company-item"
+            v-for="(recommendedCompany, index) in recommendedCompanyList"
+            :key="index"
+        >
+          <div class="company-text">{{ recommendedCompany.entName }}사에서 추천 받았습니다.</div>
+        </div>
+      </div>
+      <div v-if="!isSubscription" class="company-list">
+        <div class="company-item">
+          <div class="company-text">***사에서 추천 받았습니다.</div>
+        </div>
+      </div>
+      <div class="overlay" v-if="!isSubscription">
+        <div class="premium-btn" @click="onPremiumPackageJoinClick">프리미엄 패키지 가입하기</div>
+      </div>
+    </div>
   </main>
 </template>
 
 
 <style scoped>
 .body {
-  flex: 1;                      /* 가변 영역, 헤더와 바텀 내비게이션을 제외한 나머지 공간 차지 */
-  padding: 20px;                /* 내부 여백 */
-  box-sizing: border-box;       /* 패딩을 포함한 크기 계산 */
+  display: flex;                /* 플렉스 레이아웃 */
+  flex-direction: column;       /* 세로 방향 정렬 */
+  height: 100vh;                /* 화면 전체 높이 */
+  padding: 0;                   /* 내부 여백 제거 */
+  margin: 0;                    /* 외부 여백 제거 */
   background-color: #f8f9fa;    /* 배경색 */
-  overflow-y: auto;             /* 내용이 넘칠 경우 스크롤 가능 */
 }
 
 .header {
-  font-size: 24px;              /* 헤더 폰트 크기 */
-  font-weight: bold;            /* 헤더 두껍게 */
-  margin-bottom: 20px;          /* 아래쪽 여백 */
+  flex-shrink: 0;               /* 헤더는 크기가 줄지 않도록 고정 */
+  font-size: 24px;              /* 폰트 크기 */
+  font-weight: bold;            /* 폰트 굵기 */
+  padding: 20px;                /* 내부 여백 */
+  z-index: 2;                   /* 헤더가 최상단에 표시되도록 */
 }
 
-.subtitle {                     /* 소제목 스타일 */
-  font-size: 18px;              /* 글자 크기 */
-  font-weight: bold;            /* 글자 두께 */
-  margin-bottom: 10px;          /* 아래쪽 여백 */
-  color: #333;                  /* 텍스트 색상 */
+.content-wrapper {
+  flex: 1;                      /* 헤더를 제외한 나머지 높이 차지 */
+  display: flex;                /* 플렉스 레이아웃 */
+  flex-direction: column;       /* 세로 방향 정렬 */
+  position: relative;           /* overlay 배치를 위한 상대 위치 */
+  overflow-y: auto;             /* 스크롤 가능 */
 }
 
-.job-application-info > div {
-  margin: 5px 0;                /* 위아래 간격 설정 */
-  color: #535456;
-  font-size: 15px;
+.company-list {
+  display: flex;                /* 플렉스 레이아웃 */
+  flex-direction: column;       /* 세로 정렬 */
+  gap: 15px;                    /* 아이템 간격 */
+  padding: 20px;                /* 내부 여백 */
+  box-sizing: border-box;       /* 패딩 포함 크기 계산 */
+  z-index: 1;                   /* overlay 아래 배치 */
 }
 
-.applicant-table {
-  width: 100%; /* 테이블을 가로로 꽉 차게 설정 */
-  border-collapse: collapse; /* 테이블 경계선 겹침 방지 */
-  margin-top: 20px; /* 위쪽 여백 */
+.company-item {
+  background-color: #ffffff;    /* 카드 배경색 */
+  border: 1px solid #dee2e6;    /* 카드 테두리 */
+  border-radius: 8px;           /* 카드 모서리 둥글게 */
+  padding: 15px;                /* 내부 여백 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  margin-bottom: 3px;
 }
 
-.applicant-table th {
-  border-top: 1px solid #333; /* 제목 행 상단 선 */
-  border-bottom: 1px solid #333; /* 제목 행 하단 선 */
-  padding: 10px; /* 내부 여백 */
-  text-align: center; /* 중앙 정렬 */
-  background-color: #f1f1f1; /* 배경색 */
-  white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
+.company-text {
+  font-size: 16px;              /* 텍스트 크기 */
+  font-weight: 500;             /* 텍스트 굵기 */
+  color: #495057;               /* 텍스트 색상 */
+  line-height: 1.5;             /* 줄 간격 */
 }
 
-.applicant-table td {
-  padding: 10px; /* 내부 여백 */
-  text-align: center;
+.overlay {
+  position: absolute;           /* 절대 위치 */
+  inset: 0;                     /* top, left, right, bottom을 간단히 설정 */
+  margin: 0 10px 5px;           /* 간결하게 마진 설정 */
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 */
+  backdrop-filter: blur(3px);   /* 블러 효과 */
+  border-radius: 8px;           /* 둥근 모서리 */
+  z-index: 2;                   /* 다른 요소 위에 표시 */
+  display: flex; /* 버튼을 수평/수직 중앙 배치 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
 }
 
-.name, .recommend-count {
-  text-decoration: underline;
-}
-
-.resume-link {
-  display: inline-block; /* 블록 레벨 요소로 변환 */
-  padding: 6px 12px; /* 내부 여백 */
-  background-color: #024CAA; /* 배경색 */
-  color: white; /* 글자 색상 */
-  border-radius: 5px; /* 둥근 모서리 */
-  text-align: center; /* 텍스트 중앙 정렬 */
-  white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
-  font-size: 8pt;
-}
-
-.resume-link:hover {
-  text-decoration: underline; /* 호버 시 밑줄 */
-}
-.status-container {
-  display: flex; /* Flexbox 사용 */
-  gap: 5px;     /* 요소 간의 간격 */
-  justify-content: center; /* 가운데 정렬 */
-}
-
-.status-accepted {
-  display: inline-block; /* 블록 레벨 요소로 변환 */
-  padding: 6px 12px; /* 내부 여백 */
-  background-color: #5B99C2; /* 배경색 */
-  color: white; /* 글자 색상 */
-  border-radius: 5px; /* 둥근 모서리 */
-  text-align: center; /* 텍스트 중앙 정렬 */
-  white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
-  font-size: 8pt;
-  cursor: pointer;
-}
-
-.status-rejected {
-  display: inline-block; /* 블록 레벨 요소로 변환 */
-  padding: 6px 12px; /* 내부 여백 */
-  background-color: #7AB2D3; /* 배경색 */
-  color: white; /* 글자 색상 */
-  border-radius: 5px; /* 둥근 모서리 */
-  text-align: center; /* 텍스트 중앙 정렬 */
-  white-space: nowrap; /* 텍스트가 한 줄로 나오도록 설정 */
-  font-size: 8pt;
-  cursor: pointer;
-}
-.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-  background-color: #686D76;
-}
-
-.table-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.job-duration {
-  font-size: 14px;
-  color: #555;
-}
-
-.recommend-button {
-  display: inline-block;
-  padding: 6px 12px;
+.premium-btn {
   background-color: #024CAA;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 10pt;
-  font-weight: bold;
-  cursor: pointer;
+  color: #fff;
+  font-size: 16px;          /* 텍스트 크기 */
+  font-weight: bold;        /* 텍스트 굵기 */
+  padding: 12px 24px;       /* 버튼 안쪽 여백 */
+  border: none;             /* 테두리 제거 */
+  border-radius: 8px;       /* 둥근 모서리 */
+  cursor: pointer;          /* 커서 모양 변경 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
-
-.recommend-button:hover {
-  background-color: #023a87;
-}
-
-.recommend-button:active {
-  background-color: #022d66;
-}
-
-
 </style>
