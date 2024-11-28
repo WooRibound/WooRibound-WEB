@@ -218,47 +218,83 @@ export default {
     <!-- 서비스관리자 메뉴 -->
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.SERVICE_ADMIN">
       <div class="menu-content">
-        <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
-          <div class="menu_title" @click="onCloseFullScreenMenuClick">개인 회원 관리</div>
-        </router-link>
+        <div class="menu_title">개인 회원 관리</div>
+         <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <router-link :to="ROUTES.INDIVIDUAL_USER_MANAGEMENT.path">
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/admin_user.png">
+              <span>개인 회원 목록</span>
+            </div>
+          </router-link>
+        </div>
       </div>
       <div class="menu-content">
         <div class="menu_title">기업 회원 관리</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.CORPORATE_USER_SIGNUP.path">
-            <div class="menu-item">기업 가입</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/admin_join.png">
+              <span>기업 가입</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.CORPORATE_USER_WITHDRAWAL.path">
-            <div class="menu-item">기업 탈퇴</div>
+            <div class="menu-item">
+             <img src="@/assets/images/menuIcons/admin_delete.png">
+              <span>기업 탈퇴</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.CORPORATE_USERS.path">
-            <div class="menu-item">기업 회원 조회</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/admin_corporate.png">
+              <span>기업 회원 조회</span>
+            </div>
           </router-link>
           <router-link :to="ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path">
-            <div class="menu-item">공고 관리</div>
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/ent_posting.png">
+              <span>공고 관리</span>
+            </div>
           </router-link>
         </div>
       </div>
       <div class="menu-content">
-        <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
-          <div class="menu_title" @click="onCloseFullScreenMenuClick">지혜 마당 관리</div>
-        </router-link>
+        <div class="menu_title">지혜 마당 관리</div>
+         <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/wisdom_share.png">
+              <span>지혜 마당 관리</span>
+            </div>
+          </router-link>
+        </div>
       </div>
       <div class="menu-content">
-        <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
-          <div class="menu_title" @click="onCloseFullScreenMenuClick">사용자 로그 분석</div>
+        <div class="menu_title">사용자 로그 분석</div>
+         <div class="menu-items" @click="onCloseFullScreenMenuClick">
+          <router-link :to="ROUTES.USER_LOG_ANALYSIS.path">
+           <div class="menu-item">
+             <img src="@/assets/images/menuIcons/admin_log.png">
+             <span>사용자 로그 분석</span>
+           </div>
         </router-link>
+       </div>
       </div>
     </div>
 
     <!-- 인프라관리자 메뉴 -->
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INFRA_ADMIN">
       <div class="menu-content">
-        <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
-          <div class="menu_title" @click="onCloseFullScreenMenuClick">로그 대시보드 관리</div>
-        </router-link>
-      </div>
+          <div class="menu_title">로그 대시보드 관리</div>
+          <div class="menu-items" @click="onCloseFullScreenMenuClick">
+            <router-link :to="ROUTES.LOG_DASH_BOARD_MANAGEMENT.path">
+              <div class="menu-item">
+                <img src="@/assets/images/menuIcons/admin_log.png">
+                <span>로그 대시보드 관리</span>
+              </div>
+            </router-link>
+          </div>
     </div>
+  </div>
   </div>
 </template>
 
