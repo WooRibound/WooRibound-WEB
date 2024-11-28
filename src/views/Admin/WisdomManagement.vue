@@ -76,7 +76,7 @@ export default {
 
     const onMoveDetailPageClick = (knowhowId) => {
       router.push({
-        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+        name: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.name,
         params: {
           id: knowhowId
         },
