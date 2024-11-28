@@ -57,6 +57,7 @@ export default {
             isActionDisabled: !oneMonthPassed || employee.empRecomm !== null, // 1개월 미만 또는 empRecomm이 설정되었으면 비활성화
           };
         });
+
       } catch (error) {
         console.error("[fetchEmployment] Error:", error);
       }
@@ -116,7 +117,7 @@ export default {
             <div v-else-if="employment.empRecomm === 'Y'" class="status-accepted-gray">
               평가종료 </div>
             <!-- 추천 버튼 -->
-            <div v-else-if="!employment.isActionDisabled" class="status-accepted" @click="onRecommendClick(employment.index, 'recommend')">
+            <div v-else-if="employment.isActionDisabled" class="status-accepted" @click="onRecommendClick(employment.index, 'recommend')">
               추천 </div>
           </td>
         </tr>

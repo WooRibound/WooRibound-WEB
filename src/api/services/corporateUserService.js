@@ -127,8 +127,8 @@ export const fetchRecommendList = async (jobId) => {
 export const fetchRecommendPremium = async (userId) => {
     try {
         console.debug("Making API call to fetch recommend premium ");
-        const data = await handleApiCall("get", `corporate/jobposting/applicant-recommend/history?userId=${userId}`);
-        return data;
+        const response = await handleApiCall("get", `corporate/jobposting/applicant-recommend/history?userId=${userId}`);
+        return response.data;
     } catch (error) {
         console.error("[fetchRecommendList] Error:", error);
         throw error;
