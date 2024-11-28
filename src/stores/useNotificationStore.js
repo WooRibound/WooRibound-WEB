@@ -1,6 +1,5 @@
-import { defineStore } from "pinia";
-import { fetchAllNotification } from "@/api/services/individualUserService";
-import { useUserStore } from "@/stores/userStore";
+import {defineStore} from "pinia";
+import {fetchAllNotification} from "@/api/services/individualUserService";
 
 export const useNotificationStore = defineStore('notification', {
     state: () => ({
@@ -17,12 +16,6 @@ export const useNotificationStore = defineStore('notification', {
     },
     actions: {
         async fetchAllNotification() {
-            const userStore = useUserStore();
-
-            if (!userStore.isLoggedIn) {
-                return;
-            }
-
             try {
                 const notifications = await fetchAllNotification();
                 this.notifications = notifications;
