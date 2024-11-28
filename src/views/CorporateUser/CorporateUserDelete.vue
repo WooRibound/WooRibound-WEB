@@ -221,7 +221,7 @@ export default {
 }
 
 .confirm-input {
-  width: 100%;
+  width: 90%;
   max-width: 300px;
   padding: 12px;
   font-size: 16px;
