@@ -1,13 +1,13 @@
 <script>
 import { onMounted, ref } from "vue";
-import { formatDate2 } from "@/utils/formatters";
+import { formatDate3 } from "@/utils/formatters";
 import handleApiCall from '@/api/apiService';
 import TwoButtonModal from '@/components/TwoButtonModal.vue';
 
 export default {
   name: "CorporateUserWithdrawal",
   components: { TwoButtonModal },
-  methods: { formatDate2 },
+  methods: { formatDate3 },
   setup() {
     const searchInput = ref("");
     const corporateUserList = ref([]);
@@ -113,13 +113,8 @@ export default {
         <tbody>
           <tr v-for="corporateUser in corporateUserList" :key="corporateUser.entId">
             <td>
-              {{ formatDate2(new Date(Date.parse(corporateUser.deleteRequestedAt))) }}
+              {{ formatDate3(corporateUser.deleteRequestedAt) }}
               <br>
-              {{ new Date(corporateUser.deleteRequestedAt).toLocaleTimeString('ko-KR', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-              }) }}
             </td>
             <td>{{ corporateUser.entName }}</td>
             <td>{{ corporateUser.entField }}</td>
