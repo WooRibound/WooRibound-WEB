@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { ROUTES } from "@/router/routes";
 import { useUserStore } from "@/stores/userStore";
 import { USER_TYPES } from "@/constants/userTypes";
-import {decodeToken} from "@/utils/tokenDecoder";
-import {useLoginModalStore} from "@/stores/useLoginModalStore";
+import { decodeToken } from "@/utils/tokenDecoder";
+import { useLoginModalStore } from "@/stores/useLoginModalStore";
 
 const router = createRouter({
     history: createWebHistory(""),
@@ -40,13 +40,13 @@ const router = createRouter({
         },
         {
             path: ROUTES.JOB_APPLICATION_STATUS.path,
-            name:  ROUTES.JOB_APPLICATION_STATUS.name,
+            name: ROUTES.JOB_APPLICATION_STATUS.name,
             component: () => import("@/views/IndividualUser/JobApplicationStatus.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {
             path: ROUTES.JOB_APPLICATION_STATUS_DETAIL.path,
-            name:  ROUTES.JOB_APPLICATION_STATUS_DETAIL.name,
+            name: ROUTES.JOB_APPLICATION_STATUS_DETAIL.name,
             component: () => import("@/views/IndividualUser/JobApplicationStatusDetail.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
@@ -185,7 +185,7 @@ const router = createRouter({
             path: ROUTES.READONLY_RESUME_PAGE.path,
             name: ROUTES.READONLY_RESUME_PAGE.name,
             component: () => import("@/views/CorporateUser/ReadonlyResumePage.vue"),
-            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.CORPORATE_MEMBER },
+            meta: { requiresAuth: true, allowedUserTypes: [USER_TYPES.CORPORATE_MEMBER, USER_TYPES.SERVICE_ADMIN] },
         },
         {
             path: ROUTES.EMPLOYEE_MANAGEMENT.path,
@@ -227,7 +227,7 @@ const router = createRouter({
             path: ROUTES.WISDOM_EXPLORE_DETAIL.path,
             name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
             component: () => import("@/views/IndividualUser/WisdomExploreDetail.vue"),
-            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
+            meta: { requiresAuth: true, allowedUserTypes: [USER_TYPES.INDIVIDUAL_USER, USER_TYPES.SERVICE_ADMIN] },
 
         },
         {
@@ -322,7 +322,7 @@ router.beforeEach((to, from, next) => {
     if (window.location.hash.includes('accessToken=')) {
         const token = window.location.hash.split('accessToken=')[1];
         if (token) {
-            localStorage.setItem('accessToken', "Bearer "+token);
+            localStorage.setItem('accessToken', "Bearer " + token);
             decodeToken();
             router.replace({ path: to.path });
             window.location.hash = '';
