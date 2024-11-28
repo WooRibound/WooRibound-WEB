@@ -124,7 +124,7 @@ export const ROUTES = {
     },
     // [개인회원] 공고 상세페이지
     CORPORATE_USER_JOB_POSTING_DETAIL: {
-        path: "/corporate-user/:id",
+        path: "/corporate-user/job-posting/:postId/:viewType?",
         name: "CorporateUserJobPostingDetail",
     },
     // [기업회원] 공고 지원자
@@ -221,6 +221,11 @@ export const ROUTES = {
     CORPORATE_JOB_POSTING_MANAGEMENT: {
         path: '/admin/corporate-job-posting-management',
         name: 'CorporateJobPostingManagement',
+    },
+    // [서비스 관리자] 기업 공고 관리 상세
+    ADMIN_CORPORATE_JOB_POSTING_DETAIL: {
+        path: '/admin/corporate-job-posting-management/detail/:postId',
+        name: 'AdminCorporateJobPostingDetail',
     },
     // [서비스 관리자] 공고 상세페이지
     ADMIN_JOB_POSTING_DETAIL: {

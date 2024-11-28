@@ -220,7 +220,7 @@ export default {
 }
 
 .job-posting-info div {
-  margin-bottom: 10px;
+  margin-bottom: 17px;
 }
 
 .company-name {
@@ -234,43 +234,6 @@ export default {
   font-weight: bold;
   color: #000000;
   margin-bottom: 5px;
-}
-
-.job-title {
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-.job-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-.application-period {
-  font-size: 18px;
-  margin-top: 20px;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.application-dates {
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.company-address-label {
-  font-size: 18px;
-  margin-top: 20px;
-  font-weight: bold;
-}
-
-.company-address {
-  font-size: 18px;
-  color: #333;
 }
 
 .apply-cancel-button,

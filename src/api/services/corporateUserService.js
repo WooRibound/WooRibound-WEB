@@ -154,7 +154,7 @@ export const insertJobPosting= async (jobPosting) => {
 };
 
 // 채용공고 삭제
-export const deleteJobPosting = async (postId) => {
+export const deleteJobPostingByCorporate = async (postId) => {
     try {
         const response = await handleApiCall('post', '/corporate/jobposting/detail/delete', null, {
             params: { postId: postId },
@@ -162,7 +162,7 @@ export const deleteJobPosting = async (postId) => {
                 'Content-Type': 'application/json',
             }
         });
-        return response;
+        return response.data;
     } catch (error) {
         console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
         throw error;

@@ -267,6 +267,12 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
         },
         {
+            path: ROUTES.ADMIN_CORPORATE_JOB_POSTING_DETAIL.path,
+            name: ROUTES.ADMIN_CORPORATE_JOB_POSTING_DETAIL.name,
+            component: () => import("@/views/Admin/AdminCorporateJobPostingDetail.vue"),
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
+        },
+        {
             path: ROUTES.ADMIN_JOB_POSTING_DETAIL.path,
             name: ROUTES.ADMIN_JOB_POSTING_DETAIL.name,
             component: () => import("@/views/CorporateUser/CorporateUserJobPostingDetail.vue"),
@@ -318,19 +324,21 @@ router.beforeEach((to, from, next) => {
         if (token) {
             localStorage.setItem('accessToken', "Bearer "+token);
             decodeToken();
+            router.replace({ path: to.path });
             window.location.hash = '';
         }
     }
 
     const userStore = useUserStore();
     const loginModalStore = useLoginModalStore();
+    const isAuthenticated = userStore.isAuthenticated;
+    const currentUserType = userStore.getCurrentUserType;
+    const allowedUserTypes = to.meta.allowedUserTypes;
+    const isRequiresAuth = to.meta.requiresAuth;
 
-    // 로그인 권한이 필요하고
-    if (to.meta.requiresAuth) {
-        // 로그인이 되어 있지 않으면
-        if (!userStore.isAuthenticated) {
-            // allowedUserTypes에 따라 로그인 페이지 분기
-            const allowedUserTypes = to.meta.allowedUserTypes;
+    if (isRequiresAuth) {
+        // 로그인 x
+        if (!isAuthenticated) {
             if (allowedUserTypes && allowedUserTypes.includes(USER_TYPES.INFRA_ADMIN) || allowedUserTypes.includes(USER_TYPES.SERVICE_ADMIN)) {
                 // 권한 타입이 관리자 경우 관리자 로그인 페이지로 리다이렉트
                 return loginModalStore.openModal(ROUTES.ADMIN_LOGIN.name);
@@ -339,17 +347,15 @@ router.beforeEach((to, from, next) => {
             return loginModalStore.openModal(ROUTES.LOGIN.name);
         }
 
-        // 로그인이 되어 있는데
-        const allowedUserTypes = to.meta.allowedUserTypes;
-        if (allowedUserTypes && !allowedUserTypes.includes(userStore.getCurrentUserType)) {
+        // 로그인 o
+        if (allowedUserTypes && !allowedUserTypes.includes(currentUserType)) {
             // 권한 타입이 존재하지 않는 경우 메인 페이지로 리다이렉트
             return loginModalStore.openModal(ROUTES.LOGIN.name);
         }
     }
 
     // 로그인한 관리자 사용자의 메인 페이지 리다이렉션
-    if (userStore.isLoggedIn &&
-        (userStore.userType === USER_TYPES.INFRA_ADMIN || userStore.userType === USER_TYPES.SERVICE_ADMIN)) {
+    if (isAuthenticated && (currentUserType === USER_TYPES.INFRA_ADMIN || currentUserType === USER_TYPES.SERVICE_ADMIN)) {
         if (to.path === ROUTES.MAIN.path) {
             return next({ path: ROUTES.ADMIN_MAIN.path });
         }
