@@ -49,6 +49,7 @@ export default {
           jobName: response.jobName,
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
+          postingCnt: response.postingCnt,
         };
 
         const today = new Date();
@@ -108,13 +109,20 @@ export default {
 
 <template>
   <main class="job-posting-detail">
-    <div class="job-posting-header">채용공고 상세페이지</div>
+    <div class="job-posting-header-container">
+      <div class="job-posting-header">채용공고 상세페이지</div>
+      <div class="post-count">
+        조회 {{ jobPosting.postingCnt }}
+      </div>
+    </div>
     <div class="job-posting-content">
       <div class="company-logo">
         <img :src="jobPosting.postImg" alt="Company Logo">
       </div>
       <div class="job-posting-info">
-        <div class="job-posting-title">{{ jobPosting.postTitle }}</div>
+        <div class="job-posting-title-container">
+          <div class="job-posting-title">{{ jobPosting.postTitle }}</div>
+        </div>
         <div class="company-name">{{ jobPosting.entName }}</div>
         <div class="info-item">
           <span class="label">
@@ -157,10 +165,24 @@ export default {
   overflow-y: auto;
 }
 
+.job-posting-header-container {
+  display: flex;
+  justify-content: space-between; /* 좌우 정렬 */
+  align-items: center; /* 수직 정렬 */
+  margin-bottom: 20px;
+}
+
 .job-posting-header {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 20px;
+}
+
+.post-count {
+  font-size: 14px;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  margin-right: 7px;
 }
 
 .job-posting-content {
@@ -189,13 +211,7 @@ export default {
   border-left: 2px solid #ccc;
 }
 
-.job-posting-info div {
-  margin-bottom: 17px;
-}
-
-.company-name {
-  font-size: 17px;
-  font-weight: bold;
+.job-posting-title-container {
   margin-bottom: 5px;
 }
 
@@ -203,6 +219,15 @@ export default {
   font-size: 25px;
   font-weight: bold;
   color: #000000;
+}
+
+.job-posting-info div {
+  margin-bottom: 17px;
+}
+
+.company-name {
+  font-size: 17px;
+  font-weight: bold;
   margin-bottom: 5px;
 }
 
