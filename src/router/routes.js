@@ -124,7 +124,7 @@ export const ROUTES = {
     },
     // [개인회원] 공고 상세페이지
     CORPORATE_USER_JOB_POSTING_DETAIL: {
-        path: "/corporate-user/job-posting/:postId",
+        path: "/corporate-user/job-posting/:postId/:viewType?",
         name: "CorporateUserJobPostingDetail",
     },
     // [기업회원] 공고 지원자

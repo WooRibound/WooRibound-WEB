@@ -21,6 +21,7 @@ export default {
     const router = useRouter();
 
     const postId = route.params.postId;
+    const viewType = route.params.viewType;
     const singleModalPopupStatue = ref('');
     const singleButtonModalMessage = ref('');
     const singleButtonModalRoute = ref('');
@@ -50,6 +51,7 @@ export default {
           jobName: response.jobName,
           entAddr1: response.entAddr1,
           entAddr2: response.entAddr2,
+          postingCnt: response.postingCnt,
         };
       } catch (error) {
         console.error("채용공고 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
@@ -88,6 +90,7 @@ export default {
       showDeleteModal,
       modalMessage,
       postId,
+      viewType,
       jobPosting,
       confirmDelete,
       onDeleteClick,
@@ -98,7 +101,12 @@ export default {
 
 <template>
   <main class="job-posting-detail">
-    <div class="job-posting-header">채용공고 상세페이지</div>
+    <div class="job-posting-header-container">
+      <div class="job-posting-header">채용공고 상세페이지</div>
+      <div class="post-count">
+        조회 {{ jobPosting.postingCnt }}
+      </div>
+    </div>
     <div class="job-posting-content">
       <div class="company-logo">
         <img :src="jobPosting.postImg" alt="Company Logo">
@@ -126,7 +134,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="delete-button" @click="onDeleteClick(postId)">삭제하기</div>
+    <div class="delete-button" @click="onDeleteClick(postId)" v-if="viewType === 'deleted'">삭제하기</div>
   </main>
   <single-button-modal
       v-if="singleModalPopupStatue"
@@ -153,10 +161,24 @@ export default {
   overflow-y: auto;
 }
 
+.job-posting-header-container {
+  display: flex;
+  justify-content: space-between; /* 좌우 정렬 */
+  align-items: center; /* 수직 정렬 */
+  margin-bottom: 20px;
+}
+
 .job-posting-header {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 20px;
+}
+
+.post-count {
+  font-size: 14px;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  margin-right: 7px;
 }
 
 .job-posting-content {
