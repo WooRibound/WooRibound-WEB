@@ -1,14 +1,11 @@
 <script>
-import { useUserStore } from "@/stores/userStore";
-import { computed, onMounted, ref } from "vue";
+import {onMounted, ref} from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
-import { ROUTES } from "@/router/routes";
-import { useRoute, useRouter } from "vue-router";
-import { formatDate3 } from "@/utils/formatters";
-import { fetchJobPostingDetail } from "@/api/services/adminServiece";
-import { deleteJobPostingByCorporate } from "@/api/services/corporateUserService";
-import { USER_TYPES } from "@/constants/userTypes";
-import handleApiCall from "@/api/apiService";
+import {ROUTES} from "@/router/routes";
+import {useRoute, useRouter} from "vue-router";
+import {formatDate3} from "@/utils/formatters";
+import {fetchJobPostingDetail} from "@/api/services/adminServiece";
+import {deleteJobPostingByCorporate} from "@/api/services/corporateUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {

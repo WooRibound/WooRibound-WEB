@@ -73,9 +73,6 @@ export default {
   box-sizing: border-box;
   background-color: #f8f9fa;
   overflow-y: auto;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .header {
