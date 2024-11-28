@@ -2,8 +2,8 @@
 import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
 import { fetchLogDashboard } from "@/api/services/adminServiece";
-import { useRouter } from "vue-router";  // Importing useRouter for navigation
-import SingleButtonModal from "@/components/SingleButtonModal.vue"; // Import the modal
+import { useRouter } from "vue-router"; 
+import SingleButtonModal from "@/components/SingleButtonModal.vue"; 
 
 export default {
   name: "LogDashboardManagement",
