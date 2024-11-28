@@ -267,6 +267,12 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
         },
         {
+            path: ROUTES.ADMIN_CORPORATE_JOB_POSTING_DETAIL.path,
+            name: ROUTES.ADMIN_CORPORATE_JOB_POSTING_DETAIL.name,
+            component: () => import("@/views/Admin/AdminCorporateJobPostingDetail.vue"),
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
+        },
+        {
             path: ROUTES.ADMIN_JOB_POSTING_DETAIL.path,
             name: ROUTES.ADMIN_JOB_POSTING_DETAIL.name,
             component: () => import("@/views/CorporateUser/CorporateUserJobPostingDetail.vue"),

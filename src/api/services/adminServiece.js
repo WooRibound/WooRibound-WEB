@@ -70,4 +70,20 @@ export const fetchLogDashboard = async () => {
       console.error('Failed to fetch:', error);
       throw error;
     }
-  };
+};
+
+// 채용공고 삭제
+export const deleteJobPostingByAdmin = async (postId) => {
+    try {
+        const response = await handleApiCall('post', '/admin/jobposting/delete', null, {
+            params: { postId: postId },
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+        throw error;
+    }
+};

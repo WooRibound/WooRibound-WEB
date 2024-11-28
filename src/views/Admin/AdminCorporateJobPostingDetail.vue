@@ -1,18 +1,14 @@
 <script>
-import { useUserStore } from "@/stores/userStore";
-import { computed, onMounted, ref } from "vue";
+import {onMounted, ref} from "vue";
 import TwoButtonModal from "@/components/TwoButtonModal.vue";
-import { ROUTES } from "@/router/routes";
-import { useRoute, useRouter } from "vue-router";
-import { formatDate3 } from "@/utils/formatters";
-import { fetchJobPostingDetail } from "@/api/services/adminServiece";
-import { deleteJobPostingByCorporate } from "@/api/services/corporateUserService";
-import { USER_TYPES } from "@/constants/userTypes";
-import handleApiCall from "@/api/apiService";
+import {ROUTES} from "@/router/routes";
+import {useRoute, useRouter} from "vue-router";
+import {formatDate3} from "@/utils/formatters";
+import {deleteJobPostingByAdmin, fetchJobPostingDetail} from "@/api/services/adminServiece";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
-  name: "CorporateUserJobPostingDetail",
+  name: "AdminCorporateJobPostingDetail",
   components: {SingleButtonModal, TwoButtonModal },
   computed: {
     ROUTES() {
@@ -27,8 +23,8 @@ export default {
     const singleModalPopupStatue = ref('');
     const singleButtonModalMessage = ref('');
     const singleButtonModalRoute = ref('');
-    const modalMessage = ref('');
     const showDeleteModal = ref(false);
+    const modalMessage = ref('');
 
     const jobPosting = ref({
       entName: "",
@@ -65,20 +61,17 @@ export default {
       fetchJobPosting();
     });
 
-    const onDeleteClick = async (postId) => {
-      try {
-        const response = await deleteJobPostingByCorporate(postId);
-        singleButtonModalMessage.value = response;
-        singleButtonModalRoute.value = ROUTES.JOB_POSTING_MANAGEMENT.path
-        singleModalPopupStatue.value = true;
-      } catch (e) {
-        console.log(e);
-      }
+    const onDeleteClick = async () => {
+        modalMessage.value = "채용공고를 삭제하시겠습니까?";
+        showDeleteModal.value = true;
     }
 
     const confirmDelete = async () => {
       try {
-        await deleteJobPostingByCorporate(postId);
+        const response = await deleteJobPostingByAdmin(postId);
+        singleButtonModalMessage.value = response;
+        singleButtonModalRoute.value = ROUTES.CORPORATE_JOB_POSTING_MANAGEMENT.path
+        singleModalPopupStatue.value = true;
       } catch (error) {
         console.error("채용공고를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
       }

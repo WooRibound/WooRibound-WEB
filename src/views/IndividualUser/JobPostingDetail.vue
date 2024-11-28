@@ -190,7 +190,7 @@ export default {
 }
 
 .job-posting-info div {
-  margin-bottom: 10px;
+  margin-bottom: 17px;
 }
 
 .company-name {
@@ -217,6 +217,19 @@ export default {
 .aligned-label {
   font-size: 11pt;
   margin-left: 25px;
+}
+
+.apply-button {
+  width: 90%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 20px auto 0 auto;
+  background-color: #024CAA;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
 }
 
 .not-application-date-button {
