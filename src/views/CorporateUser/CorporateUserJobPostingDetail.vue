@@ -21,6 +21,7 @@ export default {
     const router = useRouter();
 
     const postId = route.params.postId;
+    const viewType = route.params.viewType;
     const singleModalPopupStatue = ref('');
     const singleButtonModalMessage = ref('');
     const singleButtonModalRoute = ref('');
@@ -89,6 +90,7 @@ export default {
       showDeleteModal,
       modalMessage,
       postId,
+      viewType,
       jobPosting,
       confirmDelete,
       onDeleteClick,
@@ -132,7 +134,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="delete-button" @click="onDeleteClick(postId)">삭제하기</div>
+    <div class="delete-button" @click="onDeleteClick(postId)" v-if="viewType === 'deleted'">삭제하기</div>
   </main>
   <single-button-modal
       v-if="singleModalPopupStatue"

@@ -64,7 +64,8 @@ export default {
       router.push({
         name: ROUTES.CORPORATE_USER_JOB_POSTING_DETAIL.name,
         params:{
-          postId: postId
+          postId: postId,
+          viewType: 'deleted',
         },
       })
     }
