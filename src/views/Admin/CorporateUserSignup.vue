@@ -234,37 +234,25 @@ export default {
 
 .status-accepted {
   display: inline-block;
-  /* 블록 레벨 요소로 변환 */
   padding: 6px 12px;
-  /* 내부 여백 */
   background-color: #5B99C2;
-  /* 배경색 */
   color: white;
-  /* 글자 색상 */
   border-radius: 5px;
-  /* 둥근 모서리 */
   text-align: center;
-  /* 텍스트 중앙 정렬 */
   white-space: nowrap;
-  /* 텍스트가 한 줄로 나오도록 설정 */
   font-size: 8pt;
+  cursor: pointer;
 }
 
 .status-rejected {
   display: inline-block;
-  /* 블록 레벨 요소로 변환 */
   padding: 6px 12px;
-  /* 내부 여백 */
   background-color: #7AB2D3;
-  /* 배경색 */
   color: white;
-  /* 글자 색상 */
   border-radius: 5px;
-  /* 둥근 모서리 */
   text-align: center;
-  /* 텍스트 중앙 정렬 */
   white-space: nowrap;
-  /* 텍스트가 한 줄로 나오도록 설정 */
   font-size: 8pt;
+  cursor: pointer;
 }
 </style>

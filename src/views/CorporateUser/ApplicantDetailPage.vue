@@ -241,6 +241,7 @@ export default {
 
 .name, .recommend-count {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .resume-link {
