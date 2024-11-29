@@ -1,12 +1,15 @@
 <script>
-import {ref} from "vue";
+import { ref } from "vue";
 
 export default {
   name: "UserLogAnalysis",
   setup() {
     const searchInput = ref("");
+    const iframeUrl = ref("https://kibana.wooribound.site/app/r/s/cWdia");
+
     return {
-      searchInput
+      searchInput,
+      iframeUrl
     };
   }
 }
@@ -17,21 +20,13 @@ export default {
     <div class="header">
       <div class="header-title">사용자 로그 분석</div>
     </div>
-    <div class="search-wrap">
-      <input
-          class="search-input"
-          placeholder="게시물 제목을 입력하세요"
-          type="text"
-          v-model="searchInput"
-          @keyup.enter="searchPosts"
-      >
-      <div class="filter-section">
-        <div class="filter-item"
-             @click="onFilterClick(SEARCH_FILTER_TYPES.JOB)"
-             :style="{ color: selectedJob === '전체 직무' ? 'black' : '#024CAA' }">
-          {{ selectedJob }}
-        </div>
-      </div>
+    <div class="dashboard-container">
+      <iframe
+          :src="iframeUrl"
+          class="kibana-frame"
+          frameborder="0"
+          allowfullscreen
+      ></iframe>
     </div>
   </main>
 </template>
@@ -47,10 +42,24 @@ export default {
 
 .header {
   display: flex;
-  justify-content: space-between; /* 두 요소를 양 끝에 배치 */
-  align-items: center; /* 세로 정렬을 가운데로 */
+  justify-content: space-between;
+  align-items: center;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.dashboard-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: calc(100vh - 120px);
+}
+
+.kibana-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
 }
 </style>
