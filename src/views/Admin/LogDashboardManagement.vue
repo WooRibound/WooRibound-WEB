@@ -20,6 +20,8 @@ export default {
     const isError = ref(false);
     const modalMessage = "접근 권한이 없습니다.";
 
+    const monitoringURL = process.env.VUE_APP_MONITORING_URL;
+
     const router = useRouter();
 
     const loadDashboard = async () => {
@@ -49,6 +51,7 @@ export default {
       isError,
       modalMessage,
       handleCloseModal,
+      monitoringURL
     };
   },
 };
@@ -61,25 +64,25 @@ export default {
     </div>
 
     <div v-if="isDashboardVisible" class="content">
-      <iframe src="http://localhost:3000/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=5"
-        class="full-width-iframe" frameborder="0">
+      <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=5`"
+              class="full-width-iframe" frameborder="0">
       </iframe>
 
       <div class="iframe-row">
-        <iframe src="http://localhost:3000/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=1"
-          class="half-width-iframe" frameborder="0">
+        <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=1`"
+                class="half-width-iframe" frameborder="0">
         </iframe>
-        <iframe src="http://localhost:3000/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=3"
-          class="half-width-iframe" frameborder="0">
+        <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=3`"
+                class="half-width-iframe" frameborder="0">
         </iframe>
       </div>
 
       <div class="iframe-row">
-        <iframe src="http://localhost:3000/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=2"
-          class="half-width-iframe" frameborder="0">
+        <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=2`"
+                class="half-width-iframe" frameborder="0">
         </iframe>
-        <iframe src="http://localhost:3000/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=4"
-          class="half-width-iframe" frameborder="0">
+        <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=4`"
+                class="half-width-iframe" frameborder="0">
         </iframe>
       </div>
     </div>
