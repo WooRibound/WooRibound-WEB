@@ -46,7 +46,7 @@ export default {
   <div class="modal-overlay">
     <div class="menu-content">
       <div class="menu_title">
-        AI 추천
+        AI 작성
         <div class="close-button" @click="closeModal">
           <img src="@/assets/images/icons/close.png" alt="Close" />
         </div>
