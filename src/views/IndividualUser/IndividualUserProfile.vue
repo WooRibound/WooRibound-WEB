@@ -34,8 +34,7 @@ export default {
     const jobs = computed(() => jobStore.getJobs);
 
     const provinces = computed(() => regionsStore.getProvinces);
-    const selectedProvince = ref('');
-    const cities = computed(() => regionsStore.getCitiesByProvince(selectedProvince.value) || []);
+    const cities = computed(() => regionsStore.getCitiesByProvince(userInfo.value.addrProvince) || []);
 
     const exjobChkStatus = ref("N");
     const isJobCategoryEnabled = computed(() => exjobChkStatus.value === "Y");
@@ -106,7 +105,6 @@ export default {
       userInfo.value = response;
 
       userInfo.value.birth = formatDate2(userInfo.value.birth);  // 생일 형식 포맷
-      selectedProvince.value = userInfo.value.addrProvince;      // 거주시 필터를 위해서 selectedProvince 에 값 할당
       exjobChkStatus.value = userInfo.value.exjobChk;            // 경력 여부 상태 값 할당
 
       initialUserInfo.value = JSON.parse(JSON.stringify(userInfo.value));
@@ -138,6 +136,13 @@ export default {
       userInfo.value.workHistoryJobs = userInfo.value.workHistoryJobs.filter(job => job !== '');
       userInfo.value.interestJobs = userInfo.value.interestJobs.filter(job => job !== '');
 
+      if ((initialUserInfo.value.addrProvince !== userInfo.value.addrProvince) &&
+          (initialUserInfo.value.addrCity === userInfo.value.addrCity)
+      ) {
+          errorMessage.value = "모든 필수 항목을 입력해주세요.";
+          return;
+      }
+
       const isUserInfoUnchanged = JSON.stringify(initialUserInfo.value) === JSON.stringify(userInfo.value);
 
       if (isUserInfoUnchanged) {
@@ -154,20 +159,21 @@ export default {
         return;
       }
 
-      try {
-        if (!isOnlyLetters(userInfo.value.name)) {
-          errorMessage.value = "이름은 영문자나 한글만 입력해주세요.";
-          return;
-        }
+      if (!isOnlyLetters(userInfo.value.name)) {
+        errorMessage.value = "이름은 영문자나 한글만 입력해주세요.";
+        return;
+      }
 
-        if (!userInfo.value.gender ||
-            !userInfo.value.addrProvince ||
-            !userInfo.value.addrCity ||
-            !userInfo.value.exjobChk
-        ) {
-          errorMessage.value = "모든 필수 항목을 입력해주세요.";
-          return;
-        }
+      if (!userInfo.value.gender ||
+          !userInfo.value.addrProvince ||
+          !userInfo.value.addrCity ||
+          !userInfo.value.exjobChk
+      ) {
+        errorMessage.value = "모든 필수 항목을 입력해주세요.";
+        return;
+      }
+
+      try {
 
         const date = new Date(userInfo.value.birth);
         userInfo.value.birth = date.toISOString();
@@ -284,7 +290,7 @@ export default {
         <div class="input-label">
           <span class="required">*</span>
           <select v-model="userInfo.addrCity" class="input-field" aria-label="거주 시">
-            <option value="" disabled selected>거주 시</option>
+            <option value="" disabled>거주 시</option>
             <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
           </select>
         </div>
@@ -354,9 +360,9 @@ export default {
               <span @click="onPrivacyClick" class="clickable-text">개인정보</span>제3자 제공 동의
             </label>
           </div>
-          <div v-if="errorMessage" class="error-message">
-            {{ errorMessage }}
-          </div>
+        </div>
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
         </div>
         <div class="update-button" @click="onUpdateProfileClick">수정하기</div>
         <div class="delete-button" @click="onDeleteAccountClick">회원 탈퇴</div>
@@ -534,6 +540,18 @@ input[type="radio"] {
   cursor: not-allowed;
 }
 
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 90%;
+  text-align: center;
+  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
+}
+
 .consent-wrapper {
   margin-top: 25px;
   margin-bottom: 10px;
@@ -575,18 +593,6 @@ input[type="radio"] {
   flex-wrap: wrap; /* 내용이 길어질 경우 줄바꿈 */
   align-items: center; /* 텍스트 세로 정렬 */
   font-size: 14px;
-}
-
-.error-message {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  padding: 10px;
-  margin: 10px 0;
-  width: 90%;
-  text-align: center;
-  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
 }
 
 .input-wrapper {
