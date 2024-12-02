@@ -38,11 +38,6 @@ export const ROUTES = {
         path: "/individual-user/notification",
         name: "NotificationPage",
     },
-    // [개인회원] 채용공고 메뉴 선택
-    JOB_MENU: {
-        path: "/individual-user/jobs/menu",
-        name: "JobMenu",
-    },
     // [개인회원] 지원 현황
     JOB_APPLICATION_STATUS: {
         path: "/individual-user/jobs/application-status",
