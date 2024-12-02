@@ -7,7 +7,7 @@ import {useRoute} from "vue-router";
 import {deleteWisdomDetail, fetchWisdomDetail} from "@/api/services/individualUserService";
 
 export default {
-  name: "WisdomShareDelete",
+  name: "IndividualUserWisdomDetail",
   computed: {
     ROUTES() {
       return ROUTES

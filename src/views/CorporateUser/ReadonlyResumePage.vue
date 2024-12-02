@@ -88,7 +88,7 @@ export default {
         </div>
         <!-- 주소 -->
         <div class="input-label">
-          <input class="input-field" placeholder="주소" :value="resume.addrCity + ' ' + resume.addrProvince" readonly />
+          <input class="input-field" placeholder="주소" :value="resume.addrProvince + ' ' + resume.addrCity" readonly />
         </div>
         <!-- 경력 직종 -->
         <div class="input-label">

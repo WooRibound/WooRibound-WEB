@@ -237,6 +237,11 @@ export const ROUTES = {
         path: '/admin/wisdom-management',
         name: 'WisdomManagement',
     },
+    // [서비스 관리자] 지혜 마당 관리 상세보기
+    INDIVIDUAL_USER_WISDOM_DETAIL: {
+        path: '/admin/wisdom-management/detail/:id',
+        name: 'IndividualUserWisdomDetail',
+    },
     // [서비스 관리자] 사용자 로그 분석
     USER_LOG_ANALYSIS: {
         path: '/admin/user-log-analysis',

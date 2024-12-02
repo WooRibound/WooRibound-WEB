@@ -4,12 +4,16 @@ import { USER_TYPES } from "@/constants/userTypes";
 import { useRouter } from "vue-router";
 import { ROUTES } from "@/router/routes";
 import { corporateLogin } from "@/api/services/authenticationService";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "LoginView",
+  components: {SingleButtonModal},
   setup() {
     const router = useRouter();
 
+    const modalStatus = ref(false);
+    const modalMessage = ref('');
     const activeUserType = ref(USER_TYPES.INDIVIDUAL_USER); // 기본값: 개인 회원
 
     // 추가된 ref들
@@ -44,12 +48,27 @@ export default {
         router.push(ROUTES.MAIN.path);
       } catch (error) {
         console.error('로그인 실패:', error);
+
+        if (error.status === 401 && error.data.message === '아직 가입승인 처리중입니다.') {
+          modalMessage.value = '아직 가입 승인 중입니다. (평균 3~5일 소요)';
+          modalStatus.value =  true;
+          return;
+        }
+
+        if (error.status === 401 && error.data.message === '아직 탈퇴승인 처리중입니다.') {
+          modalMessage.value = '탈퇴 신청 기업입니다.';
+          modalStatus.value =  true;
+          return;
+        }
+
         errorMessage.value = '아이디 또는 비밀번호가 올바르지 않습니다.';
       }
     }
     
 
     return {
+      modalStatus,
+      modalMessage,
       activeUserType,
       username,
       password,
@@ -113,6 +132,11 @@ export default {
       </div>
     </div>
   </main>
+  <single-button-modal
+      v-if="modalStatus"
+      @close-modal="modalStatus = false"
+      :modal-message="modalMessage"
+  />
 </template>
 
 <style scoped>

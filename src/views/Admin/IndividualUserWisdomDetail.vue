@@ -2,13 +2,15 @@
 import {onMounted, ref} from "vue";
 import {ROUTES} from "@/router/routes";
 import {useRoute, useRouter} from "vue-router";
-import {fetchWisdomDetail, insertWisdomReport} from "@/api/services/individualUserService";
+import {insertWisdomReport} from "@/api/services/individualUserService";
 import {formatDate2} from "../../utils/formatters";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
+import TwoButtonModal from '@/components/TwoButtonModal.vue';
+import handleApiCall from '@/api/apiService';
 
 export default {
-  name: "WisdomExploreDetail",
-  components: { SingleButtonModal },
+  name: "IndividualUserWisdomExploreDetail",
+  components: { SingleButtonModal, TwoButtonModal },
   methods: { formatDate2 },
   computed: {
     ROUTES() {
@@ -26,8 +28,6 @@ export default {
     const modalRouterPath = ref('');
 
     const reportedCnt = ref(0);
-    const userFullId = ref('');
-    const userFullName = ref('');
 
     const onReportClick = async (wisdom) => {
       try {
@@ -55,27 +55,63 @@ export default {
       knowhowContent: "",
     })
 
-    const fetchWisdom = async () => {
+    const fetchAdminKnowhow = async () => {
       try {
-        const response = await fetchWisdomDetail(wisdomId);
+        const response = await handleApiCall('get', `/admin/knowhow/detail`, null, {
+          params: {
+            knowhowId: wisdomId
+          }
+        });
+
         wisdom.value = {
-          userName: response.userName,
-          knowhowId: response.knowhowId,
-          knowhowJob: response.knowhowJob,
-          knowhowTitle: response.knowhowTitle,
-          knowhowContent: response.knowhowContent,
-          uploadDate: response.uploadDate,
+          userName: response.data.userName,
+          knowhowId: response.data.knowhowId,
+          knowhowJob: response.data.knowhowJob,
+          knowhowTitle: response.data.knowhowTitle,
+          knowhowContent: response.data.knowhowContent,
+          uploadDate: response.data.uploadDate,
         };
 
+        reportedCnt.value = response.data.reportedCnt;
+
       } catch (error) {
-        console.error("지혜 상세 내용을 불러오지 못했습니다. 다시 시도해 주세요.", error);
-        router.push({ name: "NotFound" });
+        console.error("신고횟수를 불러오지 못했습니다. 다시 시도해 주세요.", error);
       }
-    }
+    };
 
     onMounted(() => {
-      fetchWisdom();
+      fetchAdminKnowhow();
     });
+
+    const showDeleteModal = ref(false);
+
+    const onDeletePostClick = () => {
+      modalMessage.value = "지식을 삭제하시겠습니까?";
+      showDeleteModal.value = true;
+    };
+
+    const confirmDelete = async () => {
+      try {
+          await handleApiCall('delete', '/admin/knowhow/delete', null, {
+          params: { knowhowId: wisdom.value.knowhowId },
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        closeModal(true);
+
+      } catch (error) {
+        console.error("지혜를 삭제하지 못했습니다. 다시 시도해 주세요.", error);
+      }
+    };
+
+    const closeModal = (shouldRedirect = false) => {
+      showDeleteModal.value = false;
+      if (shouldRedirect) {
+        router.push(ROUTES.WISDOM_MANAGEMENT.path);
+      }
+    };
 
     return {
       modalPopupStatue,
@@ -83,9 +119,11 @@ export default {
       modalRouterPath,
       wisdom,
       reportedCnt,
-      userFullId,
-      userFullName,
       onReportClick,
+      onDeletePostClick,
+      showDeleteModal,
+      confirmDelete,
+      closeModal
     };
   }
 }
@@ -94,21 +132,15 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">일경험 공유하기</div>
-      <div class="report-container" v-if="!isDelete" @click="onReportClick(wisdom)">
-        <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
-        신고하기
-      </div>
-      <div class="report-container" v-if="isDelete" @click="onReportClick(wisdom)">
+      <div class="header-title">지혜 탐색</div>
+      <div class="report-container" @click="onReportClick(wisdom)">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고 {{ reportedCnt }}회
       </div>
     </div>
     <div class="author-info">
       <div class="author">
-        작성자:
-        <span v-if="!isDelete">{{ wisdom.userName }}</span>
-        <span v-else>{{ userFullId }} ({{ userFullName }})</span>
+        작성자: {{ wisdom.userName }}
       </div>
       <div class="date">{{ formatDate2(wisdom.uploadDate) }}</div>
     </div>
@@ -130,8 +162,16 @@ export default {
         <textarea class="textarea-field" placeholder="" v-model="wisdom.knowhowContent" readonly />
       </div>
     </div>
-    <div class="delete-button" v-if="isDelete" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
+    <div class="delete-button" @click="onDeletePostClick(wisdom.knowhowId)">삭제하기</div>
   </main>
+    <TwoButtonModal
+        v-if="showDeleteModal"
+        :modal-message="modalMessage"
+        leftButtonText="확인"
+        rightButtonText="취소"
+        @close-modal="closeModal"
+        @confirm="confirmDelete"
+    />
   <single-button-modal
       v-if="modalPopupStatue"
       :modal-message="modalMessage"

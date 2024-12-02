@@ -227,7 +227,7 @@ const router = createRouter({
             path: ROUTES.WISDOM_EXPLORE_DETAIL.path,
             name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
             component: () => import("@/views/IndividualUser/WisdomExploreDetail.vue"),
-            meta: { requiresAuth: true, allowedUserTypes: [USER_TYPES.INDIVIDUAL_USER, USER_TYPES.SERVICE_ADMIN] },
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
 
         },
         {
@@ -282,6 +282,12 @@ const router = createRouter({
             path: ROUTES.WISDOM_MANAGEMENT.path,
             name: ROUTES.WISDOM_MANAGEMENT.name,
             component: () => import("@/views/Admin/WisdomManagement.vue"),
+            meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
+        },
+        {
+            path: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.path,
+            name: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.name,
+            component: () => import("@/views/Admin/IndividualUserWisdomDetail.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
         },
         {

@@ -76,7 +76,7 @@ export default {
 
     const onMoveDetailPageClick = (knowhowId) => {
       router.push({
-        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+        name: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.name,
         params: {
           id: knowhowId
         },
@@ -126,7 +126,7 @@ export default {
           <div class="course-subtitle">{{ wisdom.knowhowJob }}</div>
           <div class="course-schedule">
             <div class="schedule-info">
-              <div class="info-item">{{ wisdom.userId }}</div>
+              <div class="info-item">{{ wisdom.userName }}</div>
               <div class="info-item">신고횟수 : {{ wisdom.reportedCnt }}</div>
               <div class="info-item">{{ formatDate2(new Date(Date.parse(wisdom.uploadDate))) }}</div>
             </div>
