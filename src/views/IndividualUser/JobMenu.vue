@@ -24,7 +24,7 @@ export default {
 
 <template>
   <main class="body">
-    <div class="header">채용공고</div>
+    <div class="header">일자리 찾기</div>
     <div class="job-options">
       <div class="job-option career" @click="navigateToJobPostings('career')">
         경력

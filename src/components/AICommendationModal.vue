@@ -46,20 +46,21 @@ export default {
   <div class="modal-overlay">
     <div class="menu-content">
       <div class="menu_title">
-        AI 작성
+        글쓰기 도우미
         <div class="close-button" @click="closeModal">
           <img src="@/assets/images/icons/close.png" alt="Close" />
         </div>
       </div>
       <div class="recommendation-note">
-        * 직무경험을 간단히 입력해주세요.
+        ** 예시1 : 저는 자바 개발자로 15년 동안 근무했습니다. 주로 금융 차세대 프로젝트에 참여했고, PM 경험을 통해 인력관리와 일정관리 노하우를 습득했습니다. <br>
+        <br>** 예시2 : 저는 20년차 가정주부입니다. 정리정돈 및 세탁 노하우를 주변 사람들과 블로그에 공유하는 것이 취미입니다.
       </div>
       <div class="response-section">
         <div class="input-section">
           <textarea
               v-model="userInput"
               class="comment-input"
-              placeholder="여기에 커맨트를 입력하세요..."
+              placeholder="여기에 작성해주세요."
           />
           <div class="submit-button" @click="onGetGptCommentClick">제출</div>
         </div>
@@ -116,8 +117,12 @@ export default {
   height: 24px; /* 이미지 크기 조정 (조정 가능) */
 }
 
+.comment-input::placeholder {
+  font-family: "Pretendard";
+}
+
 .recommendation-note {
-  font-size: 12px; /* 작은 글씨 크기 */
+  font-size: 15px; /* 작은 글씨 크기 */
   color: #666; /* 회색 텍스트 색상 */
   margin-bottom: 10px; /* 아래쪽 여백 추가 */
 }

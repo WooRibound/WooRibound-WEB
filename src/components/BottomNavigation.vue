@@ -103,16 +103,16 @@ export default {
                      @mouseleave="mouseLeave('company')"
         >
           <img :src="currentIcon.company ? icons.company : hoverIcons.company" alt="채용공고" class="nav-icon" />
-          채용 공고
+          일자리 찾기
         </router-link>
       </li>
       <li class="bottom-nav-item">
-        <router-link :to="ROUTES.WISDOM_MENU.path"
+        <router-link :to="ROUTES.WISDOM_SHARE.path"
                      @mouseenter="mouseEnter('wisdom')"
                      @mouseleave="mouseLeave('wisdom')"
         >
           <img :src="currentIcon.wisdom ? icons.wisdom : hoverIcons.wisdom" alt="지혜" class="nav-icon" />
-          지혜 마당
+          일경험 공유
         </router-link>
       </li>
       <li class="bottom-nav-item">

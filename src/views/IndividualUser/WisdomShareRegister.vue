@@ -62,14 +62,14 @@ export default {
       };
 
       try {
-          const response = await insertWisdomShare(wisdomShare);
-          modalMessage.value = response;
-          modalPopupStatue.value = true;
+        const response = await insertWisdomShare(wisdomShare);
+        modalMessage.value = response;
+        modalPopupStatue.value = true;
       } catch (error) {
-          console.error('Error data:', error);
-          modalMessage.value = "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
-          modalPopupStatue.value = true;
-          throw error;
+        console.error('Error data:', error);
+        modalMessage.value = "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+        modalPopupStatue.value = true;
+        throw error;
       }
 
     }
@@ -103,8 +103,8 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">지혜 나눔</div>
-      <div class="header-register-job" @click="onAIRecommendationClick">AI 작성</div>
+      <div class="header-title">일경험 공유하기</div>
+      <div class="header-register-job" @click="onAIRecommendationClick">글쓰기 도움 받기</div>
     </div>
     <div class="content">
       <!-- 직종 선택 -->
@@ -122,7 +122,13 @@ export default {
       </div>
       <!-- 내용 입력 -->
       <div class="input-label">
-        <textarea v-model="knowhowContent" class="textarea-field" placeholder="일 경험담을 작성해주세요" ref="knowhowContentSelect"/>
+        <!--        <textarea v-model="knowhowContent" class="textarea-field" placeholder="오른쪽 상단의 '글쓰기 도움 받기' 버튼을 클릭해 손쉽게 직무 경험을 공유해보세요." ref="knowhowContentSelect"/>-->
+        <textarea
+            v-model="knowhowContent"
+            class="textarea-field"
+            placeholder="오른쪽 상단의 '글쓰기 도움 받기' 버튼을 클릭해 손쉽게 직무 경험을 공유해보세요."
+            ref="knowhowContentSelect">
+        </textarea>
       </div>
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
@@ -219,6 +225,13 @@ export default {
   min-height: 250px;
 }
 
+.textarea-field::placeholder {
+  color: #6c757d; /* 원하는 색상 */
+  font-size: 16px; /* 적절한 폰트 크기 */
+  opacity: 1; /* placeholder의 가시성 */
+  font-family: "Pretendard";
+}
+
 .delete-button {
   width: 90%;
   padding: 10px;
@@ -240,6 +253,6 @@ export default {
   margin: 10px 0;
   width: 90%;
   text-align: center;
-  white-space: pre-line;  /* 줄바꿈을 위해 추가 */
+  white-space: pre-line; /* 줄바꿈을 위해 추가 */
 }
 </style>

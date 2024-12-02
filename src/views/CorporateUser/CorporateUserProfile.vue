@@ -24,8 +24,8 @@ export default {
       ];
 
       const hasEmptyField = requiredFields.some(field =>
-        !this.enterprise[field] ||
-        this.enterprise[field].toString().trim() === ''
+          !this.enterprise[field] ||
+          this.enterprise[field].toString().trim() === ''
       );
 
       const isRevenueValid = parseInt(this.revenue) >= 0;
@@ -35,7 +35,7 @@ export default {
       }
 
       const enterpriseModified = Object.keys(this.originalInfo).some(key =>
-        this.originalInfo[key] !== this.enterprise[key]
+          this.originalInfo[key] !== this.enterprise[key]
       );
 
       const revenueModified = this.originalInfo.revenue !== parseInt(this.revenue);
@@ -268,64 +268,64 @@ export default {
 .content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%; /* 부모 요소 너비를 화면에 맞춤 */
+  padding: 0 10px; /* 좌우 여백 설정 */
+  max-width: 600px; /* 최대 너비 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
+  box-sizing: border-box; /* 패딩과 border를 포함하여 크기 계산 */
 }
 
 .input-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 80%;
-  max-width: 600px;
-  margin: 0 auto;
+  align-items: flex-start; /* 왼쪽 정렬 */
+  width: 100%; /* 전체 너비 사용 */
+  max-width: 600px; /* 최대 너비 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 .input-label {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 15px;
+  justify-content: flex-start; /* 좌측 정렬 */
+  width: 100%; /* 부모 너비에 맞게 조정 */
+  margin-bottom: 15px; /* 라벨과 입력 필드 사이 여백 */
 }
 
 .input-title {
-  width: 30%;
+  width: 20%; /* 제목의 너비 설정 */
   font-weight: bold;
+  text-align: left;
+  margin-right: 20px;
+  white-space: nowrap;
 }
 
-.input-field {
-  width: 70%;
+.input-field,
+.addr-field,
+.addr-detail-field {
+  width: calc(80%);
   padding: 10px;
-  box-sizing: border-box;
   font-size: 16px;
-  border-radius: 8px;
   border: 1px solid #e1e1e1;
-  color: #413F42;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .addr-field {
   flex: 1;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #e1e1e1;
-  color: #413F42;
   margin-right: 10px;
+  width: calc(70%);
 }
 
 .addr-detail-field {
-  width: 70%;
+  width: calc(80%);
   padding: 10px;
-  box-sizing: border-box;
   font-size: 16px;
-  border-radius: 8px;
   border: 1px solid #e1e1e1;
-  color: #413F42;
-  margin-left: 0;
-  align-self: flex-end;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 
@@ -335,15 +335,16 @@ export default {
 }
 
 .addr-search-button {
-  flex-shrink: 0;
-  padding: 0 15px;
-  background-color: #024CAA;
-  color: white;
+  flex-shrink: 0; /* 크기를 고정 */
+  padding: 10px 15px;
+  font-size: 14px;
   border: none;
   border-radius: 8px;
+  background-color: #024CAA;
+  color: white;
   cursor: pointer;
-  font-size: 14px;
   height: 40px;
+  width: calc(30%);
   white-space: nowrap;
 }
 
@@ -352,15 +353,17 @@ export default {
 }
 
 .modify-button {
-  width: 90%;
+  width: 100%;
+  max-width: 580px;
   padding: 10px;
   margin: 20px auto 0 auto;
+  font-size: 16px;
+  text-align: center;
   background-color: #024CAA;
   color: white;
-  text-align: center;
   cursor: pointer;
-  font-weight: bold;
   border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .error-message {

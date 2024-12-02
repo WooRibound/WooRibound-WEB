@@ -5,7 +5,7 @@ import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
 import {formatDate2} from "@/utils/formatters";
-import {fetchAllWisdomExplore} from "@/api/services/individualUserService";
+import {fetchAllWisdomShare} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
@@ -36,7 +36,7 @@ export default {
 
     const fetchPosts = async () => {
       try {
-        const response = await fetchAllWisdomExplore(searchInput.value, selectedJob.value);
+        const response = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
         wisdomList.value = response;
         wisdomCount.value = wisdomList.value.length;
       } catch (error) {
@@ -93,7 +93,7 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">지혜 탐색</div>
+      <div class="header-title">내가 쓴 글</div>
     </div>
     <div class="search-wrap">
       <input

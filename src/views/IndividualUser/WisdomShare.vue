@@ -5,7 +5,7 @@ import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
 import {formatDate2} from "@/utils/formatters";
-import {fetchAllWisdomShare} from "@/api/services/individualUserService";
+import {fetchAllWisdomExplore} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
@@ -36,7 +36,8 @@ export default {
 
     const fetchPosts = async () => {
       try {
-        const response = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
+        const response = await fetchAllWisdomExplore(searchInput.value, selectedJob.value);
+        // const response = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
 
         wisdomList.value = response;
         wisdomCount.value = wisdomList.value.length;
@@ -54,7 +55,7 @@ export default {
 
     const onMoveDetailPageClick = (postId) => {
       router.push({
-        name: ROUTES.WISDOM_SHARE_DELETE.name,
+        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
         params:{
           id: postId
         },
@@ -99,7 +100,7 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">지혜 나눔</div>
+      <div class="header-title">일경험 공유하기</div>
       <div class="header-register-job" @click="onRegisterPostClick">등록하기</div>
     </div>
     <div class="search-wrap">
