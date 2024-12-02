@@ -1,6 +1,8 @@
 <script>
 
 import {ROUTES} from "@/router/routes";
+import {useRouter} from "vue-router";
+import {computed} from "vue";
 
 export default {
   name: "MenuGuidePopup",
@@ -9,7 +11,17 @@ export default {
       return ROUTES
     }
   },
+  props: {
+    menuGuideType: {
+      type: String,
+      required: true,
+    },
+  },
   setup(props, {emit}) {
+    const router = useRouter();
+
+    const selectedMenuGuideType = computed(() => props.menuGuideType);
+
     const closeModal = () => {
       emit('close-modal', false);
     }
@@ -45,11 +57,22 @@ export default {
       }
     };
 
+    const navigateToJobPostings = (viewType) => {
+      router.push({
+        name: ROUTES.JOB_POSTINGS_PAGE.name,
+        params:{
+          viewType: viewType
+        },
+      })
+    }
+
     return {
+      selectedMenuGuideType,
       closeModal,
       handleTouchStart,
       handleTouchMove,
       handleTouchEnd,
+      navigateToJobPostings,
     };
   }
 }
@@ -64,7 +87,7 @@ export default {
   >
     <div class="modal-container">
       <div class="modal-handle"></div>
-      <div class="menu-content">
+      <div class="menu-content" v-if="selectedMenuGuideType === 'user'">
         <div class="menu_title">
           내 정보 보기
           <div class="close-button" @click="closeModal" v-if="false">
@@ -86,7 +109,19 @@ export default {
           </router-link>
         </div>
       </div>
-
+      <div class="menu-content" v-if="selectedMenuGuideType === 'company'">
+        <div class="menu_title">
+          일자리 찾기
+          <div class="close-button" @click="closeModal" v-if="false">
+            <img src="@/assets/images/icons/close.png" alt="Close" />
+          </div>
+        </div>
+        <div class="menu-items" @click="closeModal">
+            <div class="menu-item" @click="navigateToJobPostings('career')">경력 살리기</div>
+            <div class="menu-item" @click="navigateToJobPostings('new')">새로운 일 찾기</div>
+            <div class="menu-item" @click="navigateToJobPostings('all')">전체 조회</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
