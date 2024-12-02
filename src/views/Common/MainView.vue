@@ -1,11 +1,12 @@
 <script>
 
 import {computed, onMounted, ref, watch} from "vue";
-import {fetchRecentJobPostings, fetchRecommendJobPostings} from "@/api/services/individualUserService";
+import {fetchLatest4WisdomShare, fetchRecentJobPostings} from "@/api/services/individualUserService";
 import {ROUTES} from "@/router/routes";
 import {useRouter} from "vue-router";
 import {useUserStore} from "@/stores/userStore";
 import {USER_TYPES} from "@/constants/userTypes";
+import {formatContent} from "@/utils/formatters";
 
 export default {
   name: "MainView",
@@ -73,21 +74,41 @@ export default {
     ]);
 
     const userType = computed(() => userStore.getCurrentUserType);
-    const recommendJobPostingList = ref();
     const recentJobPostingList = ref();
     const currentSlide = ref(0);
 
     const fetchJobPosting = async () => {
       try {
-        const recommendResponse = await fetchRecommendJobPostings();
-        recommendJobPostingList.value = recommendResponse;
-
         const recentResponse = await fetchRecentJobPostings();
         recentJobPostingList.value = recentResponse;
       } catch (e) {
         console.log(e);
       }
     };
+
+    const wisdomShareList = ref([]);
+
+    const fetchWisdomShare = async () => {
+      const images = [
+        require('@/assets/images/illustrate/flower.png'),
+        require('@/assets/images/illustrate/mountain.png'),
+        require('@/assets/images/illustrate/see.png'),
+        require('@/assets/images/illustrate/sky.jpeg'),
+      ];
+
+      const response = await fetchLatest4WisdomShare();
+
+      wisdomShareList.value = response.map((item, index) => ({
+        userName: item.userName,
+        knowhowId: item.knowhowId,
+        knowhowJob: item.knowhowJob,
+        knowhowTitle: item.knowhowTitle,
+        knowhowContent: formatContent(item.knowhowContent),
+        uploadDate: item.uploadDate,
+        image: images[index],
+      }));
+
+    }
 
     // 슬라이드 변경 함수
     const changeSlide = () => {
@@ -151,6 +172,7 @@ export default {
 
     onMounted(() => {
       fetchJobPosting();
+      fetchWisdomShare();
       startAutoSlide();
     });
 
@@ -160,15 +182,42 @@ export default {
       startAutoSlide();
     });
 
+    const onViewAllClick = () => {
+      router.push({
+        name: ROUTES.JOB_POSTINGS_PAGE.name,
+        params: {
+          viewType: 'new',
+        },
+      });
+    }
+
+    const onMoveWisdomPageClick = () => {
+      router.push({
+        name: ROUTES.WISDOM_SHARE.name
+      });
+    }
+
+    const onMoveWisdomDetailPageClick = (postId) => {
+      router.push({
+        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+        params:{
+          id: postId
+        },
+      });
+    }
+
     return {
       individualServiceGuideList,
       corporateServiceGuideList,
       userType,
-      recommendJobPostingList,
       recentJobPostingList,
+      wisdomShareList,
       currentSlide,
       handleSlideTouch,
       onMoveDetailPageClick,
+      onViewAllClick,
+      onMoveWisdomPageClick,
+      onMoveWisdomDetailPageClick,
     }
   },
 }
@@ -221,7 +270,10 @@ export default {
 
       <!-- 최신 공고 슬라이드 -->
       <div class="slider-section">
-        <div class="slider-title">최신 공고 ☀️</div>
+        <div class="slider-header">
+          <div class="slider-title">😆️ 경력 살려서 일자리 구하기</div>
+          <div class="view-all-div" @click="onViewAllClick">모두보기</div>
+        </div>
         <div class="slider-content">
           <div
               class="slider-item"
@@ -239,22 +291,27 @@ export default {
           </div>
         </div>
       </div>
-      <!-- 오늘 가장 인기 많은 공고 -->
-      <div class="slider-section">
-        <div class="slider-title">오늘 가장 인기 많은 공고 🔥</div>
-        <div class="slider-content">
+
+      <!-- 일 경험 공유 게시판 -->
+      <div class="experience-board-section">
+        <div class="experience-board-header">
+          <div class="experience-board-title">🌳 다양한 직무이야기 탐색하기</div>
+          <div class="experience-board-view-all" @click="onMoveWisdomPageClick">모두보기</div>
+        </div>
+        <div class="experience-board-content">
           <div
-              class="slider-item"
-              v-for="(recommendJobPosting, index) in recommendJobPostingList"
+              class="experience-board-item"
+              v-for="(wisdomShare, index) in wisdomShareList"
               :key="index"
-              @click="onMoveDetailPageClick(recommendJobPosting.jobPostingId)"
+              @click="onMoveWisdomDetailPageClick(wisdomShare.knowhowId)"
           >
-            <div class="item-image">
-              <img :src="recommendJobPosting.postImg" alt="Job image" />
+            <div class="experience-board-image">
+              <img :src="wisdomShare.image" alt="직무 이미지" />
             </div>
-            <div class="item-text">
-              <div class="item-company">{{ recommendJobPosting.entName }}</div>
-              <div class="item-title">{{ recommendJobPosting.postTitle }}</div>
+            <div class="experience-board-text">
+              <div class="experience-board-job-title">{{ wisdomShare.knowhowTitle}}</div>
+              <div class="experience-board-content">{{ wisdomShare.knowhowContent}}</div>
+              <div class="experience-board-role">{{ wisdomShare.knowhowJob}}</div>
             </div>
           </div>
         </div>
@@ -295,7 +352,7 @@ export default {
 }
 
 .service-guide-item .service-guide-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #333;
 }
@@ -326,11 +383,25 @@ export default {
   border-radius: 10px;
 }
 
-.slider-title {
-  font-size: 20px;
-  font-weight: bold;
+.slider-header {
+  display: flex;
+  justify-content: space-between; /* 제목과 "전체보기"를 양 끝 배치 */
+  align-items: center;
   margin-left: 10px;
+  margin-right: 10px;
   margin-top: 20px;
+}
+
+.slider-title {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.view-all-div {
+  color: #888;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .slider-content {
@@ -345,15 +416,15 @@ export default {
 
 .slider-item {
   flex: 0 0 calc(33.33% - 30px); /* 화면 너비의 약 1/3 사용, 간격 고려 */
-  max-width: 300px; /* 최대 너비 제한 */
-  min-width: 200px; /* 최소 너비 제한 */
+  max-width: 200px; /* 최대 너비 제한 */
+  min-width: 140px; /* 최소 너비 제한 */
   border-radius: 15px;
   padding: 10px;
   text-align: center;
 }
 
 .slider-section {
-  margin-top: 10px;
+  margin-top: 35px;
 }
 
 .slider-section .item-image {
@@ -379,14 +450,120 @@ export default {
 }
 
 .slider-section .item-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   margin-top: 10px;
 }
 
 .slider-section .item-company {
-  font-size: 14px;
+  font-size: 13px;
   color: #555;
   margin-top: 5px;
+}
+
+.experience-board-section {
+  margin-top: 35px;
+}
+
+.experience-board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 20px;
+}
+
+.experience-board-title {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.experience-board-view-all {
+  color: #888;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.experience-board-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.experience-board-item {
+  display: flex; /* 텍스트와 이미지를 가로로 배치 */
+  align-items: center; /* 세로 가운데 정렬 */
+  background-color: #f9f9f9;
+  padding: 15px;
+  cursor: pointer;
+  border-bottom: 1px solid black;
+}
+
+.experience-board-image {
+  width: 90px; /* 정사각형 크기 */
+  height: 90px;
+  border-radius: 8px; /* 둥근 모서리 */
+  overflow: hidden; /* 둥근 경계 밖 이미지를 숨김 */
+  margin-right: 15px; /* 텍스트와 이미지 사이 간격 */
+}
+
+.experience-board-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지를 정사각형에 맞게 채움 */
+}
+
+.experience-board-text {
+  flex-grow: 1; /* 텍스트 영역을 남은 공간에 확장 */
+}
+
+.experience-board-item:not(:last-child) {
+  border-bottom: 0; /* 마지막 항목이 아니면 하단 보더 제거 */
+}
+
+.experience-board-item + .experience-board-item {
+  border-top: 1px solid #ccc; /* 다음 항목과의 경계를 위한 상단 보더 추가 */
+}
+
+.experience-board-item:first-child {
+  border-top: none; /* 첫 번째 요소는 상단 보더 제거 */
+}
+
+.experience-board-item:last-child {
+  border-bottom: none; /* 마지막 요소는 하단 보더 제거 */
+}
+
+.experience-board-item:hover {
+  background-color: #e9ecef;
+}
+
+.experience-board-job-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.experience-board-post-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.experience-board-content {
+  font-size: 11px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.experience-board-role {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff; /* 글씨를 흰색으로 설정 */
+  background-color: #B7B7B7; /* 회색 배경 추가 */
+  margin-top: 8px;
+  padding: 4px 8px; /* 안쪽 여백 추가 */
+  border-radius: 10px; /* 둥근 모서리 적용 */
+  display: inline-block; /* 배경이 텍스트 크기에 맞도록 조절 */
 }
 </style>

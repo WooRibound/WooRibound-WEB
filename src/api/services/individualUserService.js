@@ -22,6 +22,17 @@ export const join = async (data) => {
   }
 }
 
+// 지혜 나눔 최근 목록 4개 조회
+export const fetchLatest4WisdomShare = async () => {
+  try {
+    const response = await handleApiCall('get', `/individual/knowhow/main/share`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
+}
+
 // 지혜 나눔 전체 목록 조회
 export const fetchAllWisdomShare = async (knowhowTitle, knowhowJob) => {
   try {
