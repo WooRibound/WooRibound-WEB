@@ -77,14 +77,14 @@ export default {
     </header>
     <div class="top-bar">
       <div class="login-text" @click="onClickMoveLogin">{{ loginText }}</div>
-      <img src="../../assets/images/logo/wooribound_logo.png" class="logo-image">
+      <img src="../../assets/images/logo/wb_logo3.png" class="logo-image">
     </div>
 
     <!-- 개인회원 메뉴 -->
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INDIVIDUAL_USER || userStore.userType === null">
       <div class="menu-content">
         <router-link :to="ROUTES.JOB_MENU.path">
-          <div class="menu_title" @click="onCloseFullScreenMenuClick">채용 공고</div>
+          <div class="menu_title" @click="onCloseFullScreenMenuClick">일자리 찾기</div>
         </router-link>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <div class="menu-item" @click="navigateToJobPostings('career')">
@@ -102,20 +102,20 @@ export default {
         </div>
       </div>
       <div class="menu-content">
-        <div class="menu_title">지혜 마당</div>
+        <div class="menu_title">일경험 커뮤니티</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.WISDOM_SHARE.path">
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/wisdom_share.png">
-              <span>지혜 나누기</span>
+              <span>일경험 공유하기</span>
             </div>
           </router-link>
-          <router-link :to="ROUTES.WISDOM_EXPLORE.path">
-            <div class="menu-item">
-              <img src="@/assets/images/menuIcons/wisdom_explore.png">
-              <span>지혜 탐색</span>
-            </div>
-          </router-link>
+<!--          <router-link :to="ROUTES.WISDOM_EXPLORE.path">-->
+<!--            <div class="menu-item">-->
+<!--              <img src="@/assets/images/menuIcons/wisdom_explore.png">-->
+<!--              <span>지혜 탐색</span>-->
+<!--            </div>-->
+<!--          </router-link>-->
         </div>
       </div>
       <div class="menu-content">
@@ -137,6 +137,12 @@ export default {
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/resume.png">
               <span>이력서</span>
+            </div>
+          </router-link>
+          <router-link :to="ROUTES.WISDOM_EXPLORE.path">
+            <div class="menu-item">
+              <img src="@/assets/images/menuIcons/wisdom_explore.png">
+              <span>내가 쓴 글</span>
             </div>
           </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
@@ -258,12 +264,12 @@ export default {
         </div>
       </div>
       <div class="menu-content">
-        <div class="menu_title">지혜 마당 관리</div>
+        <div class="menu_title">일경험 커뮤니티 관리</div>
          <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/wisdom_share.png">
-              <span>지혜 마당 관리</span>
+              <span>일경험 공유 관리</span>
             </div>
           </router-link>
         </div>
@@ -344,7 +350,7 @@ export default {
 }
 
 .logo-image {
-  width: 120px; /* 로고 이미지 크기 설정 */
+  width: 180px; /* 로고 이미지 크기 설정 */
   margin-left: 10px; /* 화면 끝에서 10px 간격 */
 }
 

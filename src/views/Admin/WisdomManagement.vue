@@ -105,7 +105,7 @@ export default {
 
 <template>
   <main class="body">
-    <div class="header">지혜마당 관리</div>
+    <div class="header">일경험 공유 관리</div>
     <div class="search-wrap">
       <input class="search-input" placeholder="게시물 제목을 검색하세요" type="text" v-model="searchInput"
         @keyup.enter="searchWisdom">

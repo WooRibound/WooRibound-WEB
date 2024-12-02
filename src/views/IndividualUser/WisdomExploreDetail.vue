@@ -149,7 +149,7 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">지혜 탐색</div>
+      <div class="header-title">일경험 공유하기</div>
       <div class="report-container" v-if="!isDelete" @click="onReportClick(wisdom)">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고하기
