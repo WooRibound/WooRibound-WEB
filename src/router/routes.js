@@ -227,7 +227,7 @@ export const ROUTES = {
         path: "/admin/corporate-job-posting-management/detail/:id",
         name: "AdminJobPostingDetail",
     },
-    // [서비스 관리자] 지혜 마당 관리
+    // [서비스 관리자] 일경험 공유 관리
     WISDOM_MANAGEMENT: {
         path: '/admin/wisdom-management',
         name: 'WisdomManagement',

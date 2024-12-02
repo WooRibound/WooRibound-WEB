@@ -54,7 +54,7 @@ export default {
   <header class="header">
     <div class="header-left">
       <router-link to="/">
-        <img src="@/assets/images/logo/wooribound_logo.png" class="logo-image">
+        <img src="@/assets/images/logo/wb_logo3.png" class="logo-image">
       </router-link>
     </div>
     <div class="header-right">
@@ -69,7 +69,7 @@ export default {
 
 <style scoped>
 .logo-image {
-  width: 70%;
+  width: 100%;
   max-width: 150px;
 }
 

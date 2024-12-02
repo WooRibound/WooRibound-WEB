@@ -39,6 +39,7 @@ app.use([
     '/d',
     '/api/plugins',
     '/api/frontend',
+    '/api/prometheus',
     '/api/frontend-metrics',
     '/api/datasources',
     '/api/annotations',

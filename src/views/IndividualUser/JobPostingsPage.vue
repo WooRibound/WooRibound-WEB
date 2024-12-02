@@ -211,7 +211,7 @@ export default {
 
 <template>
   <main class="body">
-    <div class="header">채용 공고</div>
+    <div class="header">일자리 찾기</div>
     <div class="search-wrap">
       <input class="search-input" placeholder="기업명을 입력하세요" type="text" v-model="searchInput"
              @keyup.enter="searchJobPosting">

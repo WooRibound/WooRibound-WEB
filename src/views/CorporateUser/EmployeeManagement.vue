@@ -154,9 +154,11 @@ export default {
 }
 
 .applicant-table {
-  width: 100%; /* 테이블을 가로로 꽉 차게 설정 */
+  width: 100%; /* 테이블이 부모 컨테이너 안에서 정렬되도록 설정 */
+  max-width: 1200px; /* 최대 너비 제한 */
   border-collapse: collapse; /* 테이블 경계선 겹침 방지 */
-  margin-top: 20px; /* 위쪽 여백 */
+  margin-top: 20px;
+  table-layout: auto; /* 열 너비를 자동으로 조정 */
 }
 
 .applicant-table th {
@@ -172,6 +174,12 @@ export default {
   padding: 10px; /* 내부 여백 */
   text-align: center;
   font-size: 9pt;
+  white-space: nowrap; /* 🔴 줄바꿈 방지 */
+}
+
+.applicant-table th:nth-child(4),
+.applicant-table td:nth-child(4) {
+  width: 15%; /* 🔴 평가하기 컬럼의 너비를 20%로 설정 */
 }
 
 .resume-link:hover {
@@ -198,13 +206,12 @@ export default {
 .status-accepted-gray {
   display: inline-block;
   padding: 6px 12px;
-  background-color: #bbbbbb; /* 비활성화 배경색 */
+  background-color: #bbbbbb;
   color: white;
   border-radius: 5px;
+  font-size: 8pt;
   text-align: center;
   white-space: nowrap;
-  font-size: 8pt;
-  width: 80px;
 }
 
 .text-gray {
