@@ -174,10 +174,10 @@ export default {
       }
 
       try {
-
         const date = new Date(userInfo.value.birth);
         userInfo.value.birth = date.toISOString();
         userInfo.value.exjobChk = exjobChkStatus;
+        userInfo.value.dataSharingConsent = userInfo.value.dataSharingConsent ? 'Y' : 'N';
 
         const response = await fetchUpdateUserProfile(userInfo.value);
         initializeUserProfile(response);
