@@ -21,6 +21,7 @@ export default {
     const userType = computed(() => userStore.getCurrentUserType);
 
     const menuGuidePopupStatue = ref(false);
+    const menuGuideType = ref('');
 
     const icons = {
       home: require('@/assets/images/icons/home.png'),
@@ -66,12 +67,14 @@ export default {
       currentIcon.value[icon] = true; // Hover 해제 시 기본 아이콘 표시
     };
 
-    const onShowMenuGuideClick = () => {
+    const onShowMenuGuideClick = (type) => {
+      menuGuideType.value = type;
       menuGuidePopupStatue.value = !menuGuidePopupStatue.value;
     };
 
     return {
       userType,
+      menuGuideType,
       menuGuidePopupStatue,
       icons,
       hoverIcons,
@@ -98,13 +101,14 @@ export default {
         </router-link>
       </li>
       <li class="bottom-nav-item">
-        <router-link :to="ROUTES.JOB_MENU.path"
+        <a href="#"
                      @mouseenter="mouseEnter('company')"
                      @mouseleave="mouseLeave('company')"
+                     @click="onShowMenuGuideClick('company')"
         >
           <img :src="currentIcon.company ? icons.company : hoverIcons.company" alt="채용공고" class="nav-icon" />
           일자리 찾기
-        </router-link>
+        </a>
       </li>
       <li class="bottom-nav-item">
         <router-link :to="ROUTES.WISDOM_SHARE.path"
@@ -119,7 +123,7 @@ export default {
         <a href="#"
            @mouseenter="mouseEnter('user')"
            @mouseleave="mouseLeave('user')"
-           @click="onShowMenuGuideClick">
+           @click="onShowMenuGuideClick('user')">
           <img :src="currentIcon.user ? icons.user : hoverIcons.user" alt="마이" class="nav-icon" />
           마이
         </a>
@@ -169,6 +173,7 @@ export default {
   <menu-guide-popup
       v-if="menuGuidePopupStatue"
       @close-modal="menuGuidePopupStatue = false"
+      :menu-guide-type="menuGuideType"
   />
 </template>
 

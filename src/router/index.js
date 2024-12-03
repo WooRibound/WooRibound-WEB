@@ -33,12 +33,6 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {
-            path: ROUTES.JOB_MENU.path,
-            name: ROUTES.JOB_MENU.name,
-            component: () => import("@/views/IndividualUser/JobMenu.vue"),
-            meta: { requiresAuth: false }, // 모든 사용자 접근 가능
-        },
-        {
             path: ROUTES.JOB_APPLICATION_STATUS.path,
             name: ROUTES.JOB_APPLICATION_STATUS.name,
             component: () => import("@/views/IndividualUser/JobApplicationStatus.vue"),

@@ -83,9 +83,7 @@ export default {
     <!-- 개인회원 메뉴 -->
     <div class="navigation-menu" v-if="userStore.userType === USER_TYPES.INDIVIDUAL_USER || userStore.userType === null">
       <div class="menu-content">
-        <router-link :to="ROUTES.JOB_MENU.path">
-          <div class="menu_title" @click="onCloseFullScreenMenuClick">일자리 찾기</div>
-        </router-link>
+        <div class="menu_title" @click="onCloseFullScreenMenuClick">일자리 찾기</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
           <div class="menu-item" @click="navigateToJobPostings('career')">
             <img src="@/assets/images/menuIcons/job_career.png">
