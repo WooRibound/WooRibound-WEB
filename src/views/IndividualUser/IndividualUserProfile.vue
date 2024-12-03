@@ -169,7 +169,8 @@ export default {
       if (!userInfo.value.gender ||
           !userInfo.value.addrProvince ||
           !userInfo.value.addrCity ||
-          !userInfo.value.exjobChk
+          !userInfo.value.exjobChk ||
+          !userInfo.value.phone
       ) {
         errorMessage.value = "모든 필수 항목을 입력해주세요.";
         return;
