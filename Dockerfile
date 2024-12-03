@@ -19,6 +19,7 @@ RUN npm run build
 
 # Express 프록시 설정 파일 복사 (이름이 proxy.js인 경우)
 COPY proxy.js .
+COPY logging.js .
 
 # 서버 실행
 EXPOSE 8080
