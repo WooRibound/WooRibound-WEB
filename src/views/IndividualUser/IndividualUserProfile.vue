@@ -32,7 +32,7 @@ export default {
     const termsPrivacyType = ref("");
     const termsPrivacyOfServicePopupStatue = ref(false);
     const jobs = computed(() => jobStore.getJobs);
-
+    const isShowDataSharingConsent = ref('N');
     const provinces = computed(() => regionsStore.getProvinces);
     const cities = computed(() => regionsStore.getCitiesByProvince(userInfo.value.addrProvince) || []);
 
@@ -116,6 +116,8 @@ export default {
       if (userInfo.value.interestJobs.length === 0) {
         userInfo.value.interestJobs.push('');
       }
+
+      isShowDataSharingConsent.value = userInfo.value.dataSharingConsent;
     }
 
     const loadUserProfile = async () => {
@@ -217,6 +219,7 @@ export default {
       exjobChkStatus,
       isJobCategoryEnabled,
       userInfo,
+      isShowDataSharingConsent,
       handlePhoneNumberInput,
       validatePhone,
       onAddJobFieldClick,
@@ -346,7 +349,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="consent-wrapper" v-if="userInfo.dataSharingConsent === 'N'">
+        <div class="consent-wrapper" v-if="isShowDataSharingConsent === 'N'">
           <input
               type="checkbox"
               id="thirdPartyConsent"
