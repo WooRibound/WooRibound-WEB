@@ -111,7 +111,7 @@ export default {
         </a>
       </li>
       <li class="bottom-nav-item">
-        <router-link :to="ROUTES.WISDOM_SHARE.path"
+        <router-link :to="ROUTES.WORK_EXPERIENCE_SHARING.path"
                      @mouseenter="mouseEnter('wisdom')"
                      @mouseleave="mouseLeave('wisdom')"
         >

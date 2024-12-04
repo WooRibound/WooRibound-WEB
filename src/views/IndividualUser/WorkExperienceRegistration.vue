@@ -7,7 +7,7 @@ import {insertWisdomShare} from "@/api/services/individualUserService";
 import {useJobStore} from "@/stores/useJobStore";
 
 export default {
-  name: "WisdomShareRegister",
+  name: "WorkExperienceRegistration",
   computed: {
     ROUTES() {
       return ROUTES
@@ -140,7 +140,7 @@ export default {
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
       :modal-message="modalMessage"
-      :router-path="ROUTES.WISDOM_SHARE.path"
+      :router-path="ROUTES.WORK_EXPERIENCE_SHARING.path"
   />
   <a-i-commendation-modal
       v-if="aiModalPopupStatue"

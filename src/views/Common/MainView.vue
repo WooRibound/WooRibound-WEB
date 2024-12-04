@@ -40,7 +40,7 @@ export default {
         title: "일경험 커뮤니티로 모여라",
         subtitle: "다양한 일자리 이야기 나눠봐요!",
         img: require('@/assets/images/icons/question.png'),
-        route: ROUTES.WISDOM_EXPLORE.name,
+        route: ROUTES.MY_WORK_EXPERIENCE_PAGE.name,
         viewType: '',
         backgroundColor: '#C9E6F0'
       },
@@ -135,7 +135,7 @@ export default {
         return;
       }
 
-      if (individualServiceGuideList.value[index].route === ROUTES.WISDOM_EXPLORE.name) {
+      if (individualServiceGuideList.value[index].route === ROUTES.MY_WORK_EXPERIENCE_PAGE.name) {
         router.push({
           name: individualServiceGuideList.value[index].route,
         });
@@ -193,13 +193,13 @@ export default {
 
     const onMoveWisdomPageClick = () => {
       router.push({
-        name: ROUTES.WISDOM_SHARE.name
+        name: ROUTES.WORK_EXPERIENCE_SHARING.name
       });
     }
 
-    const onMoveWisdomDetailPageClick = (postId) => {
+    const onMoveWorkExperienceDetailClick = (postId) => {
       router.push({
-        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+        name: ROUTES.WORK_EXPERIENCE_SHARING_DETAIL.name,
         params:{
           id: postId
         },
@@ -217,7 +217,7 @@ export default {
       onMoveDetailPageClick,
       onViewAllClick,
       onMoveWisdomPageClick,
-      onMoveWisdomDetailPageClick,
+      onMoveWorkExperienceDetailClick,
     }
   },
 }
@@ -303,7 +303,7 @@ export default {
               class="experience-board-item"
               v-for="(wisdomShare, index) in wisdomShareList"
               :key="index"
-              @click="onMoveWisdomDetailPageClick(wisdomShare.knowhowId)"
+              @click="onMoveWorkExperienceDetailClick(wisdomShare.knowhowId)"
           >
             <div class="experience-board-image">
               <img :src="wisdomShare.image" alt="직무 이미지" />

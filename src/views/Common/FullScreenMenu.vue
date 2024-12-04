@@ -102,7 +102,7 @@ export default {
       <div class="menu-content">
         <div class="menu_title">일경험 커뮤니티</div>
         <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <router-link :to="ROUTES.WISDOM_SHARE.path">
+          <router-link :to="ROUTES.WORK_EXPERIENCE_SHARING.path">
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/wisdom_share.png">
               <span>일경험 공유하기</span>
@@ -137,7 +137,7 @@ export default {
               <span>이력서</span>
             </div>
           </router-link>
-          <router-link :to="ROUTES.WISDOM_EXPLORE.path">
+          <router-link :to="ROUTES.MY_WORK_EXPERIENCE_PAGE.path">
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/wisdom_explore.png">
               <span>내가 쓴 글</span>

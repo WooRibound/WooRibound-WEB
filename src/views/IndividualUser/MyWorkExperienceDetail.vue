@@ -7,7 +7,7 @@ import {useRoute} from "vue-router";
 import {deleteWisdomDetail, fetchWisdomDetail} from "@/api/services/individualUserService";
 
 export default {
-  name: "IndividualUserWisdomDetail",
+  name: "MyWorkExperienceDetail",
   computed: {
     ROUTES() {
       return ROUTES
@@ -98,7 +98,7 @@ export default {
       v-if="modalPopupStatue"
       @close-modal="modalPopupStatue = false"
       :modal-message="modalMessage"
-      :router-path="ROUTES.WISDOM_SHARE.path"
+      :router-path="ROUTES.WORK_EXPERIENCE_SHARING.path"
   />
   <a-i-commendation-modal
       v-if="aiModalPopupStatue"
