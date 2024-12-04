@@ -135,7 +135,6 @@ export default {
     </div>
     <div class="job-wisdom-wrap">
       <div class="job-wisdom-info">{{ wisdomCount }}건</div>
-
       <div class="experience-board-content">
         <div
             class="experience-board-item"
@@ -153,23 +152,6 @@ export default {
           </div>
         </div>
       </div>
-
-<!--      <div class="job-wisdom-list" v-for="wisdom in wisdomList" :key="wisdom">-->
-<!--        <div class="course-title">{{ wisdom.knowhowTitle }}</div>-->
-<!--        <div class="course-subtitle">{{ wisdom.knowhowJob }}</div>-->
-<!--        <div class="course-schedule">-->
-<!--          <div class="schedule-info">-->
-<!--            <div class="info-item">{{ wisdom.userName }}</div>-->
-<!--            <div class="info-item">{{ formatDate2(wisdom.uploadDate) }}</div>-->
-<!--          </div>-->
-<!--          <img-->
-<!--              src="@/assets/images/icons/rightarrows.png"-->
-<!--              class="right-arrow-icon"-->
-<!--              alt="Right Arrow Icon"-->
-<!--              @click="onMoveDetailPageClick(wisdom.knowhowId)"-->
-<!--          >-->
-<!--        </div>-->
-<!--      </div>-->
     </div>
   </main>
   <search-filter-modal
