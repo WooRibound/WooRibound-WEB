@@ -199,7 +199,7 @@ export default {
 
     const onMoveWorkExperienceDetailClick = (postId) => {
       router.push({
-        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+        name: ROUTES.WORK_EXPERIENCE_SHARING_DETAIL.name,
         params:{
           id: postId
         },

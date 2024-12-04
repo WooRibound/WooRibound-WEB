@@ -212,9 +212,9 @@ const router = createRouter({
             meta: { requiresAuth: false }, // 모든 사용자 접근 가능
         },
         {
-            path: ROUTES.WISDOM_EXPLORE_DETAIL.path,
-            name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
-            component: () => import("@/views/IndividualUser/WisdomExploreDetail.vue"),
+            path: ROUTES.WORK_EXPERIENCE_SHARING_DETAIL.path,
+            name: ROUTES.WORK_EXPERIENCE_SHARING_DETAIL.name,
+            component: () => import("@/views/IndividualUser/WorkExperienceSharingDetail.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
 
         },

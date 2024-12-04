@@ -7,7 +7,7 @@ import {formatDate2} from "../../utils/formatters";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
-  name: "WisdomExploreDetail",
+  name: "WorkExperienceSharingDetail",
   components: { SingleButtonModal },
   methods: { formatDate2 },
   computed: {

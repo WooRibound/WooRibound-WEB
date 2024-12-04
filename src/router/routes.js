@@ -159,28 +159,28 @@ export const ROUTES = {
     },
     // [개인회원] 일경험 공유하기
     WORK_EXPERIENCE_SHARING: {
-        path: "/work-experience-sharing",
+        path: "/work-experience",
         name: "WorkExperienceSharing"
     },
     // [개인회원] 일경험 등록
     WORK_EXPERIENCE_REGISTRATION: {
-        path: "/work-experience-registration",
+        path: "/work-experience/registration",
         name: "WorkExperienceRegistration"
     },
-    // [개인회원] 내가 쓴 일경험 상세
-    MY_WORK_EXPERIENCE_DETAIL: {
-        path: "/my-work-experience/:id",
-        name: "MyWorkExperienceDetail"
+    // [개인회원] 일경험 상세보기
+    WORK_EXPERIENCE_SHARING_DETAIL: {
+        path: "/work-experience/:id",
+        name: "WorkExperienceSharingDetail"
     },
     // [개인회원] 내가 쓴 일경험
     MY_WORK_EXPERIENCE_PAGE: {
         path: "/my-work-experience",
         name: "MyWorkExperiencePage"
     },
-    // [개인회원] 지혜 나눔 상세보기
-    WISDOM_EXPLORE_DETAIL: {
-        path: "/wisdom/explore/:id",
-        name: "WisdomExploreDetail"
+    // [개인회원] 내가 쓴 일경험 상세
+    MY_WORK_EXPERIENCE_DETAIL: {
+        path: "/my-work-experience/:id",
+        name: "MyWorkExperienceDetail"
     },
     // [개인회원] 탈퇴한 아이디로 네이버 로그인 시도 시 리다이렉트 페이지
     DELETED_USER_REDIRECT: {
