@@ -157,11 +157,6 @@ export const ROUTES = {
         path: "/payment-management",
         name: "PaymentManagementView"
     },
-    // [개인회원] 지혜 메뉴
-    WISDOM_MENU: {
-        path: "/wisdom",
-        name: "WisdomMenu"
-    },
     // [개인회원] 지혜 나눔
     WISDOM_SHARE: {
         path: "/wisdom/share",

@@ -188,12 +188,6 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.CORPORATE_MEMBER },
         },
         {
-            path: ROUTES.WISDOM_MENU.path,
-            name: ROUTES.WISDOM_MENU.name,
-            component: () => import("@/views/IndividualUser/WisdomMenu.vue"),
-            meta: { requiresAuth: false }, // 모든 사용자 접근 가능
-        },
-        {
             path: ROUTES.WISDOM_SHARE.path,
             name: ROUTES.WISDOM_SHARE.name,
             component: () => import("@/views/IndividualUser/WisdomShare.vue"),
