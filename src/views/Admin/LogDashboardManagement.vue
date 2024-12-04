@@ -2,8 +2,8 @@
 import { onMounted, ref } from "vue";
 import { ROUTES } from "@/router/routes";
 import { fetchLogDashboard } from "@/api/services/adminServiece";
-import { useRouter } from "vue-router"; 
-import SingleButtonModal from "@/components/SingleButtonModal.vue"; 
+import { useRouter } from "vue-router";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "LogDashboardManagement",
@@ -64,25 +64,26 @@ export default {
     </div>
 
     <div v-if="isDashboardVisible" class="content">
-      <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=5`"
-              class="full-width-iframe" frameborder="0">
+      <iframe
+        :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&var-period=300&showCategory=Override%201&theme=light&panelId=7&__feature.dashboardSceneSolo`"
+        class="full-width-iframe" frameborder="0">
       </iframe>
 
       <div class="iframe-row">
         <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=1`"
-                class="half-width-iframe" frameborder="0">
+          class="half-width-iframe" frameborder="0">
         </iframe>
         <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=3`"
-                class="half-width-iframe" frameborder="0">
+          class="half-width-iframe" frameborder="0">
         </iframe>
       </div>
 
       <div class="iframe-row">
         <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=2`"
-                class="half-width-iframe" frameborder="0">
+          class="half-width-iframe" frameborder="0">
         </iframe>
         <iframe :src="`${monitoringURL}/d-solo/fe52n5f3ny4u8b/wb-infra?orgId=1&theme=light&panelId=4`"
-                class="half-width-iframe" frameborder="0">
+          class="half-width-iframe" frameborder="0">
         </iframe>
       </div>
     </div>
