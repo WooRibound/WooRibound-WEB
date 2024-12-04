@@ -200,9 +200,9 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {
-            path: ROUTES.WISDOM_SHARE_DELETE.path,
-            name: ROUTES.WISDOM_SHARE_DELETE.name,
-            component: () => import("@/views/IndividualUser/WisdomShareDelete.vue"),
+            path: ROUTES.MY_WORK_EXPERIENCE_DETAIL.path,
+            name: ROUTES.MY_WORK_EXPERIENCE_DETAIL.name,
+            component: () => import("@/views/IndividualUser/MyWorkExperienceDetail.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {

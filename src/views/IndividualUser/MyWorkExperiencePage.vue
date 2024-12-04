@@ -53,7 +53,7 @@ export default {
 
     const onMoveDetailPageClick = (postId) => {
       router.push({
-        name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
+        name: ROUTES.MY_WORK_EXPERIENCE_DETAIL.name,
         params:{
           id: postId
         },

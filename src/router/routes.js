@@ -167,10 +167,10 @@ export const ROUTES = {
         path: "/work-experience-registration",
         name: "WorkExperienceRegistration"
     },
-    // [개인회원] 지혜 나눔 삭제
-    WISDOM_SHARE_DELETE: {
-        path: "/wisdom/share/delete/:id",
-        name: "WisdomShareDelete"
+    // [개인회원] 내가 쓴 일경험 상세
+    MY_WORK_EXPERIENCE_DETAIL: {
+        path: "/my-work-experience/:id",
+        name: "MyWorkExperienceDetail"
     },
     // [개인회원] 내가 쓴 일경험
     MY_WORK_EXPERIENCE_PAGE: {
