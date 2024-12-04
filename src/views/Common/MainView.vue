@@ -20,7 +20,7 @@ export default {
 
     const individualServiceGuideList = ref([
       {
-        title: "경력 살려서 채용공고 찾기",
+        title: "경력 살려서 일자리 찾기",
         subtitle: "경력을 살려보는건 어때요?",
         img: require('@/assets/images/icons/career.png'),
         route: ROUTES.JOB_POSTINGS_PAGE.name,
@@ -28,16 +28,16 @@ export default {
         backgroundColor: '#F2EED7'
       },
       {
-        title: "관심 직종에 맞는 채용공고 찾기",
-        subtitle: "새로운 일 찾아보는건 어때요?",
+        title: "관심사에 맞는 새로운 일자리 찾기",
+        subtitle: "우바가 당신의 도전을 응원합니다 😍",
         img: require('@/assets/images/icons/new.png'),
         route: ROUTES.JOB_POSTINGS_PAGE.name,
         viewType: 'new',
         backgroundColor: '#F5EFFF'
       },
       {
-        title: "지혜 마당으로 모여라",
-        subtitle: "궁금한 직종에 대해 찾아보세요!",
+        title: "일경험 커뮤니티로 모여라",
+        subtitle: "다양한 일자리 이야기 나눠봐요!",
         img: require('@/assets/images/icons/question.png'),
         route: ROUTES.WISDOM_EXPLORE.name,
         viewType: '',
@@ -371,6 +371,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+  object-position: top;
 }
 
 .slider-section .item-text {
