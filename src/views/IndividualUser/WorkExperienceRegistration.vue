@@ -7,7 +7,7 @@ import {insertWisdomShare} from "@/api/services/individualUserService";
 import {useJobStore} from "@/stores/useJobStore";
 
 export default {
-  name: "WisdomShareRegister",
+  name: "WorkExperienceRegistration",
   computed: {
     ROUTES() {
       return ROUTES

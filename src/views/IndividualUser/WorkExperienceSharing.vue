@@ -90,7 +90,7 @@ export default {
     }
 
     const onRegisterPostClick = () => {
-      router.push(ROUTES.WISDOM_SHARE_REGISTER.path);
+      router.push(ROUTES.WORK_EXPERIENCE_REGISTRATION.path);
     }
 
     return {

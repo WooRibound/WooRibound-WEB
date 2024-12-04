@@ -162,10 +162,10 @@ export const ROUTES = {
         path: "/work-experience-sharing",
         name: "WorkExperienceSharing"
     },
-    // [개인회원] 지혜 나눔 등록
-    WISDOM_SHARE_REGISTER: {
-        path: "/wisdom/share/register",
-        name: "WisdomShareRegister"
+    // [개인회원] 일경험 등록
+    WORK_EXPERIENCE_REGISTRATION: {
+        path: "/work-experience-registration",
+        name: "WorkExperienceRegistration"
     },
     // [개인회원] 지혜 나눔 삭제
     WISDOM_SHARE_DELETE: {

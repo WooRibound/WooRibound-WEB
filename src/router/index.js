@@ -194,9 +194,9 @@ const router = createRouter({
             meta: { requiresAuth: false },
         },
         {
-            path: ROUTES.WISDOM_SHARE_REGISTER.path,
-            name: ROUTES.WISDOM_SHARE_REGISTER.name,
-            component: () => import("@/views/IndividualUser/WisdomShareRegister.vue"),
+            path: ROUTES.WORK_EXPERIENCE_REGISTRATION.path,
+            name: ROUTES.WORK_EXPERIENCE_REGISTRATION.name,
+            component: () => import("@/views/IndividualUser/WorkExperienceRegistration.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {
