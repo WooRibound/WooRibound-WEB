@@ -32,7 +32,7 @@ export default {
     const termsPrivacyType = ref("");
     const termsPrivacyOfServicePopupStatue = ref(false);
     const jobs = computed(() => jobStore.getJobs);
-
+    const isShowDataSharingConsent = ref('N');
     const provinces = computed(() => regionsStore.getProvinces);
     const cities = computed(() => regionsStore.getCitiesByProvince(userInfo.value.addrProvince) || []);
 
@@ -116,6 +116,8 @@ export default {
       if (userInfo.value.interestJobs.length === 0) {
         userInfo.value.interestJobs.push('');
       }
+
+      isShowDataSharingConsent.value = userInfo.value.dataSharingConsent;
     }
 
     const loadUserProfile = async () => {
@@ -167,17 +169,18 @@ export default {
       if (!userInfo.value.gender ||
           !userInfo.value.addrProvince ||
           !userInfo.value.addrCity ||
-          !userInfo.value.exjobChk
+          !userInfo.value.exjobChk ||
+          !userInfo.value.phone
       ) {
         errorMessage.value = "모든 필수 항목을 입력해주세요.";
         return;
       }
 
       try {
-
         const date = new Date(userInfo.value.birth);
         userInfo.value.birth = date.toISOString();
         userInfo.value.exjobChk = exjobChkStatus;
+        userInfo.value.dataSharingConsent = userInfo.value.dataSharingConsent ? 'Y' : 'N';
 
         const response = await fetchUpdateUserProfile(userInfo.value);
         initializeUserProfile(response);
@@ -217,6 +220,7 @@ export default {
       exjobChkStatus,
       isJobCategoryEnabled,
       userInfo,
+      isShowDataSharingConsent,
       handlePhoneNumberInput,
       validatePhone,
       onAddJobFieldClick,
@@ -346,7 +350,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="consent-wrapper" v-if="userInfo.dataSharingConsent === 'N'">
+        <div class="consent-wrapper" v-if="isShowDataSharingConsent === 'N'">
           <input
               type="checkbox"
               id="thirdPartyConsent"

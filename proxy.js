@@ -2,6 +2,8 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
 const app = express();
+const setupLogging = require('./logging');
+setupLogging(app);
 
 // Vue.js 빌드 결과물 서빙
 app.use(express.static('dist'));
