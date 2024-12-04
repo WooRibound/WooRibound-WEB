@@ -7,6 +7,7 @@ import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
 import {formatDate2} from "@/utils/formatters";
 import {fetchAllWisdomExplore} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
+import {formatContent} from "@/utils/formatters";
 
 export default {
   name: "WisdomShare",
@@ -106,6 +107,7 @@ export default {
       onMoveDetailPageClick,
       onFilterClick,
       onRegisterPostClick,
+      formatContent,
     };
   }
 }
@@ -147,7 +149,7 @@ export default {
           </div>
           <div class="experience-board-text">
             <div class="experience-board-job-title">{{ wisdomShare.knowhowTitle}}</div>
-            <div class="experience-board-content">{{ wisdomShare.knowhowContent}}</div>
+            <div class="experience-board-content">{{ formatContent(wisdomShare.knowhowContent) }}</div>
             <div class="experience-board-role">{{ wisdomShare.knowhowJob}}</div>
           </div>
         </div>
