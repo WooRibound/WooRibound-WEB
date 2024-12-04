@@ -157,10 +157,10 @@ export const ROUTES = {
         path: "/payment-management",
         name: "PaymentManagementView"
     },
-    // [개인회원] 지혜 나눔
-    WISDOM_SHARE: {
-        path: "/wisdom/share",
-        name: "WisdomShare"
+    // [개인회원] 일경험 공유하기
+    WORK_EXPERIENCE_SHARING: {
+        path: "/work-experience-sharing",
+        name: "WorkExperienceSharing"
     },
     // [개인회원] 지혜 나눔 등록
     WISDOM_SHARE_REGISTER: {

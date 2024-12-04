@@ -193,7 +193,7 @@ export default {
 
     const onMoveWisdomPageClick = () => {
       router.push({
-        name: ROUTES.WISDOM_SHARE.name
+        name: ROUTES.WORK_EXPERIENCE_SHARING.name
       });
     }
 

@@ -10,7 +10,7 @@ import SingleButtonModal from "@/components/SingleButtonModal.vue";
 import {formatContent} from "@/utils/formatters";
 
 export default {
-  name: "WisdomShare",
+  name: "WorkExperienceSharing",
   computed: {
     SEARCH_FILTER_TYPES() {
       return SEARCH_FILTER_TYPES
