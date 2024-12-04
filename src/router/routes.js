@@ -172,10 +172,10 @@ export const ROUTES = {
         path: "/wisdom/share/delete/:id",
         name: "WisdomShareDelete"
     },
-    // [개인회원] 지혜 탐색
-    WISDOM_EXPLORE: {
-        path: "/wisdom/explore",
-        name: "WisdomExplore"
+    // [개인회원] 내가 쓴 일경험
+    MY_WORK_EXPERIENCE_PAGE: {
+        path: "/my-work-experience",
+        name: "MyWorkExperiencePage"
     },
     // [개인회원] 지혜 나눔 상세보기
     WISDOM_EXPLORE_DETAIL: {

@@ -206,9 +206,9 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.INDIVIDUAL_USER },
         },
         {
-            path: ROUTES.WISDOM_EXPLORE.path,
-            name: ROUTES.WISDOM_EXPLORE.name,
-            component: () => import("@/views/IndividualUser/WisdomExplore.vue"),
+            path: ROUTES.MY_WORK_EXPERIENCE_PAGE.path,
+            name: ROUTES.MY_WORK_EXPERIENCE_PAGE.name,
+            component: () => import("@/views/IndividualUser/MyWorkExperiencePage.vue"),
             meta: { requiresAuth: false }, // 모든 사용자 접근 가능
         },
         {

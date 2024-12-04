@@ -137,7 +137,7 @@ export default {
               <span>이력서</span>
             </div>
           </router-link>
-          <router-link :to="ROUTES.WISDOM_EXPLORE.path">
+          <router-link :to="ROUTES.MY_WORK_EXPERIENCE_PAGE.path">
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/wisdom_explore.png">
               <span>내가 쓴 글</span>

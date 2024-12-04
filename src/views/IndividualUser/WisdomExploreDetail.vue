@@ -37,7 +37,7 @@ export default {
         if (response === "본인이 작성한 글은 신고할 수 없습니다.") {
           modalRouterPath.value = "";
         } else {
-          modalRouterPath.value = ROUTES.WISDOM_EXPLORE.path;
+          modalRouterPath.value = ROUTES.MY_WORK_EXPERIENCE_PAGE.path;
         }
 
       } catch (e) {

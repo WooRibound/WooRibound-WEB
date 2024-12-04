@@ -9,7 +9,7 @@ import {fetchAllWisdomShare} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
-  name: "WisdomExplore",
+  name: "MyWorkExperiencePage",
   computed: {
     SEARCH_FILTER_TYPES() {
       return SEARCH_FILTER_TYPES
