@@ -197,7 +197,7 @@ export default {
       });
     }
 
-    const onMoveWisdomDetailPageClick = (postId) => {
+    const onMoveWorkExperienceDetailClick = (postId) => {
       router.push({
         name: ROUTES.WISDOM_EXPLORE_DETAIL.name,
         params:{
@@ -217,7 +217,7 @@ export default {
       onMoveDetailPageClick,
       onViewAllClick,
       onMoveWisdomPageClick,
-      onMoveWisdomDetailPageClick,
+      onMoveWorkExperienceDetailClick,
     }
   },
 }
@@ -303,7 +303,7 @@ export default {
               class="experience-board-item"
               v-for="(wisdomShare, index) in wisdomShareList"
               :key="index"
-              @click="onMoveWisdomDetailPageClick(wisdomShare.knowhowId)"
+              @click="onMoveWorkExperienceDetailClick(wisdomShare.knowhowId)"
           >
             <div class="experience-board-image">
               <img :src="wisdomShare.image" alt="직무 이미지" />
