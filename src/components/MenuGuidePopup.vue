@@ -104,6 +104,9 @@ export default {
           <router-link :to="ROUTES.JOB_APPLICATION_STATUS.path">
             <div class="menu-item">지원 현황</div>
           </router-link>
+          <router-link :to="ROUTES.MY_WORK_EXPERIENCE_PAGE.path">
+            <div class="menu-item">내가 쓴 글</div>
+          </router-link>
           <router-link :to="ROUTES.WOORIBOUND_ELEVATION_INFO.path">
             <div class="menu-item">우바 고도</div>
           </router-link>
