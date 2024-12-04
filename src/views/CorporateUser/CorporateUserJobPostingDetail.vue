@@ -187,7 +187,7 @@ export default {
 }
 
 .company-logo {
-  height: 300px;
+  object-fit: contain;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
   display: flex;

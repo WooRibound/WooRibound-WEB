@@ -36,11 +36,25 @@ export default {
 
     const fetchPosts = async () => {
       try {
+        const images = [
+          require('@/assets/images/illustrate/flower.png'),
+          require('@/assets/images/illustrate/mountain.png'),
+          require('@/assets/images/illustrate/see.png'),
+          require('@/assets/images/illustrate/sky.jpeg'),
+        ];
+
         const response = await fetchAllWisdomExplore(searchInput.value, selectedJob.value);
         // const response = await fetchAllWisdomShare(searchInput.value, selectedJob.value);
 
-        wisdomList.value = response;
+        // 데이터를 불러오면서 각 항목에 이미지를 순환적으로 배정
+        wisdomList.value = response.map((item, index) => {
+          return {
+            ...item,
+            image: images[index % images.length],
+          };
+        });
         wisdomCount.value = wisdomList.value.length;
+
 
       } catch (error) {
         console.error('Error data:', error);
@@ -121,20 +135,21 @@ export default {
     </div>
     <div class="job-wisdom-wrap">
       <div class="job-wisdom-info">{{ wisdomCount }}건</div>
-      <div class="job-wisdom-list" v-for="wisdom in wisdomList" :key="wisdom">
-        <div class="course-title">{{ wisdom.knowhowTitle }}</div>
-        <div class="course-subtitle">{{ wisdom.knowhowJob }}</div>
-        <div class="course-schedule">
-          <div class="schedule-info">
-            <div class="info-item">{{ wisdom.userName }}</div>
-            <div class="info-item">{{ formatDate2(wisdom.uploadDate) }}</div>
+      <div class="experience-board-content">
+        <div
+            class="experience-board-item"
+            v-for="(wisdomShare, index) in wisdomList"
+            :key="index"
+            @click="onMoveWisdomDetailPageClick(wisdomShare.knowhowId)"
+        >
+          <div class="experience-board-image">
+            <img :src="wisdomShare.image" alt="직무 이미지" />
           </div>
-          <img
-              src="@/assets/images/icons/rightarrows.png"
-              class="right-arrow-icon"
-              alt="Right Arrow Icon"
-              @click="onMoveDetailPageClick(wisdom.knowhowId)"
-          >
+          <div class="experience-board-text">
+            <div class="experience-board-job-title">{{ wisdomShare.knowhowTitle}}</div>
+            <div class="experience-board-content">{{ wisdomShare.knowhowContent}}</div>
+            <div class="experience-board-role">{{ wisdomShare.knowhowJob}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -284,5 +299,86 @@ export default {
   height: auto;
   cursor: pointer;
   margin-left: 15px;
+}
+
+.experience-board-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.experience-board-item {
+  display: flex; /* 텍스트와 이미지를 가로로 배치 */
+  align-items: center; /* 세로 가운데 정렬 */
+  background-color: #f9f9f9;
+  padding: 15px;
+  cursor: pointer;
+  border-bottom: 1px solid black;
+}
+
+.experience-board-image {
+  width: 90px; /* 정사각형 크기 */
+  height: 90px;
+  border-radius: 8px; /* 둥근 모서리 */
+  overflow: hidden; /* 둥근 경계 밖 이미지를 숨김 */
+  margin-right: 15px; /* 텍스트와 이미지 사이 간격 */
+}
+
+.experience-board-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지를 정사각형에 맞게 채움 */
+}
+
+.experience-board-text {
+  flex-grow: 1; /* 텍스트 영역을 남은 공간에 확장 */
+}
+
+.experience-board-item:not(:last-child) {
+  border-bottom: 0; /* 마지막 항목이 아니면 하단 보더 제거 */
+}
+
+.experience-board-item + .experience-board-item {
+  border-top: 1px solid #ccc; /* 다음 항목과의 경계를 위한 상단 보더 추가 */
+}
+
+.experience-board-item:first-child {
+  border-top: none; /* 첫 번째 요소는 상단 보더 제거 */
+}
+
+.experience-board-item:last-child {
+  border-bottom: none; /* 마지막 요소는 하단 보더 제거 */
+}
+
+.experience-board-item:hover {
+  background-color: #e9ecef;
+}
+
+.experience-board-job-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.experience-board-post-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.experience-board-content {
+  font-size: 11px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.experience-board-role {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff; /* 글씨를 흰색으로 설정 */
+  background-color: #B7B7B7; /* 회색 배경 추가 */
+  margin-top: 8px;
+  padding: 4px 8px; /* 안쪽 여백 추가 */
+  border-radius: 10px; /* 둥근 모서리 적용 */
+  display: inline-block; /* 배경이 텍스트 크기에 맞도록 조절 */
 }
 </style>
