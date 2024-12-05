@@ -4,13 +4,16 @@ import {ROUTES} from "@/router/routes";
 import { formatDate3 } from "@/utils/formatters"
 import {fetchApplicantList, fetchMyPostingDetail, setApplicantResult} from "@/api/services/corporateUserService";
 import {computed, onMounted, ref} from "vue";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "ApplicantDetailPage",
+  components: {SingleButtonModal},
   setup() {
     const route = useRoute();
     const router = useRouter();``
 
+    const modalStatus = ref(false);
     const postId = route.params.id;
     const applicantsList = ref([]);
     const jobposting = ref({});
@@ -115,7 +118,12 @@ export default {
       })
     };
 
-    const onMovePremiumFunctionPageClick = (userId) => {
+    const onMovePremiumFunctionPageClick = (userId, recommendCount) => {
+      if (recommendCount < 1) {
+        modalStatus.value = true;
+        return;
+      }
+      
       router.push({
         name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
         params: {
@@ -125,6 +133,7 @@ export default {
     };
 
     return {
+      modalStatus,
       applyStatus,
       formattedStartDate,
       formattedEndDate,
@@ -168,7 +177,7 @@ export default {
             {{ applicant.applicantName }}
           </td>
           <td>{{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
-          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId)">{{ applicant.recommendCount }}</div></td>
+          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId, applicant.recommendCount)">{{ applicant.recommendCount }}</div></td>
           <td>
             <div class="status-container">
               <div v-if="applicant.result === 'PENDING'">
@@ -188,6 +197,11 @@ export default {
       </table>
     </div>
   </main>
+  <single-button-modal
+      v-if="modalStatus"
+      @close-modal="modalStatus = false"
+      :modal-message="'추천 내역이 아직 없습니다.'"
+  />
 </template>
 
 
