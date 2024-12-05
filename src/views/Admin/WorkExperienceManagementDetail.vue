@@ -9,7 +9,7 @@ import TwoButtonModal from '@/components/TwoButtonModal.vue';
 import handleApiCall from '@/api/apiService';
 
 export default {
-  name: "IndividualUserWisdomExploreDetail",
+  name: "WorkExperienceManagementDetail",
   components: { SingleButtonModal, TwoButtonModal },
   methods: { formatDate2 },
   computed: {
@@ -109,7 +109,7 @@ export default {
     const closeModal = (shouldRedirect = false) => {
       showDeleteModal.value = false;
       if (shouldRedirect) {
-        router.push(ROUTES.WISDOM_MANAGEMENT.path);
+        router.push(ROUTES.WORK_EXPERIENCE_MANAGEMENT.path);
       }
     };
 
@@ -132,7 +132,7 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">지혜 탐색</div>
+      <div class="header-title">일경험 공유하기</div>
       <div class="report-container" @click="onReportClick(wisdom)">
         <img src="@/assets/images/icons/siren.png" alt="신고 아이콘">
         신고 {{ reportedCnt }}회

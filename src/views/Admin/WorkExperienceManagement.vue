@@ -8,7 +8,7 @@ import { formatDate2 } from "@/utils/formatters";
 import handleApiCall from '@/api/apiService';
 
 export default {
-  name: "WisdomManagement",
+  name: "WorkExperienceManagement",
   methods: { formatDate2 },
   computed: {
     SEARCH_FILTER_TYPES() {
@@ -76,7 +76,7 @@ export default {
 
     const onMoveDetailPageClick = (knowhowId) => {
       router.push({
-        name: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.name,
+        name: ROUTES.WORK_EXPERIENCE_MANAGEMENT_DETAIL.name,
         params: {
           id: knowhowId
         },

@@ -7,16 +7,19 @@ import {
   fetchRecommendList
 } from "@/api/services/corporateUserService";
 import {computed, onMounted, ref} from "vue";
+import SingleButtonModal from "@/components/SingleButtonModal.vue";
 
 export default {
   name: "ApplicantRecommendPage",
+  components: {SingleButtonModal},
   setup() {
     const route = useRoute();
-    const router = useRouter();``
+    const router = useRouter();
 
     const jobId = route.params.jobId;
     const postId = route.params.postId;
 
+    const modalStatus = ref(false);
     const applicantsList = ref([]);
     const jobposting = ref({});
     const startDate = ref("");
@@ -68,7 +71,7 @@ export default {
     };
 
     const onMoveResumePageClick = (userId) => {
-      console.info("userId: "+ userId);
+
       router.push({
         name: ROUTES.READONLY_RESUME_PAGE.name,
         params: {
@@ -77,9 +80,14 @@ export default {
       })
     }
 
-    const onMovePremiumFunctionPageClick = (userId) => {
+    const onMovePremiumFunctionPageClick = (userId, recommendCount) => {
+      if (recommendCount < 1) {
+        modalStatus.value = true;
+        return;
+      }
+
       router.push({
-        name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
+        name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
         params: {
           userId: userId
         }
@@ -95,6 +103,7 @@ export default {
     return {
       postId,
       jobId,
+      modalStatus,
       jobposting,
       applyStatus,
       formattedStartDate,
@@ -131,12 +140,17 @@ export default {
           <td class="name" @click="onMoveResumePageClick(applicant.userId)">
             {{ applicant.applicantName }}</td>
           <td>{{ applicant.applicantGender }}/{{ applicant.applicantAge }}</td>
-          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId)">{{ applicant.recommendCount }}</div></td>
+          <td><div class="recommend-count" @click="onMovePremiumFunctionPageClick(applicant.userId, applicant.recommendCount)">{{ applicant.recommendCount }}</div></td>
         </tr>
         </tbody>
       </table>
     </div>
   </main>
+  <single-button-modal
+      v-if="modalStatus"
+      @close-modal="modalStatus = false"
+      :modal-message="'추천 내역이 아직 없습니다.'"
+  />
 </template>
 
 

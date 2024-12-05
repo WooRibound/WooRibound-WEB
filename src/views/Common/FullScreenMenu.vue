@@ -108,12 +108,6 @@ export default {
               <span>일경험 공유하기</span>
             </div>
           </router-link>
-<!--          <router-link :to="ROUTES.WISDOM_EXPLORE.path">-->
-<!--            <div class="menu-item">-->
-<!--              <img src="@/assets/images/menuIcons/wisdom_explore.png">-->
-<!--              <span>지혜 탐색</span>-->
-<!--            </div>-->
-<!--          </router-link>-->
         </div>
       </div>
       <div class="menu-content">
@@ -264,7 +258,7 @@ export default {
       <div class="menu-content">
         <div class="menu_title">일경험 커뮤니티 관리</div>
          <div class="menu-items" @click="onCloseFullScreenMenuClick">
-          <router-link :to="ROUTES.WISDOM_MANAGEMENT.path">
+          <router-link :to="ROUTES.WORK_EXPERIENCE_MANAGEMENT.path">
             <div class="menu-item">
               <img src="@/assets/images/menuIcons/wisdom_share.png">
               <span>일경험 공유 관리</span>

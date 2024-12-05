@@ -106,7 +106,7 @@ export default {
           <td>
             {{ formatDate2(new Date(employment.hireDate)) }}
           </td>
-          <td class="name" @click="onMoveResumePageClick(employment.empId)">
+          <td class="name" @click="onMoveResumePageClick(employment.userId)">
             {{ employment.userName }}
           </td>
           <td>{{ employment.jobName }}</td>

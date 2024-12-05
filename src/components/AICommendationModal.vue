@@ -94,7 +94,7 @@ export default {
   border-radius: 20px 20px 0 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  height: 60%;
+  height: 75%;
   margin-bottom: 0;
 }
 

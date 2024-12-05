@@ -223,14 +223,14 @@ export const ROUTES = {
         name: "AdminJobPostingDetail",
     },
     // [서비스 관리자] 일경험 공유 관리
-    WISDOM_MANAGEMENT: {
-        path: '/admin/wisdom-management',
-        name: 'WisdomManagement',
+    WORK_EXPERIENCE_MANAGEMENT: {
+        path: '/admin/work-experience-management',
+        name: 'WorkExperienceManagement',
     },
-    // [서비스 관리자] 지혜 마당 관리 상세보기
-    INDIVIDUAL_USER_WISDOM_DETAIL: {
-        path: '/admin/wisdom-management/detail/:id',
-        name: 'IndividualUserWisdomDetail',
+    // [서비스 관리자] 일경험 공유 관리 상세보기
+    WORK_EXPERIENCE_MANAGEMENT_DETAIL: {
+        path: '/admin/work-experience-management/:id',
+        name: 'WorkExperienceManagementDetail',
     },
     // [서비스 관리자] 사용자 로그 분석
     USER_LOG_ANALYSIS: {
