@@ -72,7 +72,7 @@ export default {
 <template>
   <main class="body">
     <div class="header">
-      <div class="header-title">지혜 나눔</div>
+      <div class="header-title">일경험 공유하기</div>
     </div>
     <div class="content">
       <!-- 직종 선택 -->
