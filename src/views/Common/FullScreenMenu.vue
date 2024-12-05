@@ -108,12 +108,6 @@ export default {
               <span>일경험 공유하기</span>
             </div>
           </router-link>
-<!--          <router-link :to="ROUTES.WISDOM_EXPLORE.path">-->
-<!--            <div class="menu-item">-->
-<!--              <img src="@/assets/images/menuIcons/wisdom_explore.png">-->
-<!--              <span>지혜 탐색</span>-->
-<!--            </div>-->
-<!--          </router-link>-->
         </div>
       </div>
       <div class="menu-content">

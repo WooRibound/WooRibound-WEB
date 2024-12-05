@@ -1,7 +1,7 @@
 <template>
   <div class="app-container" v-if="!fullScreenMenuState">
     <header-component @fullMenu-state-changed="fullScreenMenuStateChanged"/>
-    <router-view />
+    <router-view :key="$route.fullPath"/>
     <bottom-navigation
         v-if="!isAdmin"
         @icon-state-changed="handleIconStateChanged"
