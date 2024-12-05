@@ -267,15 +267,15 @@ const router = createRouter({
             meta: { requiresAuth: true, allowedUserTypes: [USER_TYPES.CORPORATE_MEMBER, USER_TYPES.SERVICE_ADMIN] },
         },
         {
-            path: ROUTES.WISDOM_MANAGEMENT.path,
-            name: ROUTES.WISDOM_MANAGEMENT.name,
-            component: () => import("@/views/Admin/WisdomManagement.vue"),
+            path: ROUTES.WORK_EXPERIENCE_MANAGEMENT.path,
+            name: ROUTES.WORK_EXPERIENCE_MANAGEMENT.name,
+            component: () => import("@/views/Admin/WorkExperienceManagement.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
         },
         {
-            path: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.path,
-            name: ROUTES.INDIVIDUAL_USER_WISDOM_DETAIL.name,
-            component: () => import("@/views/Admin/IndividualUserWisdomDetail.vue"),
+            path: ROUTES.WORK_EXPERIENCE_MANAGEMENT_DETAIL.path,
+            name: ROUTES.WORK_EXPERIENCE_MANAGEMENT_DETAIL.name,
+            component: () => import("@/views/Admin/WorkExperienceManagementDetail.vue"),
             meta: { requiresAuth: true, allowedUserTypes: USER_TYPES.SERVICE_ADMIN },
         },
         {
