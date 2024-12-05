@@ -12,7 +12,7 @@ export default {
   name: "ApplicantRecommendPage",
   setup() {
     const route = useRoute();
-    const router = useRouter();``
+    const router = useRouter();
 
     const jobId = route.params.jobId;
     const postId = route.params.postId;
@@ -68,7 +68,6 @@ export default {
     };
 
     const onMoveResumePageClick = (userId) => {
-      console.info("userId: "+ userId);
       router.push({
         name: ROUTES.READONLY_RESUME_PAGE.name,
         params: {
@@ -79,7 +78,7 @@ export default {
 
     const onMovePremiumFunctionPageClick = (userId) => {
       router.push({
-        name: ROUTES.APPLICANT_RECOMMEND_PAGE.name,
+        name: ROUTES.RECOMMEND_PREMIUM_PAGE.name,
         params: {
           userId: userId
         }
