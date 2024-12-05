@@ -38,41 +38,74 @@ export default {
   <main class="body">
     <div class="header">우바 고도</div>
     <div class="job-posting-wrap">
-      <div class="job-posting-info">설안산 총 고도 : 1,708m</div>
-      <div class="job-posting-info">현재고도 : {{ currentElevation }}m</div>
-      <img src="@/assets/images/icons/mountains.png" class="mountains-icon">
+      <div class="mountains-container">
+        <img src="@/assets/images/icons/mountains.png" class="mountains-icon">
+      </div>
+      <div class="job-posting-info-container">
+        <div class="job-posting-info">설악산 총 고도 <br> 1,708m</div>
+        <div class="job-posting-info">현재고도 <br>{{ currentElevation }}m</div>
+      </div>
     </div>
   </main>
 </template>
 
 <style scoped>
 .body {
-  flex: 1;                      /* 가변 영역, 헤더와 바텀 내비게이션을 제외한 나머지 공간 차지 */
-  padding: 20px;                /* 내부 여백 */
-  box-sizing: border-box;       /* 패딩을 포함한 크기 계산 */
-  background-color: #f8f9fa;    /* 배경색 */
-  overflow-y: auto;             /* 내용이 넘칠 경우 스크롤 가능 */
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  overflow-y: auto;
 }
 
 .header {
-  font-size: 24px;              /* 헤더 폰트 크기 */
-  font-weight: bold;            /* 헤더 두껍게 */
-  margin-bottom: 20px;          /* 아래쪽 여백 */
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .job-posting-wrap {
-  margin-top: 10px;             /* 상단 여백 */
+  margin-top: 10px;
 }
 
-.job-posting-info {
-  font-size: 20px;              /* 신청 건수 폰트 크기 */
-  font-weight: bold;            /* 굵게 설정 */
-  margin-left: 10px;
-  margin-bottom: 10px;
+.mountains-container {
+  position: relative;
 }
 
 .mountains-icon {
-  max-width: 100%;              /* 부모 요소의 너비를 초과하지 않도록 설정 */
-  height: auto;                 /* 비율을 유지하여 높이 자동 조정 */
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.mountains-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  //background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none;
+}
+
+.job-posting-info-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+  gap: 10px; /* 각 아이템 사이 간격 */
+}
+
+.job-posting-info {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 15px; /* 내부 여백 */
+  background-color: #ffffff; /* 흰색 배경 */
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+  margin: 0; /* 불필요한 여백 제거 */
+  width: 300px;
+  line-height: 1.6; /* 텍스트 줄 간격 */
 }
 </style>
