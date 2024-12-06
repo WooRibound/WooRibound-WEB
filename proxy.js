@@ -9,8 +9,6 @@ const setupCsrf = require('./csrf');
 
 setupLogging(app);
 
-// Vue.js 빌드 결과물 서빙
-app.use(express.static('dist'));
 app.use(cookieParser());
 setupCsrf(app);
 
@@ -88,8 +86,15 @@ app.use('/oauth2', createProxyMiddleware({
     secure: false
 }));
 
-// 모든 요청을 Vue 앱으로 전달, csrf토큰 전달
-app.get('*', async (req, res) => {
+// meta 태그를 추가하는 라우트를 먼저
+app.get('*', (req, res, next) => {
+    // API 요청이나 정적 파일 요청은 건너뛰기
+    if (req.path.startsWith('/api') ||
+        req.path.startsWith('/oauth2') ||
+        req.path.includes('.')) {  // 정적 파일은 확장자가 있음
+        return next();
+    }
+
     try {
         // index.html 읽기
         const html = fs.readFileSync(path.join(__dirname, 'dist', 'index.html'), 'utf8');
@@ -104,8 +109,7 @@ app.get('*', async (req, res) => {
         console.log('Meta tag included:', modifiedHtml.includes('csrf-token'));
         console.log('Token in HTML:', modifiedHtml.includes(token));
 
-        // 모든 경로에서 수정된 index.html 반환
-        // (Vue Router의 History 모드를 위해 모든 경로에서 같은 HTML 제공)
+        // HTML 반환
         res.setHeader('Content-Type', 'text/html');
         res.send(modifiedHtml);
     } catch (error) {
@@ -113,6 +117,9 @@ app.get('*', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+// 정적 파일 처리
+app.use(express.static('dist'));
 
 // http 서버 생성 및 WebSocket 핸들러 추가
 const server = require('http').createServer(app);
