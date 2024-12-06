@@ -5,8 +5,10 @@ const setupCsrf = (app) => {
     app.use(csrf({
         cookie: {
             httpOnly: true,
+            key: 'XSRF-TOKEN',
             secure: process.env.NODE_ENV === 'production'
-        }
+        },
+        value: req => req.headers['x-xsrf-token']
     }));
 
     // CSRF 에러 처리 미들웨어
