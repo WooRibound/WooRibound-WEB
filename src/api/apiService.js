@@ -21,7 +21,7 @@ const apiInstance = () => {
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
             if (csrfToken) {
-                config.headers['X-XSRF-TOKEN'] = csrfToken;
+                config.headers['x-xsrf-token'] = csrfToken;
             }
             return config;
         },
