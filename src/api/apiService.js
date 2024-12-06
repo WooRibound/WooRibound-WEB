@@ -18,6 +18,11 @@ const apiInstance = () => {
             if (token) {
                 config.headers['Authorization'] = token;
             }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (csrfToken) {
+                config.headers['X-XSRF-TOKEN'] = csrfToken;
+            }
             return config;
         },
         (error) => {

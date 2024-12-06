@@ -1,12 +1,18 @@
 const express = require('express');
+const fs = require('fs');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
 const app = express();
 const setupLogging = require('./logging');
+const cookieParser = require('cookie-parser');
+const setupCsrf = require('./csrf');
+
 setupLogging(app);
 
 // Vue.js 빌드 결과물 서빙
 app.use(express.static('dist'));
+app.use(cookieParser());
+setupCsrf(app);
 
 // WebSocket 프록시를 가장 먼저 설정
 const wsProxy = createProxyMiddleware('/api/live/ws', {
@@ -82,9 +88,27 @@ app.use('/oauth2', createProxyMiddleware({
     secure: false
 }));
 
-// 모든 요청을 Vue 앱으로 전달
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// 모든 요청을 Vue 앱으로 전달, csrf토큰 전달
+app.get('*', async (req, res) => {
+    try {
+        // index.html 읽기
+        const html = fs.readFileSync(path.join(__dirname, 'dist', 'index.html'), 'utf8');
+        const token = req.csrfToken();
+
+        // CSRF 토큰을 meta 태그로 삽입
+        const modifiedHtml = html.replace(
+            '</head>',
+            `<meta name="csrf-token" content="${token}"></head>`
+        );
+
+        // 모든 경로에서 수정된 index.html 반환
+        // (Vue Router의 History 모드를 위해 모든 경로에서 같은 HTML 제공)
+        res.setHeader('Content-Type', 'text/html');
+        res.send(modifiedHtml);
+    } catch (error) {
+        console.error('Error serving index.html:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 // http 서버 생성 및 WebSocket 핸들러 추가

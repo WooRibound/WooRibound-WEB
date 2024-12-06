@@ -17,7 +17,10 @@
     "pinia-plugin-persistedstate": "^4.1.2",
     "vue": "^3.2.13",
     "vue-router": "^4.4.5",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "csurf": "^1.11.0",
+    "cookie-parser": "^1.4.6",
+    "fs": "0.0.1-security"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
