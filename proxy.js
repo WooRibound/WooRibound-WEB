@@ -95,8 +95,6 @@ app.get('*', async (req, res) => {
         const html = fs.readFileSync(path.join(__dirname, 'dist', 'index.html'), 'utf8');
         const token = req.csrfToken();
 
-        res.cookie('XSRF-TOKEN', token);  // 쿠키로
-
         // CSRF 토큰을 meta 태그로 삽입
         const modifiedHtml = html.replace(
             '</head>',
