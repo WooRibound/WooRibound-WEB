@@ -101,6 +101,9 @@ app.get('*', async (req, res) => {
             `<meta name="csrf-token" content="${token}"></head>`
         );
 
+        console.log('Meta tag included:', modifiedHtml.includes('csrf-token'));
+        console.log('Token in HTML:', modifiedHtml.includes(token));
+
         // 모든 경로에서 수정된 index.html 반환
         // (Vue Router의 History 모드를 위해 모든 경로에서 같은 HTML 제공)
         res.setHeader('Content-Type', 'text/html');
