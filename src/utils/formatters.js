@@ -68,16 +68,29 @@ export function formatPhoneNumber(phoneNumber) {
 }
 
 /**
+ * 컨텐츠 제목을 포맷팅하여 20자 이후를 *로 처리하는 함수
+ * @param {string} content - 입력된 문자열
+ * @returns {string} 포맷된 문자열
+ */
+export function formatContentTitle(content) {
+    if (content.length <= 16) {
+        return content;
+    }
+
+    return `${content.slice(0, 16)}..`;
+}
+
+/**
  * 컨텐츠를 포맷팅하여 20자 이후를 *로 처리하는 함수
  * @param {string} content - 입력된 문자열
  * @returns {string} 포맷된 문자열
  */
 export function formatContent(content) {
-    if (content.length <= 30) {
+    if (content.length <= 25) {
         return content;
     }
 
-    return `${content.slice(0, 30)}...`;
+    return `${content.slice(0, 25)}...`;
 }
 
 
