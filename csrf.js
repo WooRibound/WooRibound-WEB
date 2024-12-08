@@ -17,19 +17,21 @@ const setupCsrf = (app) => {
         '/api/live/ws'
     ];
 
-    // CSRF 보호 설정
-    app.use(csrf({
-        cookie: {
-            httpOnly: true,
-            key: 'XSRF-TOKEN',
-            secure: process.env.NODE_ENV === 'production'
-        },
-        value: req => req.headers['x-xsrf-token'],
-        // Grafana 경로 무시 설정 추가
-        ignore: (req) => {
-            return grafanaRoutes.some(route => req.path.startsWith(route));
+    // Grafana 경로에는 CSRF 미들웨어를 적용하지 않음
+    app.use((req, res, next) => {
+        if (grafanaRoutes.some(route => req.path.startsWith(route))) {
+            next();
+        } else {
+            csrf({
+                cookie: {
+                    httpOnly: true,
+                    key: 'XSRF-TOKEN',
+                    secure: process.env.NODE_ENV === 'production'
+                },
+                value: req => req.headers['x-xsrf-token']
+            })(req, res, next);
         }
-    }));
+    });
 
     // CSRF 에러 처리 미들웨어
     app.use((err, req, res, next) => {
