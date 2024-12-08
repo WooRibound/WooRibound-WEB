@@ -295,7 +295,7 @@ export default {
       <!-- 일 경험 공유 게시판 -->
       <div class="experience-board-section">
         <div class="experience-board-header">
-          <div class="experience-board-title">🌳 다양한 직무이야기 탐색하기</div>
+          <div class="experience-board-title">🌳 다양한 일 경험 이야기 탐색하기</div>
           <div class="experience-board-view-all" @click="onMoveWisdomPageClick">모두보기</div>
         </div>
         <div class="experience-board-content">
