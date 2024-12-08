@@ -460,6 +460,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+  object-position: top;
 }
 
 .recommended-section .item-text {
