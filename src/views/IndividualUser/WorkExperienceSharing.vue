@@ -4,10 +4,9 @@ import {ROUTES} from "@/router/routes";
 import SearchFilterModal from "@/components/SearchFilterModal.vue";
 import {onMounted, ref} from "vue";
 import {SEARCH_FILTER_TYPES} from "@/constants/searchFilterTypes";
-import {formatDate2} from "@/utils/formatters";
+import {formatContentTitle, formatContent, formatDate2} from "@/utils/formatters";
 import {fetchAllWisdomExplore} from "@/api/services/individualUserService";
 import SingleButtonModal from "@/components/SingleButtonModal.vue";
-import {formatContent} from "@/utils/formatters";
 
 export default {
   name: "WorkExperienceSharing",
@@ -17,7 +16,7 @@ export default {
     }
   },
   components: {SingleButtonModal, SearchFilterModal },
-  methods: {formatDate2},
+  methods: {formatContentTitle, formatContent, formatDate2},
   setup() {
     const router = useRouter();
 
@@ -107,7 +106,6 @@ export default {
       onMoveWorkExperienceDetailClick,
       onFilterClick,
       onRegisterPostClick,
-      formatContent,
     };
   }
 }
@@ -148,7 +146,7 @@ export default {
             <img :src="wisdomShare.image" alt="직무 이미지" />
           </div>
           <div class="experience-board-text">
-            <div class="experience-board-job-title">{{ wisdomShare.knowhowTitle}}</div>
+            <div class="experience-board-job-title">{{ formatContentTitle(wisdomShare.knowhowTitle)}}</div>
             <div class="experience-board-content">{{ formatContent(wisdomShare.knowhowContent) }}</div>
             <div class="experience-board-role">{{ wisdomShare.knowhowJob}}</div>
           </div>
@@ -253,56 +251,6 @@ export default {
   margin-bottom: 10px;
 }
 
-.job-wisdom-list {
-  background-color: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
-  color: #000000;
-  font-weight: bold;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.course-title {
-  font-size: 18px;
-  margin-right: auto; /* Ensures it stays on the left */
-}
-
-.course-subtitle {
-  margin-bottom: 12px;
-  color: #6c757d;
-}
-
-.course-schedule {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.schedule-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.info-item {
-  margin-right: 20px;
-  font-size: 14px;
-  color: #6c757d;
-  font-weight: normal;
-}
-
-.right-arrow-icon {
-  width: 20px;
-  height: auto;
-  cursor: pointer;
-  margin-left: 15px;
-}
-
 .experience-board-content {
   display: flex;
   flex-direction: column;
@@ -315,11 +263,14 @@ export default {
   padding: 15px;
   cursor: pointer;
   border-bottom: 1px solid black;
+  min-height: 120px; /* 최소 높이 설정 */
+  box-sizing: border-box; /* 패딩 포함한 크기 계산 */
 }
 
 .experience-board-image {
-  width: 90px; /* 정사각형 크기 */
-  height: 90px;
+  flex-shrink: 0; /* 크기를 축소하지 않음 */
+  width: 90px; /* 고정 너비 */
+  height: 90px; /* 고정 높이 */
   border-radius: 8px; /* 둥근 모서리 */
   overflow: hidden; /* 둥근 경계 밖 이미지를 숨김 */
   margin-right: 15px; /* 텍스트와 이미지 사이 간격 */
@@ -332,7 +283,10 @@ export default {
 }
 
 .experience-board-text {
-  flex-grow: 1; /* 텍스트 영역을 남은 공간에 확장 */
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 긴 텍스트 말줄임 처리 */
+  white-space: nowrap; /* 한 줄로 표시 */
 }
 
 .experience-board-item:not(:last-child) {

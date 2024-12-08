@@ -6,7 +6,7 @@ import {ROUTES} from "@/router/routes";
 import {useRouter} from "vue-router";
 import {useUserStore} from "@/stores/userStore";
 import {USER_TYPES} from "@/constants/userTypes";
-import {formatContent} from "@/utils/formatters";
+import {formatContent, formatContentTitle} from "@/utils/formatters";
 
 export default {
   name: "MainView",
@@ -102,7 +102,7 @@ export default {
         userName: item.userName,
         knowhowId: item.knowhowId,
         knowhowJob: item.knowhowJob,
-        knowhowTitle: item.knowhowTitle,
+        knowhowTitle: formatContentTitle(item.knowhowTitle),
         knowhowContent: formatContent(item.knowhowContent),
         uploadDate: item.uploadDate,
         image: images[index],
@@ -499,11 +499,14 @@ export default {
   padding: 15px;
   cursor: pointer;
   border-bottom: 1px solid black;
+  min-height: 120px; /* 최소 높이 설정 */
+  box-sizing: border-box; /* 패딩 포함한 크기 계산 */
 }
 
 .experience-board-image {
-  width: 90px; /* 정사각형 크기 */
-  height: 90px;
+  flex-shrink: 0; /* 크기를 축소하지 않음 */
+  width: 90px; /* 고정 너비 */
+  height: 90px; /* 고정 높이 */
   border-radius: 8px; /* 둥근 모서리 */
   overflow: hidden; /* 둥근 경계 밖 이미지를 숨김 */
   margin-right: 15px; /* 텍스트와 이미지 사이 간격 */
@@ -516,7 +519,10 @@ export default {
 }
 
 .experience-board-text {
-  flex-grow: 1; /* 텍스트 영역을 남은 공간에 확장 */
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 긴 텍스트 말줄임 처리 */
+  white-space: nowrap; /* 한 줄로 표시 */
 }
 
 .experience-board-item:not(:last-child) {
