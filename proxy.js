@@ -39,6 +39,17 @@ const wsProxy = createProxyMiddleware('/api/live/ws', {
 app.use('/api/live/ws', wsProxy);
 
 
+// Kibana 프록시 설정
+app.use('/kibana', createProxyMiddleware({
+    target: 'https://kibana.wooribound.site',
+    changeOrigin: true,
+    secure: false,
+    onProxyReq: (proxyReq) => {
+        // 필요한 경우 헤더 추가
+        console.log('Proxying Kibana request:', proxyReq.path);
+    }
+}));
+
 // Grafana 관련 모든 경로 처리
 app.use([
     '/d-solo',

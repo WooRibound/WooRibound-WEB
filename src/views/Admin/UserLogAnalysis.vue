@@ -5,7 +5,7 @@ export default {
   name: "UserLogAnalysis",
   setup() {
     const searchInput = ref("");
-    const iframeUrl = ref("https://kibana.wooribound.site/app/r/s/lvkeu");
+    const iframeUrl = ref("/kibana/app/r/s/lvkeu");
 
 
     return {
