@@ -249,7 +249,7 @@ export default {
 }
 
 .applicant-table td {
-  padding: 10px; /* 내부 여백 */
+  padding: 8px; /* 내부 여백 */
   text-align: center;
 }
 
