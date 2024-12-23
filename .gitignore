@@ -1,0 +1,50 @@
+.DS_Store
+node_module
+# Build output
+dist/
+build/
+
+
+# Environment variables
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+root-ca.crt
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Dependency directories
+jspm_packages/
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Production
+/build/
+
+# Cache files
+node_modules/
+node_modules/.cache/
+
+# Exclude ESLint cache files
+node_modules/.cache/eslint/
+
