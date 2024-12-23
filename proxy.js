@@ -39,14 +39,27 @@ const wsProxy = createProxyMiddleware('/api/live/ws', {
 app.use('/api/live/ws', wsProxy);
 
 
-// Kibana 프록시 설정
 app.use('/kibana', createProxyMiddleware({
     target: 'https://kibana.wooribound.site',
     changeOrigin: true,
     secure: false,
-    onProxyReq: (proxyReq) => {
-        // 필요한 경우 헤더 추가
-        console.log('Proxying Kibana request:', proxyReq.path);
+    pathRewrite: {
+        '^/kibana': '/' // 옵션
+    },
+    onProxyRes: (proxyRes, req, res) => {
+        // 기존 코드 유지
+        delete proxyRes.headers['content-security-policy'];
+        delete proxyRes.headers['content-security-policy-report-only'];
+        proxyRes.headers['content-security-policy'] = "frame-ancestors 'self' https://wooribound.site";
+        proxyRes.headers['x-frame-options'] = 'ALLOW-FROM https://wooribound.site';
+
+        // 리다이렉트 URL 수정
+        if (proxyRes.headers.location) {
+            proxyRes.headers.location = proxyRes.headers.location.replace(
+                'kibana.wooribound.site',
+                'wooribound.com/kibana'
+            );
+        }
     }
 }));
 

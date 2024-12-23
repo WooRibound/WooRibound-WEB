@@ -1,16 +1,14 @@
 <script>
-import { ref } from "vue";
 
 export default {
   name: "UserLogAnalysis",
   setup() {
-    const searchInput = ref("");
-    const iframeUrl = ref("/kibana/app/r/s/lvkeu");
-
+    const openKibanaDashboard = () => {
+      window.open('/kibana/app/r/s/lvkeu', '_blank', 'noopener,noreferrer');
+    };
 
     return {
-      searchInput,
-      iframeUrl
+      openKibanaDashboard
     };
   }
 }
@@ -22,12 +20,14 @@ export default {
       <div class="header-title">사용자 로그 분석</div>
     </div>
     <div class="dashboard-container">
-      <iframe
-          :src="iframeUrl"
-          class="kibana-frame"
-          frameborder="0"
-          allowfullscreen
-      ></iframe>
+      <div class="kibana-button-container">
+        <button
+            @click="openKibanaDashboard"
+            class="open-kibana-button"
+        >
+          Kibana 대시보드 열기
+        </button>
+      </div>
     </div>
   </main>
 </template>
@@ -56,11 +56,27 @@ export default {
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.kibana-frame {
-  width: 100%;
-  height: 100%;
+.kibana-button-container {
+  text-align: center;
+}
+
+.open-kibana-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.open-kibana-button:hover {
+  background-color: #0056b3;
 }
 </style>
